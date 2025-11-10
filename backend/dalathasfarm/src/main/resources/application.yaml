@@ -1,3 +1,39 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: dalathasfarm
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/dalathasfarm}
+    username: root
+    password: ${MYSQL_ROOT_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+api:
+  prefix: /api/v1
+
+jwt:
+  expiration: 2592000 #30 days = 30d * 24h * 60m * 60s
+  expiration-refresh-token: 5184000 #60 days = 60d * 24h * 60m * 60s
+  secretKey: k91v0UiqsELb5S9c14/gtKvcs/gxCnD8CBXJHj41WlE=
+
+vnpay:
+  pay-url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+  return-url: "${VNPAY_RETURN_URI:http://localhost:4200/payments/payment-callback}"
+  #  Tài khoản VNPay deploy
+  tmn-code: "SPG3I6UM"
+  secret-key: "EJ0X2C3PWI1I4K1HO62K3W1XD5AEC4IC"
+  api-url: "htt

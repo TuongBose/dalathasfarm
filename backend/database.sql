@@ -5,6 +5,17 @@ CREATE TABLE categories
     thumbnail VARCHAR(300) UNIQUE
 );
 
+CREATE TABLE occasions
+(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,      
+    thumbnail VARCHAR(300) UNIQUE,           
+    start_date DATE,                                    
+    end_date DATE,                                      
+    banner_image VARCHAR(255) UNIQUE,                          
+    is_active BIT DEFAULT 1,
+)
+
 CREATE TABLE suppliers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -23,8 +34,10 @@ CREATE TABLE products (
     created_at DATETIME,
     updated_at DATETIME,
     category_id INT NOT NULL,
+    occasion_id INT,
     thumbnail VARCHAR(300) UNIQUE,
     CONSTRAINT fk_products_category FOREIGN KEY (category_id) REFERENCES categories(id),
+    CONSTRAINT fk_products_occasion FOREIGN KEY (occasion_id) REFERENCES occasions(id),
     CONSTRAINT fk_products_supplier FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
 );
 
@@ -132,7 +145,8 @@ CREATE TABLE orders (
     phone_number VARCHAR(15) NOT NULL,
     address VARCHAR(200) NOT NULL,
     note VARCHAR(100),
-    status ENUM('Pending', 'Processing', 'Shipping', 'Delivered', 'Cancelled'),  order_date DATE,
+    status ENUM('Pending', 'Processing', 'Shipping', 'Delivered', 'Cancelled'),  
+    order_date DATE,
     total_money DECIMAL(10,2) NOT NULL CHECK (total_money >= 0),
     payment_method ENUM('Bank Transfer', 'Cash'),
     shipping_date DATE,
@@ -163,6 +177,7 @@ CREATE TABLE feedbacks (
     star INT NOT NULL,
     product_id INT NOT NULL,
     created_at DATETIME,
+    updated_at DATETIME,
     is_active BIT DEFAULT 0,
     is_delete BIT DEFAULT 0,
     CONSTRAINT fk_feedbacks_products FOREIGN KEY (product_id) REFERENCES products(id),

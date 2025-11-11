@@ -22,8 +22,8 @@ public class PurchaseOrder {
     private SupplierInvoice supplierInvoice;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_role_id", nullable = false)
-    private UserRole userRole;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "import_date", nullable = false)
     private LocalDateTime importDate;

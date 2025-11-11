@@ -27,8 +27,8 @@ public class Notification extends BaseEntity{
     private Boolean isRead;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_role_id", nullable = false)
-    private UserRole userRole;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public enum Importance {
         Low, Normal, High

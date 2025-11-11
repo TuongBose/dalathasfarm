@@ -1,3 +1,7 @@
+CREATE DATABASE dalathasfarm;
+
+USE dalathasfarm;
+
 CREATE TABLE categories 
 (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -13,8 +17,8 @@ CREATE TABLE occasions
     start_date DATE,                                    
     end_date DATE,                                      
     banner_image VARCHAR(255) UNIQUE,                          
-    is_active BIT DEFAULT 1,
-)
+    is_active BIT DEFAULT 1
+);
 
 CREATE TABLE suppliers (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -48,63 +52,25 @@ CREATE TABLE product_images (
     CONSTRAINT fk_images_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
-CREATE TABLE admins (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    password VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE,
-    fullname VARCHAR(255),
-    address VARCHAR(255),
-    phone_number VARCHAR(15) UNIQUE NOT NULL,
-    created_at DATETIME,
-    updated_at DATETIME,
-    is_active BIT DEFAULT 1,
-    date_of_birth DATE,
-    profile_image VARCHAR(500) UNIQUE
-);
-
-CREATE TABLE employees (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    password VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE,
-    fullname VARCHAR(255),
-    address VARCHAR(255),
-    phone_number VARCHAR(15) UNIQUE NOT NULL,
-    created_at DATETIME,
-    updated_at DATETIME,
-    is_active BIT DEFAULT 1,
-    date_of_birth DATE,
-    profile_image VARCHAR(500) UNIQUE
-);
-
-CREATE TABLE customers (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    password VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE,
-    fullname VARCHAR(255),
-    address VARCHAR(255),
-    phone_number VARCHAR(15) UNIQUE NOT NULL,
-    created_at DATETIME,
-    updated_at DATETIME,
-    is_active BIT DEFAULT 1,
-    date_of_birth DATE,
-    profile_image VARCHAR(500) UNIQUE
-);
-
 CREATE TABLE roles (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) UNIQUE NOT NULL
 );
 
-CREATE TABLE user_roles (
+CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    fullname VARCHAR(255),
+    address VARCHAR(255),
+    phone_number VARCHAR(15) UNIQUE NOT NULL,
+    created_at DATETIME,
+    updated_at DATETIME,
+    is_active BIT DEFAULT 1,
+    date_of_birth DATE,
+    profile_image VARCHAR(500) UNIQUE,
     role_id INT NOT NULL,
-    admin_id INT UNIQUE,
-    employee_id INT UNIQUE,
-    customer_id INT UNIQUE,
-    CONSTRAINT fk_user_roles_roles FOREIGN KEY (role_id) REFERENCES roles(id),
-    CONSTRAINT fk_user_roles_admins FOREIGN KEY (admin_id) REFERENCES admins(id),
-    CONSTRAINT fk_user_roles_employees FOREIGN KEY (employee_id) REFERENCES employees(id),
-    CONSTRAINT fk_user_roles_customers FOREIGN KEY (customer_id) REFERENCES customers(id)
+    CONSTRAINT fk_users_roles FOREIGN KEY (role_id) REFERENCES roles(id)
 );
 
 CREATE TABLE tokens (
@@ -114,11 +80,11 @@ CREATE TABLE tokens (
     expiration_date DATETIME,
     revoked BIT DEFAULT 1,
     expired BIT DEFAULT 1,
-    user_role_id INT NOT NULL,
+    user_id INT NOT NULL,
     is_mobile BIT DEFAULT 0,
     refresh_token VARCHAR(255),
     refresh_expiration_date DATETIME,
-    CONSTRAINT fk_tokens_user_roles FOREIGN KEY (user_role_id) REFERENCES user_roles(id)
+    CONSTRAINT fk_tokens_users FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE coupons (
@@ -139,7 +105,7 @@ CREATE TABLE coupon_conditions (
 
 CREATE TABLE orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_role_id INT NOT NULL,
+    user_id INT NOT NULL,
     fullname VARCHAR(100) NOT NULL,
     email VARCHAR(100),
     phone_number VARCHAR(15) NOT NULL,
@@ -153,7 +119,7 @@ CREATE TABLE orders (
     is_active BIT DEFAULT 1,
     coupon_id INT,
     vnp_txn_ref VARCHAR(50),
-    CONSTRAINT fk_orders_user_roles FOREIGN KEY (user_role_id) REFERENCES user_roles(id),
+    CONSTRAINT fk_orders_users FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_orders_coupons FOREIGN KEY (coupon_id) REFERENCES coupons(id)
 );
 
@@ -172,7 +138,7 @@ CREATE TABLE order_details (
 
 CREATE TABLE feedbacks (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_role_id INT NOT NULL,
+    user_id INT NOT NULL,
     content VARCHAR(255) NOT NULL,
     star INT NOT NULL,
     product_id INT NOT NULL,
@@ -181,12 +147,12 @@ CREATE TABLE feedbacks (
     is_active BIT DEFAULT 0,
     is_delete BIT DEFAULT 0,
     CONSTRAINT fk_feedbacks_products FOREIGN KEY (product_id) REFERENCES products(id),
-    CONSTRAINT fk_feedbacks_user_roles FOREIGN KEY (user_role_id) REFERENCES user_roles(id)
+    CONSTRAINT fk_feedbacks_users FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE notifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_role_id INT NOT NULL,
+    user_id INT NOT NULL,
     title VARCHAR(255) NOT NULL,
     content TEXT,
     type ENUM(
@@ -197,7 +163,7 @@ CREATE TABLE notifications (
     is_read BIT DEFAULT 0,
     created_at DATETIME,
     updated_at DATETIME,
-    CONSTRAINT fk_notifications_user_roles FOREIGN KEY (user_role_id) REFERENCES user_roles(id)
+    CONSTRAINT fk_notifications_users FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE supplier_invoices (
@@ -228,10 +194,10 @@ CREATE TABLE supplier_invoice_details (
 CREATE TABLE purchase_orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     supplier_invoice_id INT NOT NULL,
-    user_role_id INT NOT NULL,
+    user_id INT NOT NULL,
     import_date DATETIME NOT NULL,
     note VARCHAR(255),
-    CONSTRAINT fk_purchase_orders_user_roles FOREIGN KEY (user_role_id) REFERENCES user_roles(id),
+    CONSTRAINT fk_purchase_orders_users FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_purchase_orders_supplier_invoices FOREIGN KEY (supplier_invoice_id) REFERENCES supplier_invoices(id)
 );
 
@@ -247,13 +213,13 @@ CREATE TABLE purchase_order_details (
 CREATE TABLE supplier_orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     supplier_id INT NOT NULL,
-    user_role_id INT NOT NULL,
+    user_id INT NOT NULL,
     order_date DATETIME NOT NULL,
     status ENUM('Unconfirmed', 'Confirmed') DEFAULT 'Unconfirmed',
     total_money DECIMAL(10,2) NOT NULL CHECK (total_money >= 0),
     note VARCHAR(255),
     CONSTRAINT fk_supplier_orders_suppliers FOREIGN KEY (supplier_id) REFERENCES suppliers(id),
-    CONSTRAINT fk_supplier_orders_user_roles FOREIGN KEY (user_role_id) REFERENCES user_roles(id)
+    CONSTRAINT fk_supplier_orders_users FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE supplier_order_details (
@@ -285,3 +251,8 @@ CREATE TABLE product_discount_items (
     CONSTRAINT fk_product_discount_items_products FOREIGN KEY (product_id) REFERENCES products(id),
     CONSTRAINT fk_product_discount_items_product_discounts FOREIGN KEY (product_discount_id) REFERENCES product_discounts(id)
 );
+
+INSERT INTO roles (name) VALUES 
+('Admin'),
+('Employee'),
+('Customer');

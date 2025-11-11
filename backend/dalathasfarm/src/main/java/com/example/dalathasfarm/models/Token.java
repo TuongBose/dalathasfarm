@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Token {
+    public static final int MAX_TOKENS = 3;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -30,8 +32,8 @@ public class Token {
     private Boolean expired;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_role_id", nullable = false)
-    private UserRole userRole;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "is_mobile")
     private Boolean isMobile;

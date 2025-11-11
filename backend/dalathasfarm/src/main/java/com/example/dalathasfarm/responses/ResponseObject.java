@@ -10,10 +10,7 @@ import org.springframework.http.HttpStatus;
 @NoArgsConstructor
 @Builder
 public class ResponseObject {
-    @JsonProperty("message")
     private String message;
-
     private HttpStatus status;
-
     private Object data;
 }

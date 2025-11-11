@@ -30,10 +30,21 @@ jwt:
   expiration-refresh-token: 5184000 #60 days = 60d * 24h * 60m * 60s
   secretKey: k91v0UiqsELb5S9c14/gtKvcs/gxCnD8CBXJHj41WlE=
 
+# health check
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      base-path: /api/v1/actuator
+      exposure:
+        include: "health, info"
+
 vnpay:
   pay-url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
   return-url: "${VNPAY_RETURN_URI:http://localhost:4200/payments/payment-callback}"
   #  Tài khoản VNPay deploy
   tmn-code: "SPG3I6UM"
   secret-key: "EJ0X2C3PWI1I4K1HO62K3W1XD5AEC4IC"
-  api-url: "htt
+  api-url: "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction"

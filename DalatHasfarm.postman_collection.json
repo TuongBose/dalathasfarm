@@ -1,0 +1,1940 @@
+{
+	"info": {
+		"_postman_id": "26c6df2a-0b37-47d2-b715-4dc33eef5abc",
+		"name": "DalatHasfarm",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39377536"
+	},
+	"item": [
+		{
+			"name": "categories",
+			"item": [
+				{
+					"name": "deleteLoaiSanPham",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/loaisanphams/10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"loaisanphams",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateLoaiSanPham",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tenloaisanpham\":\"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/loaisanphams/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"loaisanphams",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createLoaiSanPham",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tenloaisanpham\": \"Phu kien d\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}categories",
+							"host": [
+								"{{API_PREFIX}}categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllCategory",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}categories?page=1&limit=100",
+							"host": [
+								"{{API_PREFIX}}categories"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "100"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getLoaiSanPhamById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}loaisanphams/3",
+							"host": [
+								"{{API_PREFIX}}loaisanphams"
+							],
+							"path": [
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "feedbacks",
+			"item": [
+				{
+					"name": "deleteFeedback",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}feedbacks/1",
+							"host": [
+								"{{API_PREFIX}}feedbacks"
+							],
+							"path": [
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateFeedback",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_USER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\":2,\r\n    \"content\": \"San pham ngon, mng hay mua di\",\r\n    \"sosao\": 10,\r\n    \"product_id\": 99\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}feedbacks/1",
+							"host": [
+								"{{API_PREFIX}}feedbacks"
+							],
+							"path": [
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "insertFeedback",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_USER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\":2,\r\n    \"content\": \"San pham rat tot\",\r\n    \"sosao\": 3,\r\n    \"product_id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}feedbacks",
+							"host": [
+								"{{API_PREFIX}}feedbacks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "generateFakeFeedbacks",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\":2,\r\n    \"content\": \"San pham rat tot\",\r\n    \"sosao\": 3,\r\n    \"product_id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}feedbacks/generateFakeFeedbacks",
+							"host": [
+								"{{API_PREFIX}}feedbacks"
+							],
+							"path": [
+								"generateFakeFeedbacks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllFeedbacks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}feedbacks?user_id=&product_id=2",
+							"host": [
+								"{{API_PREFIX}}feedbacks"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": ""
+								},
+								{
+									"key": "product_id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SanPhams",
+			"item": [
+				{
+					"name": "getAllSanPham",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}sanphams?page=0&limit=10&keyword=&MALOAISANPHAM=",
+							"host": [
+								"{{API_PREFIX}}sanphams"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "keyword",
+									"value": ""
+								},
+								{
+									"key": "MALOAISANPHAM",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "viewImage",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/sanphams/images/iphone14_2.jpg",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"sanphams",
+								"images",
+								"iphone14_2.jpg"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getSanPham",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/sanphams/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"sanphams",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getSanPhamByMaSanPhamList",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/sanphams/by-ids?ids=1,3,5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"sanphams",
+								"by-ids"
+							],
+							"query": [
+								{
+									"key": "ids",
+									"value": "1,3,5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Them 1 san pham",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_USER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tensanpham\": \"macbook pro 15inch 2025\",\r\n    \"gia\": \"1566\",\r\n    \"mota\": \"Day la san pham trung bay\",\r\n    \"mathuonghieu\":1,\r\n    \"maloaisanpham\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/sanphams",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"sanphams"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Them 200 san pham fake",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_USER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tensanpham\": \"macbook pro 15inch 2025\",\r\n    \"gia\": \"1566\",\r\n    \"mota\": \"Day la san pham trung bay\",\r\n    \"mathuonghieu\":1,\r\n    \"maloaisanpham\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}sanphams/generateFakeSanPhams",
+							"host": [
+								"{{API_PREFIX}}sanphams"
+							],
+							"path": [
+								"generateFakeSanPhams"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Them hinh anh 1 san pham",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_USER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": [
+										"/D:/HocTap/LTW_MVC/ShopBanDienThoai_Web/DoAn_LTW/Images/HinhAnhSP/AcerAspire3.jpg",
+										"/D:/HocTap/LTW_MVC/ShopBanDienThoai_Web/DoAn_LTW/Images/HinhAnhSP/airpods_pro.jpg",
+										"/D:/HocTap/LTW_MVC/ShopBanDienThoai_Web/DoAn_LTW/Images/HinhAnhSP/Asus_Vivobook.jpg",
+										"/D:/HocTap/LTW_MVC/ShopBanDienThoai_Web/DoAn_LTW/Images/HinhAnhSP/cu_sac_nhanh_20w.jpg",
+										"/D:/HocTap/LTW_MVC/ShopBanDienThoai_Web/DoAn_LTW/Images/HinhAnhSP/Dell_Inspiron.jpg"
+									]
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/sanphams/uploads/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"sanphams",
+								"uploads",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_USER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"gia\": 9909,\r\n    \"mota\": \"San pham tuyet voi.\",\r\n    \"maloaisanpham\": 1,\r\n    \"mathuonghieu\": 2,\r\n    \"tensanpham\": \"MacBook pro 155inch 2030\",\r\n    \"soluongtonkho\": 10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/sanphams/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"sanphams",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_USER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/sanphams/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"sanphams",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Accounts",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"123\",\r\n    \"retypepassword\": \"123\",\r\n    \"email\": \"tuong@124gmail.com\",\r\n    \"fullname\": \"LE MANH TUONG\",\r\n    \"diachi\": \"123 LE TRONG TAN\",\r\n    \"sodienthoai\": \"090909\",\r\n    \"ngaysinh\": \"2004-09-21\",\r\n    \"FACEBOOK_ACCOUNT_ID\": \"\",\r\n    \"GOOGLE_ACCOUNT_ID\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/accounts/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register without email",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"123\",\r\n    \"retypepassword\": \"123\",\r\n    \"fullname\": \"LE MANH TUONG\",\r\n    \"diachi\": \"123 LE TRONG TAN\",\r\n    \"sodienthoai\": \"555555\",\r\n    \"ngaysinh\": \"2004-09-21\",\r\n    \"FACEBOOK_ACCOUNT_ID\": 0,\r\n    \"GOOGLE_ACCOUNT_ID\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/accounts/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register without phoneNumber",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"123\",\r\n    \"retypepassword\": \"123\",\r\n    \"email\": \"LEMANHTUONG2@GMAIL.COM\",\r\n    \"fullname\": \"LE MANH TUONG\",\r\n    \"diachi\": \"123 LE TRONG TAN\",\r\n    \"ngaysinh\": \"2004-09-21\",\r\n    \"FACEBOOK_ACCOUNT_ID\": 0,\r\n    \"GOOGLE_ACCOUNT_ID\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/accounts/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login_user with phone number",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "vi",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "mobile",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"123\",\r\n    \"sodienthoai\": \"111111\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/accounts/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login_user with email",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "vi",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "mobile",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"123\",\r\n    \"email\": \"LEMANHTUONG2@GMAIL.COM\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/accounts/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login_admin",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "vi",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "mobile",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"123\",\r\n    \"sodienthoai\": \"555555\"\r\n    ,\"roleid\":true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/accounts/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getDetails",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_USER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "vi",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/accounts/details",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"details"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateAccount",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\":\"123\",\r\n    \"retypepassword\":\"123\",\r\n    \"email\":\"444@gmail.com\",\r\n    \"fullname\":\"le manh tuong\",\r\n    \"diachi\":\"binh long tan huong\",\r\n    \"sodienthoai\":\"123\",\r\n    \"ngaysinh\":\"2000-01-01\",\r\n    \"FACEBOOK_ACCOUNT_ID\":\"\",\r\n    \"GOOGLE_ACCOUNT_ID\":\"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/accounts/details/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"details",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reset-password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\":\"123\",\r\n    \"email\":\"tuongtuongtuong@gmail.com\",\r\n    \"fullname\":\"le manh tuong\",\r\n    \"diachi\":\"binh long tan huong\",\r\n    \"sodienthoai\":\"123\",\r\n    \"ngaysinh\":\"2000-01-01\",\r\n    \"FACEBOOK_ACCOUNT_ID\":3,\r\n    \"GOOGLE_ACCOUNT_ID\":1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/accounts/reset-password/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"reset-password",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "block-user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\":\"123\",\r\n    \"email\":\"tuongtuongtuong@gmail.com\",\r\n    \"fullname\":\"le manh tuong\",\r\n    \"diachi\":\"binh long tan huong\",\r\n    \"sodienthoai\":\"123\",\r\n    \"ngaysinh\":\"2000-01-01\",\r\n    \"FACEBOOK_ACCOUNT_ID\":3,\r\n    \"GOOGLE_ACCOUNT_ID\":1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/accounts/block/1/0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"block",
+								"1",
+								"0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refreshToken",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "vi",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "mobile",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\": \"3222c510-670f-4d93-84e0-47e61edcf753\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}accounts/refreshToken",
+							"host": [
+								"{{API_PREFIX}}accounts"
+							],
+							"path": [
+								"refreshToken"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllAccountCustomer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}accounts?keyword=&page=0&limit=10",
+							"host": [
+								"{{API_PREFIX}}accounts"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": ""
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_USER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userid\":2,\r\n    \"fullname\":\"le manh tuong\",\r\n    \"email\":\"abc@gmail.com\",\r\n    \"sodienthoai\":\"0123489823574\",\r\n    \"diachi\":\"555 le trong binh\",\r\n    \"ghichu\":\"san pham nay dep\",\r\n    \"tongtien\":12.5,\r\n    \"phuongthucthanhtoan\":\"chuyen khoang\",\r\n    \"cartitems\":[\r\n        {\r\n            \"masanpham\":3,\r\n            \"quantity\":2\r\n        },\r\n        {\r\n            \"masanpham\":5,\r\n            \"quantity\":9\r\n        }\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}accounts/auth/social-login?login_type=google",
+							"host": [
+								"{{API_PREFIX}}accounts"
+							],
+							"path": [
+								"auth",
+								"social-login"
+							],
+							"query": [
+								{
+									"key": "login_type",
+									"value": "google"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DonHangs",
+			"item": [
+				{
+					"name": "createDonHang",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_USER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userid\":2,\r\n    \"fullname\":\"le manh tuong\",\r\n    \"email\":\"abc@gmail.com\",\r\n    \"sodienthoai\":\"0123489823574\",\r\n    \"diachi\":\"555 le trong binh\",\r\n    \"ghichu\":\"san pham nay dep\",\r\n    \"tongtien\":12.5,\r\n    \"phuongthucthanhtoan\":\"chuyen khoang\",\r\n    \"cartitems\":[\r\n        {\r\n            \"masanpham\":3,\r\n            \"quantity\":2\r\n        },\r\n        {\r\n            \"masanpham\":5,\r\n            \"quantity\":9\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/donhangs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"donhangs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getDonHangByMADONHANG",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_USER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userid\":4,\r\n    \"fullname\":\"le manh tuong\",\r\n    \"email\":\"honghanh@gmail.com\",\r\n    \"sodienthoai\":\"0123489823574\",\r\n    \"diachi\":\"123 le trong truong\",\r\n    \"ghichu\":\"san pham nay dep\",\r\n    \"tongtien\":3000,\r\n    \"phuongthucthanhtoan\":\"chuyen khoang\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/donhangs/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"donhangs",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllDonHangByKeyword",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userid\":4,\r\n    \"fullname\":\"le manh tuong\",\r\n    \"email\":\"honghanh@gmail.com\",\r\n    \"sodienthoai\":\"0123489823574\",\r\n    \"diachi\":\"123 le trong truong\",\r\n    \"ghichu\":\"san pham nay dep\",\r\n    \"tongtien\":3000,\r\n    \"phuongthucthanhtoan\":\"chuyen khoang\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/donhangs/get-alldonhang-by-keyword?page=0&limit=10&keyword=xau",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"donhangs",
+								"get-alldonhang-by-keyword"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "keyword",
+									"value": "xau"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getDonHangByUSERID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_USER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userid\":4,\r\n    \"fullname\":\"le manh tuong\",\r\n    \"email\":\"honghanh@gmail.com\",\r\n    \"sodienthoai\":\"0123489823574\",\r\n    \"diachi\":\"123 le trong truong\",\r\n    \"ghichu\":\"san pham nay dep\",\r\n    \"tongtien\":3000,\r\n    \"phuongthucthanhtoan\":\"chuyen khoang\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/donhangs/account/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"donhangs",
+								"account",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_USER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userid\":1,\r\n    \"fullname\":\"hong\",\r\n    \"email\":\"hanh@gamil.com\",\r\n    \"sodienthoai\":\"096969696969\",\r\n    \"diachi\":\"123 long 1\",\r\n    \"ghichu\":\"hang de vo xin nhe \",\r\n    \"tongtien\":10000000,\r\n    \"phuongthucthanhtoan\":\"THANH TOAN BANG TIEN MAT\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/donhangs/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"donhangs",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWJqZWN0IjoibGVtYW5odHVvbmcyMTA5QGdtYWlsLmNvbSIsInVzZXJJZCI6MSwic3ViIjoibGVtYW5odHVvbmcyMTA5QGdtYWlsLmNvbSIsImV4cCI6MTc1Nzc1MjE5MH0.xMFY3Jaw0yiPi5ysO3rVAa7a04Xu6AqQCXf-LAybo1s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userid\":1,\r\n    \"fullname\":\"hong hanh\",\r\n    \"email\":\"hanh@gamil.com\",\r\n    \"sodienthoai\":\"096969696969\",\r\n    \"diachi\":\"123 binh long quan 1\",\r\n    \"ghichu\":\"hang de vo xin nhe tay\",\r\n    \"tongtien\":10000000,\r\n    \"phuongthucthanhtoan\":\"THANH TOAN BANG TIEN MAT\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/donhangs/status?status=Đang vận chuyển&vnpTxnRef=9999999",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"donhangs",
+								"status"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "Đang vận chuyển"
+								},
+								{
+									"key": "vnpTxnRef",
+									"value": "9999999"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_USER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userid\":5,\r\n    \"fullname\":\"le manh tuong\",\r\n    \"email\":\"tuuong@gmail.com\",\r\n    \"sodienthoai\":\"0123489823574\",\r\n    \"diachi\":\"123 le trong tan\",\r\n    \"ghichu\":\"san pham nay dep\",\r\n    \"tongtien\":3000,\r\n    \"phuongthucthanhtoan\":\"chuyen khoang\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/donhangs/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"donhangs",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CTDHs",
+			"item": [
+				{
+					"name": "New Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"madonhang\":1,\r\n    \"masanpham\":2,\r\n    \"soluong\":5,\r\n    \"giaban\":8,\r\n    \"tongtien\":4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/chitietdonhangs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"chitietdonhangs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request Copy",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"madonhang\":2,\r\n    \"masanpham\":3,\r\n    \"soluong\":5,\r\n    \"giaban\":8,\r\n    \"tongtien\":4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/chitietdonhangs/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"chitietdonhangs",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request Copy",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userid\":5,\r\n    \"fullname\":\"le manh tuong\",\r\n    \"email\":\"tuuong@gmail.com\",\r\n    \"sodienthoai\":\"0123489823574\",\r\n    \"diachi\":\"123 le trong tan\",\r\n    \"ghichu\":\"san pham nay dep\",\r\n    \"tongtien\":3000,\r\n    \"phuongthucthanhtoan\":\"chuyen khoang\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/chitietdonhangs/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"chitietdonhangs",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getCTDHByMADONHANG",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userid\":5,\r\n    \"fullname\":\"le manh tuong\",\r\n    \"email\":\"tuuong@gmail.com\",\r\n    \"sodienthoai\":\"0123489823574\",\r\n    \"diachi\":\"123 le trong tan\",\r\n    \"ghichu\":\"san pham nay dep\",\r\n    \"tongtien\":3000,\r\n    \"phuongthucthanhtoan\":\"chuyen khoang\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/chitietdonhangs/donhang/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"chitietdonhangs",
+								"donhang",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getCTDHById",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_USER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userid\":5,\r\n    \"fullname\":\"le manh tuong\",\r\n    \"email\":\"tuuong@gmail.com\",\r\n    \"sodienthoai\":\"0123489823574\",\r\n    \"diachi\":\"123 le trong tan\",\r\n    \"ghichu\":\"san pham nay dep\",\r\n    \"tongtien\":3000,\r\n    \"phuongthucthanhtoan\":\"chuyen khoang\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/chitietdonhangs/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"chitietdonhangs",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ThuongHieus",
+			"item": [
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/thuonghieus?page=0&limit=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"thuonghieus"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJTT0RJRU5USE9BSSI6IjA5MDQiLCJVU0VSSUQiOjEsInN1YiI6IjA5MDQiLCJleHAiOjE3NTQ3MjczMTV9.Wvbc461A8PPKhIrmLLia4Ybicm5EJ_iFkne_VmuY83Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tenthuonghieu\": \"Rollroyce\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/thuonghieus",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"thuonghieus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/thuonghieus/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"thuonghieus",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tenthuonghieu\":\"Lenovo\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/thuonghieus/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"thuonghieus",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "healthcheck",
+			"item": [
+				{
+					"name": "actuator/health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}actuator/health",
+							"host": [
+								"{{API_PREFIX}}actuator"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "healthcheck/health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}healthcheck/health",
+							"host": [
+								"{{API_PREFIX}}healthcheck"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Coupons",
+			"item": [
+				{
+					"name": "coupons",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}coupons/calculate?couponCode=HEAVEN&totalAmount=120.0",
+							"host": [
+								"{{API_PREFIX}}coupons"
+							],
+							"path": [
+								"calculate"
+							],
+							"query": [
+								{
+									"key": "couponCode",
+									"value": "HEAVEN"
+								},
+								{
+									"key": "totalAmount",
+									"value": "120.0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "coupon2",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}coupons/calculate?couponCode=DISCOUNT20&totalAmount=201",
+							"host": [
+								"{{API_PREFIX}}coupons"
+							],
+							"path": [
+								"calculate"
+							],
+							"query": [
+								{
+									"key": "couponCode",
+									"value": "DISCOUNT20"
+								},
+								{
+									"key": "totalAmount",
+									"value": "201"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "notifications",
+			"item": [
+				{
+					"name": "getNotificationByUserId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}notifications",
+							"host": [
+								"{{API_PREFIX}}notifications"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8099/api/v1/actuator/health",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8099",
+					"path": [
+						"api",
+						"v1",
+						"actuator",
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

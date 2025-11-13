@@ -89,7 +89,7 @@ CREATE TABLE tokens (
 
 CREATE TABLE coupons (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    code VARCHAR(50) UNIQUE NOT NULL,
+    code VARCHAR(50) UNIQUE NOT NULL, 
     is_active BIT DEFAULT 1
 );
 

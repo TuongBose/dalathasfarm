@@ -48,7 +48,6 @@ public class NotificationController {
                 .status(HttpStatus.OK)
                 .data(notificationResponses)
                 .build());
-
     }
 
     @GetMapping("/unread")

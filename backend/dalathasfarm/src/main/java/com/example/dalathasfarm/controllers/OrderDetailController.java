@@ -27,7 +27,7 @@ public class OrderDetailController {
     private final LocalizationUtils localizationUtils;
 
     @PostMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_EMPLOYEE')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity<ResponseObject> createOrderDetail(
             @Valid @RequestBody OrderDetailDto orderDetailDto,
             BindingResult result
@@ -58,7 +58,6 @@ public class OrderDetailController {
                 .status(HttpStatus.OK)
                 .data(newOrderDetailResponse)
                 .build());
-
     }
 
     @GetMapping("/order/{id}")
@@ -89,7 +88,7 @@ public class OrderDetailController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_EMPLOYEE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ResponseObject> deleteOrderDetail(@Valid @PathVariable Integer id) {
         orderDetailService.deleteOrderDetail(id);
         return ResponseEntity.ok(ResponseObject.builder()

@@ -35,7 +35,7 @@ public class OrderController {
     private final SecurityUtils securityUtils;
 
     @PostMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_EMPLOYEE')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity<ResponseObject> createOrder(
             @RequestBody @Valid OrderDto orderDto,
             BindingResult result
@@ -158,7 +158,7 @@ public class OrderController {
     }
 
     @PutMapping("/cancel/{id}")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_EMPLOYEE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity<ResponseObject> cancelOrder(@Valid @PathVariable Integer id) throws Exception {
         OrderResponse orderResponse = orderService.getOrderById(id);
 

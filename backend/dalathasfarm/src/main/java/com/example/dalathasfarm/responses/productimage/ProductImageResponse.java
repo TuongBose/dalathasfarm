@@ -9,5 +9,5 @@ import lombok.*;
 @Builder
 public class ProductImageResponse {
     private Integer productId;
-    private String url;
+    private String name;
 }

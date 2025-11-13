@@ -1,0 +1,68 @@
+<app-header></app-header>
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="profile-form-wrapper">
+    <div class="profile-form p-5 rounded-lg shadow-lg">
+      <h2 class="profile-header text-center mb-4">Thông tin tài khoản</h2>
+      <form [formGroup]="userProfileForm">
+        <div class="mb-4">
+          <label for="name" class="form-label">Họ và tên</label>
+          <input type="text" formControlName="fullname" class="form-control" id="name"
+            [class.is-invalid]="userProfileForm.get('fullname')!.invalid && userProfileForm.get('fullname')!.touched">
+          @if (userProfileForm.get('fullname')!.invalid && userProfileForm.get('fullname')!.touched) {
+            <div class="invalid-feedback">Họ và tên bắt buộc</div>
+          }
+        </div>
+
+        <div class="mb-4">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" formControlName="email" class="form-control" id="email"
+            [class.is-invalid]="userProfileForm.get('email')!.invalid && userProfileForm.get('email')!.touched">
+          @if (userProfileForm.get('email')!.invalid && userProfileForm.get('email')!.touched) {
+            <div class="invalid-feedback">Email không hợp lệ</div>
+          }
+        </div>
+
+        <div class="mb-4">
+          <label for="phone" class="form-label">Số điện thoại</label>
+          <input type="text" formControlName="sodienthoai" class="form-control" id="phone"
+            [class.is-invalid]="userProfileForm.get('sodienthoai')!.invalid && userProfileForm.get('sodienthoai')!.touched">
+          @if (userProfileForm.get('sodienthoai')!.invalid && userProfileForm.get('sodienthoai')!.touched) {
+            <div class="invalid-feedback">Số điện thoại không hợp lệ</div>
+          }
+        </div>
+
+        <div class="mb-4">
+          <label for="password" class="form-label">Mật khẩu</label>
+          <input type="password" formControlName="password" class="form-control" id="password"
+            [class.is-invalid]="userProfileForm.get('password')!.invalid && userProfileForm.get('password')!.touched">
+          @if (userProfileForm.get('password')!.invalid && userProfileForm.get('password')!.touched) {
+            <div class="invalid-feedback">Mật khẩu không hợp lệ</div>
+          }
+        </div>
+
+        <div class="mb-4">
+          <label for="retype-password" class="form-label">Nhập lại mật khẩu</label>
+          <input type="password" formControlName="retypePassword" class="form-control" id="retype-password"
+            [class.is-invalid]="userProfileForm.get('retypePassword')!.invalid && userProfileForm.get('retypePassword')!.touched">
+          @if (userProfileForm.get('retypePassword')!.invalid && userProfileForm.get('retypePassword')!.touched) {
+            <div class="invalid-feedback">Mật khẩu không khớp</div>
+          }
+        </div>
+
+        <div class="mb-4">
+          <label for="address" class="form-label">Địa chỉ</label>
+          <input type="text" formControlName="diachi" class="form-control" id="address"
+            [class.is-invalid]="userProfileForm.get('diachi')!.invalid && userProfileForm.get('diachi')!.touched">
+          @if (userProfileForm.get('diachi')!.invalid && userProfileForm.get('diachi')!.touched) {
+            <div class="invalid-feedback">Địa chỉ không hợp lệ</div>
+          }
+        </div>
+
+        <div class="text-center">
+          <button type="button" (click)="save()" class="btn btn-gradient">Lưu thay đổi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

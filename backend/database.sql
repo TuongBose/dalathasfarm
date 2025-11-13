@@ -48,7 +48,7 @@ CREATE TABLE products (
 CREATE TABLE product_images (
     id INT AUTO_INCREMENT PRIMARY KEY,
     product_id INT NOT NULL,
-    url VARCHAR(300) UNIQUE,
+    name VARCHAR(300) UNIQUE,
     CONSTRAINT fk_images_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 

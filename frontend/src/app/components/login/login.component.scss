@@ -1,0 +1,150 @@
+@import '../../styles/shared-styles.scss';
+
+.container {
+  color: $shopapp-text-color;
+  min-height: 100vh; /* Đảm bảo container chiếm toàn bộ chiều cao màn hình */
+  display: flex;
+  align-items: center; /* Căn giữa dọc */
+  justify-content: center; /* Căn giữa ngang */
+}
+
+.login-form-wrapper {
+  width: 100%;
+  max-width: 600px; /* Tăng độ rộng lên 600px */
+}
+
+.login-form {
+  background-color: $shopapp-card-bg;
+  border-radius: 10px;
+  padding: 30px;
+  max-width: 500px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+}
+
+.login-header {
+  color: $shopapp-color;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+.form-control {
+  background-color: $shopapp-card-bg;
+  border: 1px solid #e2e8f0;
+  color: $shopapp-text-color;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: $shopapp-color;
+  box-shadow: 0 0 5px rgba(127, 68, 255, 0.3);
+  background-color: $shopapp-card-bg;
+}
+
+.form-label {
+  color: $shopapp-text-color;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 70%;
+  right: 10px;
+  transform: translateY(-50%);
+  color: $shopapp-subtext-color;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.password-toggle:hover {
+  color: $shopapp-color;
+}
+
+.checkbox-text {
+  color: $shopapp-text-color;
+  display: flex;
+  align-items: center;
+}
+
+.form-check-input {
+  margin-right: 5px;
+}
+
+.form-check-input:checked {
+  background-color: $shopapp-color;
+  border-color: $shopapp-color;
+}
+
+.register-link {
+  color: $shopapp-color;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.register-link:hover {
+  color: darken($shopapp-color, 10%);
+  text-decoration: underline;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, $shopapp-tint-color, $shopapp-color);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(127, 68, 255, 0.4);
+}
+
+.divider {
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 20px 0;
+}
+
+.social-login-buttons .social-button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.google-button {
+  background-color: #EA4335;
+  color: white;
+}
+
+.google-button:hover {
+  background-color: darken(#EA4335, 10%);
+}
+
+.facebook-button {
+  background-color: #3b5998;
+  color: #ffffff;
+}
+
+.facebook-button:hover {
+  background-color: darken(#3b5998, 10%);
+}
+
+@media (max-width: 768px) {
+  .login-form {
+    padding: 20px;
+  }
+  .social-login-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

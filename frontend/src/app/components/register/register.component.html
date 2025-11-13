@@ -1,0 +1,86 @@
+<app-header></app-header>
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="register-form-wrapper">
+        <div class="register-form p-4 rounded-lg shadow-lg">
+            <h2 class="register-header text-center mb-4">Đăng ký</h2>
+            <form #registerForm="ngForm">
+                <div class="form-group mb-4">
+                    <label for="phoneNumber" class="form-label">Số điện thoại</label>
+                    <input type="text" class="form-control" [(ngModel)]="phoneNumber" name="phoneNumber"
+                        id="phoneNumber" required (focus)="registerForm.form.markAsTouched()">
+                    <div class="divider-nospace"></div>
+                    @if (phoneNumber.length < 6 && registerForm.form.touched) { <p class="text-danger">Số điện thoại
+                        phải có ít nhất 6 ký tự</p>
+                        }
+                </div>
+                <div class="form-group mb-4 position-relative">
+                    <label for="password" class="form-label">Mật khẩu</label>
+                    <input [type]="showPassword ? 'text' : 'password'" required [(ngModel)]="password"
+                        placeholder="Ít nhất 3 ký tự" class="form-control" id="password" name="password">
+                    <i class="password-toggle fas" [ngClass]="showPassword ? 'fa-eye' : 'fa-eye-slash'"
+                        (click)="showPassword = !showPassword"></i>
+                    <div class="divider-nospace"></div>
+                    @if (password.length < 3 && registerForm.form.touched) { <p class="text-danger">Mật khẩu phải có ít
+                        nhất 3 ký tự</p>
+                        }
+                </div>
+                <div class="form-group mb-4 position-relative">
+                    <label for="retype-password" class="form-label">Nhập lại mật khẩu</label>
+                    <input [type]="showRetypePassword ? 'text' : 'password'" name="retypePassword" required
+                        placeholder="Ít nhất 3 ký tự" [(ngModel)]="retypePassword"
+                        (input)="registerForm.form.markAsTouched(); checkPasswordsMatch()" class="form-control"
+                        id="retype-password">
+                    <i class="password-toggle fas" [ngClass]="showRetypePassword ? 'fa-eye' : 'fa-eye-slash'"
+                        (click)="showRetypePassword = !showRetypePassword"></i>
+                    <div class="divider-nospace"></div>
+                    @if (retypePassword.length < 3 && registerForm.form.touched) { <p class="text-danger">Nhập lại mật
+                        khẩu phải có ít nhất 3 ký tự</p>
+                        }
+                        @if (registerForm.form.controls['retypePassword'].hasError('passwordMismatch') &&
+                        registerForm.form.touched) {
+                        <p class="text-danger">Mật khẩu không khớp</p>
+                        }
+                </div>
+                <div class="form-group mb-4">
+                    <label for="full-name" class="form-label">Họ và tên</label>
+                    <input type="text" [(ngModel)]="fullName" name="fullName" required class="form-control"
+                        id="full-name">
+                    <div class="divider-nospace"></div>
+                </div>
+                <div class="form-group mb-4">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="text" [(ngModel)]="email" name="email" required class="form-control" id="email">
+                    <div class="divider-nospace"></div>
+                </div>
+                <div class="form-group mb-4">
+                    <label for="date-of-birth" class="form-label">Ngày sinh</label>
+                    <input type="date" class="form-control" id="date-of-birth" [(ngModel)]="dateOfBirth"
+                        (input)="registerForm.form.markAsTouched(); checkAge();" name="dateOfBirth" required>
+                    <div class="divider-nospace"></div>
+                    @if (registerForm.form.controls['dateOfBirth'].hasError('invalidAge') && registerForm.form.touched) {
+  <p class="text-danger">Bạn chưa đủ 18 tuổi</p>
+}
+
+                </div>
+                <div class="form-group mb-4">
+                    <label for="address" class="form-label">Địa chỉ</label>
+                    <input type="text" class="form-control" name="address" [(ngModel)]="address" id="address">
+                    <div class="divider-nospace"></div>
+                </div>
+                <div class="form-group mb-4">
+                    <div class="form-check checkbox-text">
+                        <input type="checkbox" [(ngModel)]="isAccepted" name="isAccepted" class="form-check-input"
+                            id="agree">
+                        <label class="form-check-label" for="agree">Tôi đồng ý với các điều khoản và điều kiện</label>
+                    </div>
+                </div>
+                <button type="button" (click)="register()" class="register-button w-100">Đăng ký</button>
+                <div class="divider my-4"></div>
+                <p class="text-center mt-3">
+                    Bạn đã có tài khoản? <a class="register-link text-primary" (click)="login()">Đăng nhập</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>

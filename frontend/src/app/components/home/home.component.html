@@ -1,0 +1,116 @@
+<!-- Hero Section -->
+<div class="hero-section py-5 position-relative bg-light min-h-[600px] overflow-hidden">
+  <app-header></app-header>
+  <!-- Lớp phủ đen -->
+  <div class="position-absolute top-0 start-0 h-100 w-100 bg-dark"
+    style="background: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.5)); z-index: 0;"></div>
+
+  <!-- Hình dưới lớp phủ cho desktop -->
+  <img [src]="bannerWebPcUrl" alt="Hero Background"
+    class="position-absolute top-0 start-0 w-100 h-100 object-cover -z-1 hero-image-desktop" style="opacity: 0.6;" />
+
+    <!-- Hình dưới lớp phủ cho mobile -->
+    <img [src]="bannerWebMobileUrl" alt="Hero Background"
+    class="position-absolute top-0 start-0 w-100 h-100 object-cover -z-1 hero-image-mobile" style="opacity: 0.6;" />
+  <div
+    class="container text-dark d-flex flex-column flex-md-row align-items-start align-items-md-center py-5 position-relative z-10">
+    <div class="col-md-6" style="color: white;">
+      <h1 class="display-3 fw-black mb-4">Shop Smart<br><strong>Succeed Big</strong></h1>
+      <p class="lead mb-4">Simple, highlights a fulfilling lifestyle and ease of shopping</p>
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn-hero-section" (click)="scrollToProducts()">Bắt đầu mua sắm</button>
+        <div class="small">
+          <p class="mb-0">Giảm 20% với đơn hơn 200k</p>
+          <p class="mb-0">Ưu đãi hấp dẫn</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 d-flex justify-content-end mt-4 mt-md-0">
+      <div class="text-muted small d-flex align-items-center cursor-pointer">
+        <i class="fas fa-play-circle me-2 icon-about-me"></i>
+        <a class="about-me" routerLink="/introduce">Tại sao chọn MANHTUONG?</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Search and Category Section -->
+<div id="product-section" class="container py-4">
+  <div class="search-box d-flex justify-content-center mb-5">
+    <input type="text" class="form-control search-input me-3" placeholder="Tìm sản phẩm..." [(ngModel)]="keyword" />
+    <select class="form-control product-category me-3" [(ngModel)]="selectedCategoryId">
+      <option selected disabled>Danh mục sản phẩm</option>
+      <option [value]="0">Tất cả</option>
+      @for (category of categories; track category.id) {
+      <option [value]="category.id">
+        {{ category.name }}
+      </option>
+      }
+    </select>
+    <button class="btn btn-primary" (click)="searchSanPham()">Tìm kiếm</button>
+  </div>
+
+  <!-- Product Grid -->
+  <div class="row row-cols-2 row-cols-md-4 g-4">
+    @for (product of products; track product.id) {
+    <div class="col">
+      <div class="product-item" (click)="onProductClick(product.id)">
+        <img [src]="product.thumbnailUrl" alt="Hình ảnh" class="product-image img-fluid">
+        <h3 class="product-name mt-3">{{ product.name }}</h3>
+        <p class="product-description text-muted">{{ product.description }}</p>
+        <p class="product-price fw-bold">Giá: ${{ product.price }}</p>
+        <div class="product-rating">
+          <i class="fa-solid fa-star text-warning"></i>
+          <i class="fa-solid fa-star text-warning"></i>
+          <i class="fa-solid fa-star text-warning"></i>
+          <i class="fa-solid fa-star text-warning"></i>
+          <i class="fa-solid fa-star-half-stroke text-warning"></i>
+        </div>
+        @if (product.stock_quantity <= 0) { <div class="out-of-stock-overlay">
+          <i class="fa-solid fa-ban"></i>
+          <span class="out-of-stock-text">Hết hàng</span>
+      </div>
+      }
+      <div class="product-actions mt-3">
+        <button class="btn btn-primary me-2" (click)="addToCart($event, product.id)">Thêm vào giỏ</button>
+        <button class="btn btn-success" (click)="buyNow($event, product.id)">Mua ngay</button>
+      </div>
+    </div>
+  </div>
+  }
+</div>
+
+<!-- Pagination -->
+<div class="d-flex justify-content-center mt-5">
+  <nav aria-label="Page navigation">
+    <ul class="pagination">
+      @if (currentPage > 0) {
+      <li class="page-item">
+        <a class="page-link" href="#" (click)="onPageChange(0)">First</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="#" (click)="onPageChange(currentPage - 1)">
+          <i class="fa fa-chevron-left"></i>
+        </a>
+      </li>
+      }
+      @for (page of visiblePages; track page) {
+      <li class="page-item" [ngClass]="{'active': page === currentPage}">
+        <a class="page-link" href="#" (click)="onPageChange(page)">{{ page + 1 }}</a>
+      </li>
+      }
+      @if (currentPage < totalPages - 1) { <li class="page-item">
+        <a class="page-link" href="#" (click)="onPageChange(currentPage + 1)">
+          <i class="fa fa-chevron-right"></i>
+        </a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="#" (click)="onPageChange(totalPages - 1)">Last</a>
+        </li>
+        }
+    </ul>
+  </nav>
+</div>
+</div>
+<app-footer></app-footer>

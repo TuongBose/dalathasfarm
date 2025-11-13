@@ -25,7 +25,7 @@ public class ProductImageController {
     public ResponseEntity<ResponseObject> delete(@PathVariable Integer id) throws DataNotFoundException, Exception {
         ProductImage productImage = productImageService.deleteProductImageById(id);
         if (productImage != null) {
-            FileUtils.deleteFile(productImage.getUrl());
+            FileUtils.deleteFile(productImage.getName());
         }
         return ResponseEntity.ok(ResponseObject.builder()
                 .message("Delete product image successfully")

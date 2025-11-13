@@ -22,5 +22,5 @@ public class ProductImage {
     private Product product;
 
     @Column(nullable = false, unique = true)
-    private String url;
+    private String name;
 }

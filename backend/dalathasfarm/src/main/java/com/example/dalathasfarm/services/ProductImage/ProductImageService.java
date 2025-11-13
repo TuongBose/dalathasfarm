@@ -24,7 +24,7 @@ public class ProductImageService implements IProductImageService{
         if (productImages.isEmpty()) {
             ProductImageResponse newProductImageResponse = ProductImageResponse.builder()
                     .productId(0)
-                    .url("notfound.jpg")
+                    .name("notfound.jpg")
                     .build();
             productImageResponses.add(newProductImageResponse);
         } else {
@@ -32,7 +32,7 @@ public class ProductImageService implements IProductImageService{
                 ProductImageResponse newProductImageResponse = ProductImageResponse
                         .builder()
                         .productId((productImage.getProduct().getId()))
-                        .url(productImage.getUrl())
+                        .name(productImage.getName())
                         .build();
                 productImageResponses.add(newProductImageResponse);
             }

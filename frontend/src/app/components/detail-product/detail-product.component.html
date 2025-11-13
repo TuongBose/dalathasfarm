@@ -1,0 +1,123 @@
+<app-header></app-header>
+@if(!isLoading){
+<div class="container py-5">
+  <div class="intro-section text-center mb-5">
+    <h1 class="display-5 fw-bold">Chi tiết sản phẩm</h1>
+    <p class="text-muted">Khám phá thông tin chi tiết về sản phẩm!</p>
+  </div>
+  <!-- Product detail Section -->
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          @for (image of product?.productImages; track image.imageUrl; let i = $index) {
+          <div [ngClass]="{'active': i === currentImageIndex}" class="carousel-item">
+            <img [src]="image.imageUrl" class="d-block w-100 product-image" alt="Hình ảnh">
+          </div>
+          }
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev"
+          (click)="previousImage()">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next"
+          (click)="nextImage()">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+      <div class="thumbnail-container d-flex justify-content-start mt-3">
+        @for (image of product?.productImages; track image.imageUrl; let i = $index) {
+        <div class="thumbnail-item me-2" [ngClass]="{'active': i === currentImageIndex}" (click)="thumbnailClick(i)">
+          <img [src]="image.imageUrl" class="thumbnail-image" alt="Thumbnail">
+        </div>
+        }
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="product-details p-4 bg-white rounded shadow-sm">
+        <h2 class="product-name">{{ product?.name }}</h2>
+        <p class="product-description text-muted">{{ product?.description }}</p>
+        <p class="product-price fw-bold">Kho: <span class="text-danger">{{ product?.stock_quantity }}</span></p>
+        <p class="product-price fw-bold">
+          Giá:
+          <span class="text-primary">
+            {{ product?.price | currency: 'VND':'symbol':'1.0-0' }}
+          </span>
+        </p>
+        @if(product!.stock_quantity>0){
+        <span class="badge bg-success">Còn hàng</span>
+        <p class="product-total fw-bold">Tổng tiền: <span class="text-success">${{ getTotalPrice() | number: '1.2-2'
+            }}</span></p>
+        <div class="product-actions mt-4">
+          <button class="btn btn-primary me-2" (click)="addToCart()">Thêm vào giỏ hàng</button>
+          <button class="btn btn-success" (click)="buyNow()">Mua ngay</button>
+        </div>
+        <div class="product-quantity mt-3">
+          <div class="input-group border rounded">
+            <button class="btn btn-outline-secondary" (click)="decreaseQuantity()">-</button>
+            <input type="text" class="form-control text-center" [value]="quantity" readonly>
+            <button class="btn btn-outline-secondary" (click)="increaseQuantity()">+</button>
+          </div>
+        </div>
+        }@else {
+        <span class="badge bg-danger">Hết hàng</span>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback Section -->
+  <div class="feedback-section mt-5">
+    <!-- Feedback Form -->
+    <div class="feedback-form mt-4">
+      <h4 class="mb-3">Thêm nhận xét của bạn</h4>
+      <div id="starRating" class="mb-3">
+        <i class="star far fa-star" *ngFor="let i of [1, 2, 3, 4, 5]; let index = index"
+          [class.selected]="hoveredStar >= index + 1 || newFeedback.star >= index + 1"
+          (mouseover)="onStarHover(index + 1)" (mouseout)="onStarLeave()" (click)="onStarClick(index + 1)"></i>
+      </div>
+      @if(feedbackError){
+      <div class="alert alert-danger" role="alert">{{ feedbackError }}</div>
+      }
+      <input type="hidden" id="SoSao" [value]="newFeedback.star" />
+      <div class="mb-3">
+        <input type="text" class="form-control" id="DanhGia" [(ngModel)]="newFeedback.content"
+          placeholder="Chia sẻ đánh giá của bạn về sản phẩm nhé" required>
+      </div>
+      <button class="btn btn-primary" (click)="submitFeedback()" [disabled]="isAddingFeedback">
+        {{ isAddingFeedback ? 'Đang gửi...' : 'Gửi đánh giá' }}
+      </button>
+    </div>
+    <br>
+    <h3 class="mb-3">Đánh giá và Nhận xét</h3>
+    @if(feedbackResponse.length > 0){
+    <div class="feedback-list">
+      @for (feedback of feedbackResponse; track feedback.id) {
+      <div class="feedback-item p-3 mb-3 bg-light rounded">
+        <p class="mb-1"><strong>{{ feedback.userResponse.fullName }}</strong> - {{ feedback.createdAt |
+          date:'dd/MM/yyyy' }}</p>
+        @for(i of getStarArray(feedback.star); track i){
+        <span class="text-warning">★</span>
+        }
+        <p class="mb-0">{{ feedback.content }}</p>
+      </div>
+      }
+    </div>
+    }@else {
+    <ng-template #noFeedback>
+      <p class="text-muted">Chưa có đánh giá nào cho sản phẩm này.</p>
+    </ng-template>
+    }
+  </div>
+</div>
+} @else {
+<!-- Template khi đang tải -->
+<ng-template #loadingTemplate>
+  <div class="text-center py-5">
+    <p>Đang tải dữ liệu sản phẩm...</p>
+  </div>
+</ng-template>
+}
+<app-footer></app-footer>

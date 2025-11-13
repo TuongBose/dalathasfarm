@@ -1,0 +1,28 @@
+<app-header></app-header>
+<div class="notification-container">
+  <h2>Thông báo</h2>
+  @if (notifications.length > 0) {
+    <button class="mark-all-read-btn" (click)="markAllAsRead()">Đánh dấu tất cả là đã đọc</button>
+    <ul class="notification-list">
+      @for (notification of notifications.slice(0, 10); track notification.id) {
+        <li class="notification-item" [ngClass]="{'unread': !notification.isRead}">
+          <div class="notification-content">
+            <p>{{ notification.title }} - {{ notification.content }}</p>
+            <small>{{ notification.createdAt | date:'dd/MM/yyyy HH:mm' }}</small>
+          </div>
+          @if (!notification.isRead) {
+            <button (click)="markAsRead(notification.id)" class="mark-read-btn">Đánh dấu đã đọc</button>
+          }@else {
+            <span>Đã đọc</span>
+          }
+        </li>
+      }
+    </ul>
+    @if (notifications.length > 10) {
+      <p class="more-notifications">Chỉ hiển thị 10 thông báo mới nhất. Tổng cộng có {{ notifications.length }} thông báo.</p>
+    }
+  } @else {
+    <p>Không có thông báo nào.</p>
+  }
+</div>
+<app-footer></app-footer>

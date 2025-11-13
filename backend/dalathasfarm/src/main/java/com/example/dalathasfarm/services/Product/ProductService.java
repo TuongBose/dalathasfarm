@@ -115,7 +115,7 @@ public class ProductService implements IProductService{
         Product existingProduct = getProductById(productImageDto.getProductId());
 
         ProductImage newProductImage = ProductImage.builder()
-                .url(productImageDto.getName())
+                .name(productImageDto.getName())
                 .product(existingProduct)
                 .build();
 
@@ -125,7 +125,7 @@ public class ProductService implements IProductService{
             throw new InvalidParamException("Number of images must be <= "+ProductImage.MAXIMUM_IMAGES_PER_PRODUCT);
 
         if(existingProduct.getThumbnail()==null){
-            existingProduct.setThumbnail(newProductImage.getUrl());
+            existingProduct.setThumbnail(newProductImage.getName());
         }
         productRepository.save(existingProduct);
         productImageRepository.save(newProductImage);

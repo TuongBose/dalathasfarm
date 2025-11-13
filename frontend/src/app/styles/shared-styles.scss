@@ -1,0 +1,15 @@
+$shopapp-color: rgb(127, 68, 255);        // Màu tím đậm (giữ nguyên)
+$shopapp-tint-color: rgb(233, 66, 178);   // Màu hồng (giữ nguyên)
+$shopapp-background-color: #f4f7fa;       // Xám nhạt sáng
+$shopapp-card-bg: #ffffff;                // Trắng cho thẻ
+$shopapp-light-color: #e0e7ff;            // Tím nhạt
+$shopapp-text-color: #1e293b;             // Văn bản đậm
+$shopapp-subtext-color: #64748b;          // Văn bản phụ
+
+body {
+  background: linear-gradient(to right, #ffffff, #f4f7fa); // Gradient từ trắng sang xám nhạt
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}

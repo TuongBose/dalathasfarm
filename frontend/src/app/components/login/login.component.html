@@ -1,0 +1,46 @@
+<app-header></app-header>
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="login-form-wrapper">
+    <div class="login-form p-4 rounded-lg shadow-lg">
+      <h2 class="login-header text-center mb-4">Đăng nhập</h2>
+      <form #loginForm="ngForm">
+        <div class="form-group mb-4">
+          <label for="phoneNumber" class="form-label">Số điện thoại</label>
+          <input type="text" class="form-control" id="phoneNumber" [(ngModel)]="phoneNumber" name="phoneNumber" required
+            [class.is-invalid]="loginForm.form.get('phoneNumber')?.invalid && loginForm.form.get('phoneNumber')?.touched"
+            (focus)="loginForm.form.markAsTouched()">
+          @if(loginForm.form.get('phoneNumber')?.invalid && loginForm.form.get('phoneNumber')?.touched){
+          <div class="invalid-feedback">
+            Số điện thoại bắt buộc
+          </div>
+          }
+        </div>
+        <div class="form-group mb-4 position-relative">
+          <label for="password" class="form-label">Mật khẩu</label>
+          <input [type]="showPassword ? 'text' : 'password'" required [(ngModel)]="password"
+            placeholder="Ít nhất 6 ký tự" class="form-control" id="password" name="password">
+          <i class="password-toggle fas" [ngClass]="{'fa-eye': showPassword, 'fa-eye-slash': !showPassword}"
+            (click)="showPassword = !showPassword"></i>
+          @if(loginForm.form.get('password')?.invalid && loginForm.form.get('password')?.touched){
+          <div class="invalid-feedback">
+            Mật khẩu bắt buộc
+          </div>
+          }
+        </div>
+        <div class="form-group mb-4 d-flex justify-content-between align-items-center">
+          <div class="form-check checkbox-text">
+            <input type="checkbox" [(ngModel)]="rememberMe" class="form-check-input" id="remember" name="rememberMe">
+            <label class="form-check-label" for="remember">Ghi nhớ đăng nhập</label>
+          </div>
+          <a href="#" class="register-link text-primary">Quên mật khẩu?</a>
+        </div>
+        <button type="button" (click)="login()" class="btn btn-primary w-100 mb-4">Đăng nhập</button>
+        <div class="divider my-4"></div>
+        <p class="text-center mt-4">
+          Bạn chưa có tài khoản? <a (click)="createAccount()" class="register-link text-primary">Tạo tài khoản</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

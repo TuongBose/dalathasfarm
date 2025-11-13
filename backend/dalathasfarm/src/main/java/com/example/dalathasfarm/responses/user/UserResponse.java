@@ -12,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class UserResponse {
-    private int userId;
+    private int id;
     private String fullName;
     private String address;
     private String phoneNumber;
@@ -25,7 +25,7 @@ public class UserResponse {
     public static UserResponse fromUser(User user) {
         return UserResponse
                 .builder()
-                .userId(user.getId())
+                .id(user.getId())
                 .fullName(user.getFullName())
                 .address(user.getAddress())
                 .phoneNumber(user.getPhoneNumber())

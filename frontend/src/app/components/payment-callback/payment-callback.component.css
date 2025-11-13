@@ -1,0 +1,18 @@
+.payment-callback {
+  text-align: center;
+  padding: 50px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h2 {
+  color: #28a745;
+}
+
+p {
+  color: #555;
+  font-size: 16px;
+}

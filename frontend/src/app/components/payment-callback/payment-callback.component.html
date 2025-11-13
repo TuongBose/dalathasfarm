@@ -1,0 +1,16 @@
+<div class="payment-callback" *ngIf="loading">
+    <p>Đang xử lý thanh toán, vui lòng đợi...</p>
+</div>
+
+@if(!loading && paymentSuccess){
+<div class="payment-callback">
+    <h2>Thanh toán thành công!</h2>
+    <p>Bạn sẽ được chuyển hướng về trang chủ sau 3 giây...</p>
+</div>
+}
+@if(!loading && !paymentSuccess){
+<div class="payment-callback">
+    <h2>Thanh toán thất bại!</h2>
+    <p>Có lỗi xảy ra. Bạn sẽ được chuyển hướng về trang chủ sau 3 giây...</p>
+</div>
+}

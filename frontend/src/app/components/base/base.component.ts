@@ -12,6 +12,7 @@ import { CategoryService } from "../../services/category.service";
 import { ProductService } from "../../services/product.service";
 import { UserService } from "../../services/user.service";
 import { OrderService } from "../../services/order.service";
+import { OccasionService } from "../../services/occasion.service";
 
 @Component({
   selector: 'app-base',
@@ -27,6 +28,7 @@ export class BaseComponent {
   toastService = inject(ToastService);
   router: Router = inject(Router);
   categoryService: CategoryService = inject(CategoryService);
+  occasionService: OccasionService = inject(OccasionService);
   productService: ProductService = inject(ProductService);
   tokenService: TokenService = inject(TokenService);
   activatedRoute: ActivatedRoute = inject(ActivatedRoute);

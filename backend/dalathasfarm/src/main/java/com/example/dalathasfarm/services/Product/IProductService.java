@@ -15,6 +15,7 @@ public interface IProductService {
     Product getProductById(Integer id) throws Exception;
     Page<ProductResponse> getAllProduct(String keyword,
                                         Integer categoryId,
+                                        Integer occasionId,
                                         PageRequest pageRequest) throws Exception;
     Product updateProduct(Integer id, ProductDto productDto) throws Exception;
     void deleteProduct(Integer id);

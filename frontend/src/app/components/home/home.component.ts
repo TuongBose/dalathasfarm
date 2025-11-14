@@ -10,6 +10,7 @@ import { ApiResponse } from '../../responses/api.response';
 import { Product } from '../../models/product';
 import { Category } from '../../models/category';
 import { environment } from '../../environments/environment';
+import { Occasion } from '../../models/occasion';
 
 @Component({
   selector: 'app-home',
@@ -27,6 +28,8 @@ import { environment } from '../../environments/environment';
 })
 export class HomeComponent extends BaseComponent implements OnInit {
   products: Product[] = [];
+  occasions: Occasion[] = [];
+  categories: Category[] = [];
   currentPage: number = 0;
   itemsPerPage: number = 12;
   pages: number[] = [];
@@ -34,32 +37,53 @@ export class HomeComponent extends BaseComponent implements OnInit {
   visiblePages: number[] = [];
   keyword: string = "";
   selectedCategoryId: number = 0;
-  categories: Category[] = [];
+  selectedOccasionId: number = 0;
   isPressAddToCart: boolean = false;
+  occasionProductsMap: { [occasionId: number]: Product[] } = {};
+  categoryProductsMap: { [categoryId: number]: Product[] } = {};
 
-  bannerWebPcName: string = 'banner_web_Pc_2025.jpg';
-  bannerWebPcUrl?: string;
-
-  bannerWebMobileName: string = 'banner_web_Mobile_2025.png';
-  bannerWebMobileUrl?: string;
+  bannerName: string = 'banner.jpg';
+  bannerUrl?: string;
 
   constructor() {
     super();
   }
 
   ngOnInit(): void {
-    this.getAllProduct(this.keyword, this.selectedCategoryId, this.currentPage, this.itemsPerPage);
-    this.getAllCategory(1, 100);
+    this.getAllProduct(this.keyword, this.selectedCategoryId, this.selectedOccasionId, this.currentPage, this.itemsPerPage);
+    this.getAllCategory(0, 6);
+    this.getTodayOccasions();
     this.currentPage = Number(localStorage.getItem('currentProductPage')) || 0;
-    this.bannerWebPcUrl = `${environment.apiBaseUrl}/products/images/${this.bannerWebPcName}`;
-    this.bannerWebMobileUrl = `${environment.apiBaseUrl}/products/images/${this.bannerWebMobileName}`;
+    this.bannerUrl = `${environment.apiBaseUrl}/products/images/${this.bannerName}`;
+  }
+
+  getTodayOccasions() {
+    this.occasionService.getTodayOccasions().subscribe({
+      next: (response: ApiResponse) => {
+        debugger
+        this.occasions = response.data;
+      },
+      complete: () => { debugger },
+      error: (error: HttpErrorResponse) => {
+        debugger;
+        console.error('Error fetching occasion: ', error)
+      }
+    })
+  }
+
+  getOccasionThumbnailUrl(thumbnail: string): string {
+    return `${environment.apiBaseUrl}/products/images/${thumbnail}`;
+  }
+
+  getOccasionBannerUrl(banner:string):string{
+    return `${environment.apiBaseUrl}/products/images/${banner}`;
   }
 
   getAllCategory(page: number, limit: number) {
     this.categoryService.getAllCategory(page, limit).subscribe({
       next: (response: ApiResponse) => {
         debugger
-        this.categories = response.data;
+        this.categories = response.data.slice(0, 5);
       },
       complete: () => { debugger },
       error: (error: HttpErrorResponse) => {
@@ -69,16 +93,64 @@ export class HomeComponent extends BaseComponent implements OnInit {
     })
   }
 
-  getAllProduct(keyword: string, selectedCategoryId: number, page: number, limit: number) {
+  getProductsByOccasion(occasionId: number): Product[] {
+    if (this.occasionProductsMap[occasionId]) {
+      return this.occasionProductsMap[occasionId];
+    }
+
+    // Gọi API lấy sản phẩm theo occasion
+    this.productService.getAllProduct('', 0, occasionId, 0, 6).subscribe({
+      next: (response: ApiResponse) => {
+        const products = response.data.productResponses.map((p: Product) => {
+          p.thumbnailUrl = `${environment.apiBaseUrl}/products/images/${p.thumbnail}`;
+          return p;
+        });
+        this.occasionProductsMap[occasionId] = products;
+      },
+      error: (err) => {
+        console.error(`Lỗi tải sản phẩm cho occasion ${occasionId}:`, err);
+        this.occasionProductsMap[occasionId] = [];
+      }
+    });
+
+    // Trả về mảng rỗng tạm thời
+    return this.occasionProductsMap[occasionId] || [];
+  }
+
+  getProductsByCategory(categoryId: number): Product[] {
+    if (this.categoryProductsMap[categoryId]) {
+      return this.categoryProductsMap[categoryId];
+    }
+
+    // Gọi API lấy sản phẩm theo occasion
+    this.productService.getAllProduct('', categoryId, 0, 0, 6).subscribe({
+      next: (response: ApiResponse) => {
+        const products = response.data.productResponses.map((p: Product) => {
+          p.thumbnailUrl = `${environment.apiBaseUrl}/products/images/${p.thumbnail}`;
+          return p;
+        });
+        this.categoryProductsMap[categoryId] = products;
+      },
+      error: (err) => {
+        console.error(`Lỗi tải sản phẩm cho occasion ${categoryId}:`, err);
+        this.categoryProductsMap[categoryId] = [];
+      }
+    });
+
+    // Trả về mảng rỗng tạm thời
+    return this.categoryProductsMap[categoryId] || [];
+  }
+
+  getAllProduct(keyword: string, selectedCategoryId: number, selectedOccasionId: number, page: number, limit: number) {
     debugger
-    this.productService.getAllProduct(keyword, selectedCategoryId, page, limit).subscribe({
+    this.productService.getAllProduct(keyword, selectedCategoryId, selectedOccasionId, page, limit).subscribe({
       next: (apiresponse: ApiResponse) => {
         debugger
         const response = apiresponse.data;
-        response.sanPhamResponseList.forEach((product: Product) => {
+        response.productResponses.forEach((product: Product) => {
           product.thumbnailUrl = `${environment.apiBaseUrl}/products/images/${product.thumbnail}`;
         })
-        this.products = response.sanPhamResponseList;
+        this.products = response.productResponses;
         this.totalPages = response.totalPages;
         this.visiblePages = this.generateVisiblePageArray(this.currentPage, this.totalPages);
       },
@@ -98,15 +170,15 @@ export class HomeComponent extends BaseComponent implements OnInit {
   onPageChange(page: number) {
     debugger;
     this.currentPage = page < 0 ? 0 : page;
-    this.getAllProduct(this.keyword, this.selectedCategoryId, this.currentPage, this.itemsPerPage);
+    this.getAllProduct(this.keyword, this.selectedCategoryId, this.selectedOccasionId, this.currentPage, this.itemsPerPage);
     localStorage.setItem('currentProductPage', String(this.currentPage));
   }
 
-  searchSanPham() {
+  searchProduct() {
     this.currentPage = 0;
     this.itemsPerPage = 12;
     debugger
-    this.getAllProduct(this.keyword, this.selectedCategoryId, this.currentPage, this.itemsPerPage);
+    this.getAllProduct(this.keyword, this.selectedCategoryId, this.selectedOccasionId, this.currentPage, this.itemsPerPage);
   }
 
   onProductClick(productId: number) {
@@ -138,7 +210,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
     }
   }
 
-  buyNow(event: Event, productId:number): void {
+  buyNow(event: Event, productId: number): void {
     event.stopPropagation(); // Ngăn sự kiện click lan ra div cha
     const token = this.tokenService.getToken();
     if (!token) {

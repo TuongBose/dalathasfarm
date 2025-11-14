@@ -212,6 +212,7 @@ public class ProductController {
     public ResponseEntity<ResponseObject> getAllProduct(
             @RequestParam(defaultValue = "") String keyword,
             @RequestParam(defaultValue = "0", name = "categoryId") int categoryId,
+            @RequestParam(defaultValue = "0", name = "occasionId") int occasionId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit
     ) throws Exception {
@@ -221,14 +222,14 @@ public class ProductController {
                 //Sort.by("NGAYTAO").descending()
                 Sort.by("id").ascending()
         );
-        logger.info(String.format("keyword = %s, categoryId = %d, page = %d, limit = %d",
-                keyword, categoryId, page, limit));
+        logger.info(String.format("keyword = %s, categoryId = %d, occasionId = %d, page = %d, limit = %d",
+                keyword, categoryId, occasionId, page, limit));
 
-        Page<ProductResponse> productResponsePage = productService.getAllProduct(keyword, categoryId, pageRequest);
+        Page<ProductResponse> productResponsePage = productService.getAllProduct(keyword, categoryId, occasionId, pageRequest);
 
         // Lấy tổng số trang
         int totalPages = productResponsePage.getTotalPages();
-        List<ProductResponse> productResponses  = productResponsePage.getContent();
+        List<ProductResponse> productResponses = productResponsePage.getContent();
 
         ProductListResponse productListResponse = ProductListResponse.builder()
                 .productResponses(productResponses)
@@ -272,13 +273,13 @@ public class ProductController {
 //    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseObject> getProductById(@PathVariable Integer id) throws Exception{
+    public ResponseEntity<ResponseObject> getProductById(@PathVariable Integer id) throws Exception {
         Product product = productService.getProductById(id);
         List<ProductImageResponse> productImageResponses = productImageService.getAllProductImageByProduct(product);
         return ResponseEntity.ok(ResponseObject.builder()
                 .message("Get detail product successfully")
                 .status(HttpStatus.OK)
-                .data(ProductResponse.fromProductForDetail(product,productImageResponses))
+                .data(ProductResponse.fromProductForDetail(product, productImageResponses))
                 .build());
 
     }
@@ -288,8 +289,8 @@ public class ProductController {
     public ResponseEntity<ResponseObject> updateProduct(
             @PathVariable Integer id,
             @Valid @RequestBody ProductDto productDto
-    ) throws Exception{
-        Product product = productService.updateProduct(id,productDto);
+    ) throws Exception {
+        Product product = productService.updateProduct(id, productDto);
         return ResponseEntity.ok(ResponseObject.builder()
                 .message("Update product successfully")
                 .status(HttpStatus.OK)

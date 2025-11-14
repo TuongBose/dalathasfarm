@@ -13,17 +13,24 @@ export class ProductService {
     private apiGetAllProduct = `${environment.apiBaseUrl}/products`;
     constructor(private http: HttpClient) { }
 
-    getAllProduct(keyword: string, selectedCategoryId: number, page: number, limit: number): Observable<ApiResponse> {
+    getAllProduct(
+        keyword: string,
+        selectedCategoryId: number,
+        selectedOccasionId: number,
+        page: number,
+        limit: number
+    ): Observable<ApiResponse> {
         const params = new HttpParams()
             .set('keyword', keyword.toString())
             .set('categoryId', selectedCategoryId.toString())
+            .set('occasionId', selectedOccasionId.toString())
             .set('page', page.toString())
             .set('limit', limit.toString());
 
         return this.http.get<ApiResponse>(this.apiGetAllProduct, { params });
     }
 
-    getProductById(productId: number) :Observable<ApiResponse>{
+    getProductById(productId: number): Observable<ApiResponse> {
         return this.http.get<ApiResponse>(`${environment.apiBaseUrl}/products/${productId}`);
     }
 
@@ -31,16 +38,16 @@ export class ProductService {
         // Chuyển danh sách MASANPHAM thành một chuỗi và truyền vào params
         debugger
         const params = new HttpParams().set('ids', productIds.join(','));
-        return this.http.get<ApiResponse>(`${this.apiGetAllProduct}/by-ids`,{params});
+        return this.http.get<ApiResponse>(`${this.apiGetAllProduct}/by-ids`, { params });
     }
 
-    deleteProduct(productId: number): Observable<string>{
+    deleteProduct(productId: number): Observable<string> {
         debugger
-        return this.http.delete<string>( `${this.apiGetAllProduct}/${productId}`)
+        return this.http.delete<string>(`${this.apiGetAllProduct}/${productId}`)
     }
 
-    insertProduct(productDto: ProductDto):Observable<any>{
-        return this.http.post(`${this.apiGetAllProduct}`,productDto);
+    insertProduct(productDto: ProductDto): Observable<any> {
+        return this.http.post(`${this.apiGetAllProduct}`, productDto);
     }
 
     // uploadImages(masanpham: number, files:File[]):Observable<any>{

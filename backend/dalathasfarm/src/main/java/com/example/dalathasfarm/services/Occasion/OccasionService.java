@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -67,5 +68,11 @@ public class OccasionService implements IOccasionService{
         else {
             throw new Exception("Occasion already exist");
         }
+    }
+
+    @Override
+    public List<Occasion> getActiveOccasionsForToday() {
+        LocalDate today = LocalDate.now();
+        return occasionRepository.findActiveOccasionsForToday(today);
     }
 }

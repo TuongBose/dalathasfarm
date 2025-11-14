@@ -7,6 +7,8 @@ import { environment } from '../../environments/environment';
 import { NotificationResponse } from '../../responses/notification.response';
 import { ApiResponse } from '../../responses/api.response';
 import { UserResponse } from '../../responses/user/user.response';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Category } from '../../models/category';
 
 @Component({
   selector: 'app-header',
@@ -25,7 +27,10 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   cartItemCount: number = 0;
   unreadNotificationCount: number = 0;
   logoUrl?: string;
-  logoname: string = 'logo2.png';
+  logoname: string = 'logo.png';
+  currentPage: number = 0;
+  itemsPerPage: number = 12;
+  categories: Category[] = [];
 
   activeNavItem: number = 0;
   navItems = [
@@ -70,11 +75,13 @@ export class HeaderComponent extends BaseComponent implements OnInit {
       });
     }
 
-    this.logoUrl = `${environment.apiBaseUrl}/sanphams/images/${this.logoname}`;
+    this.logoUrl = `${environment.apiBaseUrl}/products/images/${this.logoname}`;
     this.loadUnreadNotifications();
     this.notificationService.unreadCount$.subscribe(count => {
       this.unreadNotificationCount = count;
     });
+
+    this.getAllCategory(0, 20);
   }
 
   updateCartCount(): void {
@@ -117,4 +124,27 @@ export class HeaderComponent extends BaseComponent implements OnInit {
       });
     }
   }
+
+  logout(): void {
+    this.userService.removeUserFromLocalStorage();
+    this.tokenService.removeToken();
+    this.user = null;
+    this.router.navigate(['/login']);
+  }
+
+  getAllCategory(page: number, limit: number) {
+    this.categoryService.getAllCategory(page, limit).subscribe({
+      next: (response: ApiResponse) => {
+        debugger
+        this.categories = response.data.slice(0, 10);
+      },
+      complete: () => { debugger },
+      error: (error: HttpErrorResponse) => {
+        debugger;
+        console.error('Error fetching category: ', error)
+      }
+    })
+  }
+
+  
 }

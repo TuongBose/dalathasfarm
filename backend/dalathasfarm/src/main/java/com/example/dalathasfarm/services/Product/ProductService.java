@@ -55,9 +55,9 @@ public class ProductService implements IProductService{
     }
 
     @Override
-    public Page<ProductResponse> getAllProduct(String keyword, Integer categoryId, PageRequest pageRequest) throws Exception{
+    public Page<ProductResponse> getAllProduct(String keyword, Integer categoryId,Integer occasionId, PageRequest pageRequest) throws Exception{
         // Lấy danh sách sản phẩm theo trang(page) và giới hạn(limit)
-        Page<Product> products = productRepository.searchProducts(categoryId, keyword, pageRequest);
+        Page<Product> products = productRepository.searchProducts(categoryId,occasionId, keyword, pageRequest);
 
         return products.map(ProductResponse::fromProduct);
     }

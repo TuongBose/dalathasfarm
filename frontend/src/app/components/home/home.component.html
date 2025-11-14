@@ -1,58 +1,265 @@
 <!-- Hero Section -->
-<div class="hero-section py-5 position-relative bg-light min-h-[600px] overflow-hidden">
-  <app-header></app-header>
-  <!-- Lớp phủ đen -->
-  <div class="position-absolute top-0 start-0 h-100 w-100 bg-dark"
-    style="background: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.5)); z-index: 0;"></div>
+<app-header></app-header>
+<!-- HERO SECTION - GIỐNG H.BLOOM -->
+<div class="hero-hbloom position-relative overflow-hidden">
+  <!-- Background Image -->
+  <div class="hero-bg">
+    <img [src]="bannerUrl" alt="Luxury Flowers" class="hero-img-desktop">
+  </div>
 
-  <!-- Hình dưới lớp phủ cho desktop -->
-  <img [src]="bannerWebPcUrl" alt="Hero Background"
-    class="position-absolute top-0 start-0 w-100 h-100 object-cover -z-1 hero-image-desktop" style="opacity: 0.6;" />
+  <!-- Overlay Gradient -->
+  <div class="hero-overlay"></div>
 
-    <!-- Hình dưới lớp phủ cho mobile -->
-    <img [src]="bannerWebMobileUrl" alt="Hero Background"
-    class="position-absolute top-0 start-0 w-100 h-100 object-cover -z-1 hero-image-mobile" style="opacity: 0.6;" />
-  <div
-    class="container text-dark d-flex flex-column flex-md-row align-items-start align-items-md-center py-5 position-relative z-10">
-    <div class="col-md-6" style="color: white;">
-      <h1 class="display-3 fw-black mb-4">Shop Smart<br><strong>Succeed Big</strong></h1>
-      <p class="lead mb-4">Simple, highlights a fulfilling lifestyle and ease of shopping</p>
-      <div class="d-flex align-items-center gap-3">
-        <button class="btn-hero-section" (click)="scrollToProducts()">Bắt đầu mua sắm</button>
-        <div class="small">
-          <p class="mb-0">Giảm 20% với đơn hơn 200k</p>
-          <p class="mb-0">Ưu đãi hấp dẫn</p>
+  <!-- Content -->
+  <div class="container position-relative z-10">
+    <div class="row align-items-center min-vh-100 py-5">
+      <div class="col-lg-7 col-xl-6 text-white">
+        <!-- Main Title -->
+        <h1 class="display-3 fw-light mb-4 lh-1" style="font-family: 'Playfair Display', serif;">
+          SỰ SANG TRỌNG TRONG TỪNG BÔNG HOA
+        </h1>
+
+        <!-- Sub Title -->
+        <p class="text-uppercase fs-6 tracking-widest mb-2 opacity-80">
+          GIAO HOA TẬN TAY
+          <span class="fw-bold">TRÊN TOÀN QUỐC</span>
+        </p>
+
+
+        <!-- Description -->
+        <p class="lead mb-5 max-w-2xl opacity-90">
+          Chúng tôi xem mỗi bông hoa là một tác phẩm nghệ thuật sống.
+          Từ những thiết kế ấn tượng đến các loại cây cao cấp,
+          chúng tôi giao hoa tươi – đẹp – sang trọng đến tận nơi trên toàn quốc.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="d-flex flex-column flex-sm-row gap-3">
+          <button class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-medium" (click)="scrollToProducts()">
+            Mua sắm ngay
+          </button>
+          <a routerLink="/introduce"
+            class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill fw-medium d-flex align-items-center justify-content-center gap-2">
+            <span>Thông tin về chúng tôi</span>
+            <i class="fas fa-arrow-right"></i>
+          </a>
         </div>
-      </div>
-    </div>
-
-    <div class="col-md-6 d-flex justify-content-end mt-4 mt-md-0">
-      <div class="text-muted small d-flex align-items-center cursor-pointer">
-        <i class="fas fa-play-circle me-2 icon-about-me"></i>
-        <a class="about-me" routerLink="/introduce">Tại sao chọn MANHTUONG?</a>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Search and Category Section -->
-<div id="product-section" class="container py-4">
-  <div class="search-box d-flex justify-content-center mb-5">
-    <input type="text" class="form-control search-input me-3" placeholder="Tìm sản phẩm..." [(ngModel)]="keyword" />
-    <select class="form-control product-category me-3" [(ngModel)]="selectedCategoryId">
-      <option selected disabled>Danh mục sản phẩm</option>
-      <option [value]="0">Tất cả</option>
-      @for (category of categories; track category.id) {
-      <option [value]="category.id">
-        {{ category.name }}
-      </option>
-      }
-    </select>
-    <button class="btn btn-primary" (click)="searchSanPham()">Tìm kiếm</button>
-  </div>
+<!-- OCCASIONS SECTION -->
+<div class="occasions-section py-5 bg-white">
+  <div class="container">
+    <!-- Tiêu đề -->
+    <h2 class="mb-5 fw-light fs-1 text-dark" style="font-family: 'Playfair Display', serif;">
+      Hoa cho các dịp lễ
+    </h2>
 
-  <!-- Product Grid -->
-  <div class="row row-cols-2 row-cols-md-4 g-4">
+    <!-- Danh sách occasions -->
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4 justify-content-center">
+      @for (occasion of occasions; track occasion.id) {
+      <div class="col text-center">
+        <a routerLink="/occasion/{{ occasion.id }}" class="occasion-link text-decoration-none">
+          <div class="occasion-card rounded-2 overflow-hidden shadow-sm hover-shadow">
+            <img [src]="getOccasionThumbnailUrl(occasion.thumbnail)" [alt]="occasion.name"
+              class="img-fluid occasion-img">
+          </div>
+          <p class="mt-3 mb-0 text-dark fw-medium occasion-name">
+            {{ occasion.name }}
+          </p>
+        </a>
+      </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- OCCASIONS WITH PRODUCTS SECTION -->
+@for (occasion of occasions; track occasion.id) {
+<div class="hero-section py-5 position-relative bg-light min-h-[600px] overflow-hidden">
+  <!-- Lớp phủ đen -->
+  <div class="position-absolute top-0 start-0 h-100 w-100 bg-dark"
+    style="background: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.5)); z-index: 0;"></div>
+
+  <img [src]="getOccasionBannerUrl(occasion.bannerImage)" alt="Hero Background"
+    class="position-absolute top-0 start-0 w-100 h-100 object-cover -z-1 hero-image-desktop" style="opacity: 0.9;" />
+</div>
+
+<div class="occasions-products-section py-5 bg-light">
+  <div class="container">
+    <div class="occasion-block mb-5">
+      <div class="d-flex align-items-center justify-content-center mb-4">
+        <h2 class="mb-0 fw-light fs-2 text-dark text-center" style="font-family: 'Playfair Display', serif;">
+          {{ occasion.name }}
+        </h2>
+      </div>
+      <!-- Danh sách sản phẩm theo occasion -->
+      <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
+        @for (product of getProductsByOccasion(occasion.id); track product.id) {
+        <div class="col">
+          <div class="product-minimal" (click)="onProductClick(product.id)">
+
+            <img [src]="product.thumbnailUrl" [alt]="product.name" class="product-img img-fluid rounded-2 mb-2">
+
+            <h3 class="product-name fs-6 fw-medium text-dark mb-1" style="font-family: 'Playfair Display', serif;">{{
+              product.name }}</h3>
+            <p class="product-subtitle text-muted small mb-2" style="font-size: 12px;font-style: italic;">
+              {{ product.description || 'The design darling' }}
+            </p>
+            <p class="product-price mb-1">${{ product.price }}</p>
+            <div class="product-actions d-flex gap-1 mt-2">
+              <button class=" btn-sm btn-outline-light-product flex-fill"
+                (click)="$event.stopPropagation(); addToCart($event, product.id)">
+                Thêm vào giỏ
+              </button>
+              <!-- <button class="btn btn-sm btn-primary flex-fill"
+              (click)="$event.stopPropagation(); buyNow($event, product.id)">
+              Mua
+            </button> -->
+            </div>
+          </div>
+        </div>
+        } @empty {
+        <div class="col-12 text-center py-4 text-muted">
+          <p>Chưa có sản phẩm cho dịp này</p>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+} @empty {
+<div class="text-center py-5">
+  <p class="text-muted">Không có dịp lễ nào đang diễn ra</p>
+</div>
+}
+
+<!-- CATEGORY SECTION -->
+<div class="greeting-card-section py-5">
+  <div class="container">
+    <div class="row align-items-center g-5">
+
+      <!-- CỘT TRÁI -->
+      <div class="col-lg-6">
+        <h2 class="display-4 fw-bold mb-4 lh-sm" style="font-family: 'Playfair Display', serif;">
+          Danh mục sản phẩm nào bạn cần?<br>Đã tìm thấy rồi?
+        </h2>
+        <p class="lead mb-4 text-dark opacity-90">
+          Không cần cuộn mãi để xem các danh mục sản phẩm. Chúng tôi đã chọn lọc
+          những danh mục tinh tế và đầy cảm xúc cho mọi khoảnh khắc của cuộc sống —
+          từ niềm vui, nỗi buồn đến những điều dịu dàng ở giữa.
+          Tất cả được hiện thị ngay bên đây và rất vui khi nó có thể giúp ích được cho bạn.
+        </p>
+        <a routerLink="/cards" class="btn-cta-link fw-medium fs-5">
+          Các sản phẩm liên quan
+          <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+      </div>
+
+      <!-- CỘT PHẢI: ẢNH THIỆP -->
+      <div class="col-lg-6 position-relative">
+        <div class="card-image-wrapper">
+          @for (category of categories; track category.id) {
+          <img [src]="getOccasionThumbnailUrl(category.thumbnail)" alt="Small Card {{ category.id }}"
+            class="card-small-{{ category.id }} shadow">
+          } @empty {
+          <div class="text-center py-5">
+            <p class="text-muted">Không có danh mục sản phẩm nào</p>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORIES WITH PRODUCTS SECTION -->
+@for (category of categories; track category.id) {
+<div class="greeting-card-section-forone py-5">
+  <div class="container">
+    <div class="row align-items-center g-5">
+
+      <!-- CỘT TRÁI -->
+      <div class="col-lg-6">
+        <h2 class="display-4 fw-bold mb-4 lh-sm" style="font-family: 'Playfair Display', serif;">
+          {{ category.name }}
+        </h2>
+        <p class="lead mb-4 text-dark opacity-90">
+          No more endless scrolling. We've done the hard work for you, and curated a
+          beautifully thoughtful range of cards for life's highs, lows and everything in between.
+          Discover gorgeous designs you won't find anywhere else, printed on sustainable sugarcane card
+          and available for next-day delivery.
+        </p>
+        <a routerLink="/cards" class="btn-cta-link fw-medium fs-5">
+          Shop greeting cards
+          <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+      </div>
+
+      <!-- CỘT PHẢI: ẢNH THIỆP -->
+      <div class="col-lg-6 position-relative">
+        <div class="card-image-wrapper">
+          <img [src]="getOccasionThumbnailUrl(category.thumbnail)" alt="Small Card {{ category.id }}" class="card-main shadow">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="occasions-products-section py-5 bg-light">
+  <div class="container">
+    <div class="occasion-block mb-5">
+      <!-- <div class="d-flex align-items-center justify-content-center mb-4">
+        <h2 class="mb-0 fw-light fs-2 text-dark text-center" style="font-family: 'Playfair Display', serif;">
+          {{ category.name }}
+        </h2>
+      </div> -->
+      <!-- Danh sách sản phẩm theo occasion -->
+      <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
+        @for (product of getProductsByOccasion(category.id); track product.id) {
+        <div class="col">
+          <div class="product-minimal" (click)="onProductClick(product.id)">
+
+            <img [src]="product.thumbnailUrl" [alt]="product.name" class="product-img img-fluid rounded-2 mb-2">
+
+            <h3 class="product-name fs-6 fw-medium text-dark mb-1" style="font-family: 'Playfair Display', serif;">{{
+              product.name }}</h3>
+            <p class="product-subtitle text-muted small mb-2" style="font-size: 12px;font-style: italic;">
+              {{ product.description || 'The design darling' }}
+            </p>
+            <p class="product-price mb-1">${{ product.price }}</p>
+            <div class="product-actions d-flex gap-1 mt-2">
+              <button class=" btn-sm btn-outline-light-product flex-fill"
+                (click)="$event.stopPropagation(); addToCart($event, product.id)">
+                Thêm vào giỏ
+              </button>
+              <!-- <button class="btn btn-sm btn-primary flex-fill"
+              (click)="$event.stopPropagation(); buyNow($event, product.id)">
+              Mua
+            </button> -->
+            </div>
+          </div>
+        </div>
+        } @empty {
+        <div class="col-12 text-center py-4 text-muted">
+          <p>Chưa có sản phẩm cho danh mục này</p>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+} @empty {
+<div class="text-center py-5">
+  <p class="text-muted">Không có danh mục sản phẩm nào</p>
+</div>
+}
+
+<!-- <div id="product-section" class="container py-4"> -->
+<!-- Product Grid -->
+<!-- <div class="row row-cols-2 row-cols-md-4 g-4">
     @for (product of products; track product.id) {
     <div class="col">
       <div class="product-item" (click)="onProductClick(product.id)">
@@ -79,10 +286,10 @@
     </div>
   </div>
   }
-</div>
+</div> -->
 
 <!-- Pagination -->
-<div class="d-flex justify-content-center mt-5">
+<!-- <div class="d-flex justify-content-center mt-5">
   <nav aria-label="Page navigation">
     <ul class="pagination">
       @if (currentPage > 0) {
@@ -111,6 +318,5 @@
         }
     </ul>
   </nav>
-</div>
-</div>
+</div> -->
 <app-footer></app-footer>

@@ -21,6 +21,7 @@ public class ProductDto {
     @Min(value = 0, message = "Giá sản phẩm phải lớn hơn hoặc bằng 0")
     private BigDecimal price;
     private String description;
+    private String components;
     private Integer stockQuantity;
     private Integer categoryId;
     private Integer occasionId;

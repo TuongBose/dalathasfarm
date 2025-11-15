@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap'
 import { environment } from '../../environments/environment';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-footer',
@@ -9,15 +10,18 @@ import { RouterModule } from '@angular/router';
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.css',
   imports: [
-    NgbModule,
+    FormsModule,
     RouterModule
   ]
 })
-export class FooterComponent implements OnInit {
-  logoUrl?: string;
-  logoname: string = 'logo2.png';
+export class FooterComponent {
+  email: string = '';
 
-  ngOnInit(): void {
-    this.logoUrl = `${environment.apiBaseUrl}/products/images/${this.logoname}`;
+  onSubmit() {
+    if (this.email) {
+      console.log('Subscribed:', this.email);
+      alert('Cảm ơn bạn đã đăng ký nhận tin!');
+      this.email = '';
+    }
   }
 }

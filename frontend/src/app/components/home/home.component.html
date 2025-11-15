@@ -77,7 +77,7 @@
 </div>
 
 <!-- OCCASIONS WITH PRODUCTS SECTION -->
-@for (occasion of occasions; track occasion.id) {
+@for (occasion of occasionsForToday; track occasion.id) {
 <div class="hero-section py-5 position-relative bg-light min-h-[600px] overflow-hidden">
   <!-- Lớp phủ đen -->
   <div class="position-absolute top-0 start-0 h-100 w-100 bg-dark"
@@ -105,12 +105,12 @@
 
             <h3 class="product-name fs-6 fw-medium text-dark mb-1" style="font-family: 'Playfair Display', serif;">{{
               product.name }}</h3>
-            <p class="product-subtitle text-muted small mb-2" style="font-size: 12px;font-style: italic;">
+            <p class="product-subtitle text-muted small mb-2 line-clamp-3" style="font-size: 12px;font-style: italic;">
               {{ product.description || 'The design darling' }}
             </p>
             <p class="product-price mb-1">${{ product.price }}</p>
-            <div class="product-actions d-flex gap-1 mt-2">
-              <button class=" btn-sm btn-outline-light-product flex-fill"
+            <div class="product-actions mt-auto">
+              <button class=" btn-sm btn-outline-light-product w-100"
                 (click)="$event.stopPropagation(); addToCart($event, product.id)">
                 Thêm vào giỏ
               </button>
@@ -153,7 +153,7 @@
           Tất cả được hiện thị ngay bên đây và rất vui khi nó có thể giúp ích được cho bạn.
         </p>
         <a routerLink="/cards" class="btn-cta-link fw-medium fs-5">
-          Các sản phẩm liên quan
+          Xem thêm danh mục
           <i class="fas fa-arrow-right ms-2"></i>
         </a>
       </div>
@@ -187,13 +187,10 @@
           {{ category.name }}
         </h2>
         <p class="lead mb-4 text-dark opacity-90">
-          No more endless scrolling. We've done the hard work for you, and curated a
-          beautifully thoughtful range of cards for life's highs, lows and everything in between.
-          Discover gorgeous designs you won't find anywhere else, printed on sustainable sugarcane card
-          and available for next-day delivery.
+          {{ category.description }}
         </p>
         <a routerLink="/cards" class="btn-cta-link fw-medium fs-5">
-          Shop greeting cards
+          Các sản phẩm liên quan
           <i class="fas fa-arrow-right ms-2"></i>
         </a>
       </div>
@@ -201,14 +198,15 @@
       <!-- CỘT PHẢI: ẢNH THIỆP -->
       <div class="col-lg-6 position-relative">
         <div class="card-image-wrapper">
-          <img [src]="getOccasionThumbnailUrl(category.thumbnail)" alt="Small Card {{ category.id }}" class="card-main shadow">
+          <img [src]="getOccasionThumbnailUrl(category.thumbnail)" alt="Small Card {{ category.id }}"
+            class="card-main shadow">
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="occasions-products-section py-5 bg-light">
+<div class="featured-products-section py-5 bg-white">
   <div class="container">
     <div class="occasion-block mb-5">
       <!-- <div class="d-flex align-items-center justify-content-center mb-4">
@@ -217,7 +215,7 @@
         </h2>
       </div> -->
       <!-- Danh sách sản phẩm theo occasion -->
-      <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 g-lg-5">
         @for (product of getProductsByOccasion(category.id); track product.id) {
         <div class="col">
           <div class="product-minimal" (click)="onProductClick(product.id)">
@@ -319,4 +317,84 @@
     </ul>
   </nav>
 </div> -->
+<!-- ABOUT US SECTION -->
+<div class="about-bloom-section py-5 bg-white">
+  <div class="container">
+    <div class="row g-5 align-items-start">
+
+      <!-- CỘT TRÁI: ABOUT -->
+      <div class="col-lg-6">
+        <h2 class="display-6 fw-bold mb-4 lh-sm" style="font-family: 'Playfair Display', serif;">
+          Về Tiệm hoa FLOWER BOUTIQUE – giao hoa &<br>giao cây tận nơi
+        </h2>
+        <p class="lead mb-4 text-dark opacity-90">
+          Xin chào, chúng tôi là Tiệm hoa. Chúng tôi không chỉ gửi hoa – chúng tôi giúp bạn gửi gắm sự quan tâm một
+          cách trọn vẹn nhất. Mỗi đơn hàng đều được chúng tôi chăm chút như dành tặng cho chính mình.
+          <br><br>
+          Đó là lý do Tiệm hoa luôn quan tâm đến việc bó hoa của bạn đến đúng giờ. Tại sao Tiệm hoa tỉ mỉ lựa chọn từng
+          loại
+          hoa độc đáo. Tại sao đội ngũ Chăm Sóc Khách Hàng luôn sẵn sàng hết mình nếu có bất kỳ điều gì chưa hoàn hảo.
+          <br><br>
+          Quan tâm tận tâm là tôn vinh những điều nhỏ bé mà chúng ta dành cho nhau mỗi ngày. Cũng như trong những dịp
+          đặc biệt khi bạn cần hoa sinh nhật, hoa kỷ niệm hay hoa chúc mừng.
+        </p>
+        <a routerLink="/about" class="btn-read-more fw-medium fs-5">
+          Xem thêm
+          <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+      </div>
+
+      <!-- CỘT PHẢI: SERVICE LINKS -->
+      <div class="col-lg-6">
+        <h3 class="h4 fw-bold mb-4">Dịch vụ giao quà tặng</h3>
+        <div class="row row-cols-2 row-cols-md-3 g-3">
+
+          <!-- CỘT 1 -->
+          <div class="col">
+            <ul class="list-unstyled text-small">
+              <li class="mb-2"><a routerLink="/london" class="text-dark text-decoration-none hover-underline">Giao hoa
+                  Hà Nội</a></li>
+              <li class="mb-2"><a routerLink="/by-post" class="text-dark text-decoration-none hover-underline">Giao hoa
+                  qua bưu điện</a></li>
+              <li class="mb-2"><a routerLink="/birthday-gifts"
+                  class="text-dark text-decoration-none hover-underline">Quà sinh nhật gửi bưu điện</a></li>
+              <li class="mb-2"><a routerLink="/uk" class="text-dark text-decoration-none hover-underline">Giao hoa toàn
+                  nước Việt Nam</a></li>
+              <li class="mb-2"><a routerLink="/subscriptions"
+                  class="text-dark text-decoration-none hover-underline">Giao hoa định kỳ</a></li>
+              <li class="mb-2"><a routerLink="/gift-subs" class="text-dark text-decoration-none hover-underline">Gói quà
+                  tặng định kỳ</a></li>
+              <li class="mb-2"><a routerLink="/next-day" class="text-dark text-decoration-none hover-underline">Giao hoa
+                  trong ngày kế tiếp</a></li>
+            </ul>
+          </div>
+
+          <!-- CỘT 2 -->
+          <div class="col">
+            <ul class="list-unstyled text-small">
+              <li class="mb-2"><a routerLink="/competitions" class="text-dark text-decoration-none hover-underline">Hoa
+                  theo danh mục</a></li>
+              @for(category of categories; track category.id){
+              <li class="mb-2"><a routerLink="/ireland" class="text-dark text-decoration-none hover-underline">{{
+                  category.name }}</a></li>
+              }
+            </ul>
+          </div>
+
+          <!-- CỘT 3 -->
+          <div class="col">
+            <ul class="list-unstyled text-small">
+              <li class="mb-2"><a routerLink="/occasions" class="text-dark text-decoration-none hover-underline">Hoa
+                  theo dịp</a></li>
+              @for(occasion of occasions; track occasion.id){
+              <li class="mb-2"><a routerLink="/birthday" class="text-dark text-decoration-none hover-underline">{{
+                  occasion.name }}</a></li>
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <app-footer></app-footer>

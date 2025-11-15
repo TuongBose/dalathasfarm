@@ -157,9 +157,21 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<ResponseObject> login(
-            @RequestBody UserLoginDto userLoginDto,
+            @Valid @RequestBody UserLoginDto userLoginDto,
+            BindingResult result,
             HttpServletRequest request
     ) throws Exception {
+        LoginResponse loginResponse = new LoginResponse();
+
+        if (result.hasErrors()) {
+            List<String> errorMessages = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
+            loginResponse.setMessage(String.join("; ", errorMessages));
+            return ResponseEntity.badRequest().body(ResponseObject.builder()
+                    .message(String.join("; ", errorMessages))
+                    .status(HttpStatus.BAD_REQUEST)
+                    .data(loginResponse)
+                    .build());
+        }
 
         if (userLoginDto.getPhoneNumber() == null || userLoginDto.getPhoneNumber().isBlank()) {
             return ResponseEntity.badRequest().body(ResponseObject.builder()
@@ -179,15 +191,14 @@ public class UserController {
         User userDetail = userService.getUserDetailsFromToken(token);
         Token jwtToken = tokenService.addToken(userDetail, token, isMobileDevice(userAgent));
 
-        LoginResponse loginResponse = LoginResponse.builder()
-                .message(localizationUtils.getLocalizedMessage(MessageKeys.LOGIN_SUCCESSFULLY))
-                .token(token)
-                .tokenType(jwtToken.getTokenType())
-                .refreshToken(jwtToken.getRefreshToken())
-                .userName(userDetail.getFullName())
-                .role(userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
-                .id(userDetail.getId())
-                .build();
+//        LoginResponse loginResponse = LoginResponse.builder()
+        loginResponse.setMessage(localizationUtils.getLocalizedMessage(MessageKeys.LOGIN_SUCCESSFULLY));
+        loginResponse.setToken(token);
+        loginResponse.setTokenType(jwtToken.getTokenType());
+        loginResponse.setRefreshToken(jwtToken.getRefreshToken());
+        loginResponse.setUserName(userDetail.getFullName());
+        loginResponse.setRole(userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
+        loginResponse.setId(userDetail.getId());
 
         return ResponseEntity.ok().body(ResponseObject.builder()
                 .message(loginResponse.getMessage())

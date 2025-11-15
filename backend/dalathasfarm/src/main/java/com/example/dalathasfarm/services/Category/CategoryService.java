@@ -49,6 +49,7 @@ public class CategoryService implements ICategoryService{
         Category existingCategory = getCategoryById(id);
         if(!categoryRepository.existsByName(categoryDto.getName())) {
             existingCategory.setName(categoryDto.getName());
+            existingCategory.setDescription(categoryDto.getDescription());
             categoryRepository.save(existingCategory);
             return existingCategory;
         }else {
@@ -63,6 +64,7 @@ public class CategoryService implements ICategoryService{
             Category newCategory = Category
                     .builder()
                     .name(categoryDto.getName())
+                    .description(categoryDto.getDescription())
                     .build();
             return categoryRepository.save(newCategory);
         }

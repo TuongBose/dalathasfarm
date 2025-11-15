@@ -1,134 +1,144 @@
-<footer class="bg-dark text-white py-5">
+<footer class="footer py-5">
   <div class="container">
-    <!-- Phần 1: Thông tin chi nhánh -->
-    <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
-      <div class="col">
-        <h3 class="text-white fw-semibold mb-4 pb-2 border-bottom border-secondary">TPHCM</h3>
-        <ul class="list-unstyled">
-          <li class="mb-3">
-            <div class="d-flex align-items-start gap-3">
-              <i class="fas fa-map-marker-alt text-secondary mt-1"></i>
-              <div>
-                <p class="text-white fw-medium mb-0">140 Lê Trọng Tấn, Q.Tân Phú</p>
-                <p class="text-muted mb-0">(024) 6673 1234</p>
-              </div>
-            </div>
-          </li>
-          <li class="mb-3">
-            <div class="d-flex align-items-start gap-3">
-              <i class="fas fa-map-marker-alt text-secondary mt-1"></i>
-              <div>
-                <p class="text-white fw-medium mb-0">140 Lê Trọng Tấn, Q.Tân Phú</p>
-                <p class="text-muted mb-0">(024) 6658 1234</p>
-              </div>
-            </div>
-          </li>
-          <li class="mb-3">
-            <div class="d-flex align-items-start gap-3">
-              <i class="fas fa-map-marker-alt text-secondary mt-1"></i>
-              <div>
-                <p class="text-white fw-medium mb-0">140 Lê Trọng Tấn, Q.Tân Phú</p>
-                <p class="text-muted mb-0">(024) 2123 1234</p>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-      <div class="col">
-        <h3 class="text-white fw-semibold mb-4 pb-2 border-bottom border-secondary">TPHCM</h3>
-        <ul class="list-unstyled">
-          <li class="mb-3">
-            <div class="d-flex align-items-start gap-3">
-              <i class="fas fa-map-marker-alt text-secondary mt-1"></i>
-              <div>
-                <p class="text-white fw-medium mb-0">140 Lê Trọng Tấn, Q.Tân Phú</p>
-                <p class="text-muted mb-0">(024) 6688 1234</p>
-              </div>
-            </div>
-          </li>
-          <li class="mb-3">
-            <div class="d-flex align-items-start gap-3">
-              <i class="fas fa-map-marker-alt text-secondary mt-1"></i>
-              <div>
-                <p class="text-white fw-medium mb-0">140 Lê Trọng Tấn, Q.Tân Phú</p>
-                <p class="text-muted mb-0">(024) 665 73 1234</p>
-              </div>
-            </div>
-          </li>
-          <li class="mb-3">
-            <div class="d-flex align-items-start gap-3">
-              <i class="fas fa-map-marker-alt text-secondary mt-1"></i>
-              <div>
-                <p class="text-white fw-medium mb-0">140 Lê Trọng Tấn, Q.Tân Phú</p>
-                <p class="text-muted mb-0">(024) 6656 1234</p>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-      <div class="col">
-        <h3 class="text-white fw-semibold mb-4 pb-2 border-bottom border-secondary">Tỉnh thành khác</h3>
-        <ul class="list-unstyled">
-          <li class="mb-3">
-            <div class="d-flex align-items-start gap-3">
-              <i class="fas fa-map-marker-alt text-secondary mt-1"></i>
-              <div>
-                <p class="text-white fw-medium mb-0">140 Lê Trọng Tấn, Q.Tân Phú</p>
-                <p class="text-muted mb-0">(020) 4655 1234</p>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
 
-    <!-- Phần 2: Thông tin công ty và liên kết -->
-    <div class="row row-cols-1 row-cols-md-4 g-4 border-top border-secondary pt-4 pb-3">
-      <div class="col">
-        <h4 class="fw-bold mb-3">Đồ da Mạnh Tường</h4>
-        <p class="text-muted mb-1">CÔNG TY TNHH TỔNG HỢP MẠNH TƯỜNG</p>
-        <p class="text-muted mb-1">Địa chỉ: Số 140 Lê Trọng Tấn, Tân Quý, Tân Phú, TPHCM, Việt Nam</p>
-        <p class="text-muted mb-1">Mã số doanh nghiệp: 999999999</p>
-        <p class="text-muted mb-1">Email: cskh@manhtuong.net</p>
-        <div class="d-flex gap-3 mt-3">
-          <a href="#" class="text-muted" target="_blank"><i class="fab fa-youtube"></i></a>
-          <a href="#" class="text-muted" target="_blank"><i class="fab fa-instagram"></i></a>
-          <a href="#" class="text-muted" target="_blank"><i class="fab fa-tiktok"></i></a>
-          <a href="#" class="text-muted" target="_blank"><i class="fab fa-facebook-f"></i></a>
+    <!-- PHẦN 1: ĐĂNG KÝ EMAIL -->
+    <div class="newsletter-section mb-5 pb-5 border-bottom">
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+          <h3 class="h4 fw-bold mb-2">Sign Up for Email</h3>
+          <p class="text-muted mb-0">
+            For a first look at our newest arrivals, exclusive sales, and special events
+          </p>
+        </div>
+        <div class="col-lg-6">
+          <form (ngSubmit)="onSubmit()" class="d-flex gap-2">
+            <input type="email" class="form-control form-control-lg" placeholder="Email Address*" [(ngModel)]="email"
+              name="email" required>
+            <button type="submit" class="btn btn-success btn-lg px-4 text-white" style="font-size: 18px;">
+              SUBMIT
+            </button>
+          </form>
         </div>
       </div>
+      <p class="text-xs text-muted mt-4" style="font-size: 15px;">
+        By signing up, you will receive Terrain offers, promotions, and other commercial messages.
+        You are also agreeing to Terrain's <a href="#" class="text-decoration-underline">Privacy Policy</a>.
+        You may unsubscribe at any time.
+      </p>
+    </div>
+
+    <!-- PHẦN 2: 4 CỘT MENU -->
+    <div class="row row-cols-2 row-cols-md-5 g-4 mb-5">
+
+      <!-- CỘT 1: Help + Info -->
       <div class="col">
-        <h4 class="mb-3">Hướng dẫn mua hàng</h4>
-        <ul class="list-unstyled">
-          <li class="mb-2"><a routerLink="/terms-of-service" class="text-white hover:text-secondary" style="text-decoration: none;">Điều khoản và dịch vụ</a></li>
-          <li class="mb-2">Hướng dẫn mua hàng</li>
-          <li class="mb-2">Phương thức thanh toán</li>
+        <h5 class="fw-bold mb-3">Help + Info</h5>
+        <ul class="list-unstyled text-small">
+          <li class="mb-2"><a routerLink="/track-order" class="text-muted text-decoration-none hover-text-dark">Track
+              Your Order</a></li>
+          <li class="mb-2"><a routerLink="/returns" class="text-muted text-decoration-none hover-text-dark">Start A
+              Return Or Exchange</a></li>
+          <li class="mb-2"><a routerLink="/returns" class="text-muted text-decoration-none hover-text-dark">Returns &
+              Exchanges</a></li>
+          <li class="mb-2"><a routerLink="/customer-service"
+              class="text-muted text-decoration-none hover-text-dark">Customer Service</a></li>
+          <li class="mb-2"><a routerLink="/gift-card" class="text-muted text-decoration-none hover-text-dark">Check Gift
+              Card Balance</a></li>
+          <li class="mb-2"><a routerLink="/promotions" class="text-muted text-decoration-none hover-text-dark">Current
+              Promotions</a></li>
         </ul>
-        <p class="fw-semibold mt-3">Hotline: 1900 9999 - 0999.000.999</p>
       </div>
+
+      <!-- CỘT 2: About Us -->
       <div class="col">
-        <h4 class="mb-3">Chính sách khách hàng</h4>
-        <ul class="list-unstyled">
-          <li class="mb-2">Chính sách vận chuyển</li>
-          <li class="mb-2">Chính sách đổi trả hàng</li>
-          <li class="mb-2">Chính sách bảo hành sản phẩm</li>
+        <h5 class="fw-bold mb-3">About Us</h5>
+        <ul class="list-unstyled text-small">
+          <li class="mb-2"><a routerLink="/our-story" class="text-muted text-decoration-none hover-text-dark">Our
+              Story</a></li>
+          <li class="mb-2"><a routerLink="/philanthropy" class="text-muted text-decoration-none hover-text-dark">Our
+              Philanthropy</a></li>
+          <li class="mb-2"><a routerLink="/careers" class="text-muted text-decoration-none hover-text-dark">Careers</a>
+          </li>
         </ul>
       </div>
+
+      <!-- CỘT 3: Services -->
       <div class="col">
-        <ul class="list-unstyled">
-          <li class="mb-2"><a routerLink="/privacy-policy" class="text-white hover:text-secondary" style="text-decoration: none;">Chính sách bảo mật</a></li>
-          <li class="mb-2"><a routerLink="/terms-of-service" class="text-white hover:text-secondary" style="text-decoration: none;">Điều khoản và dịch vụ</a></li>
-          <li class="mb-2">Nhượng quyền thương hiệu</li>
+        <h5 class="fw-bold mb-3">Services</h5>
+        <ul class="list-unstyled text-small">
+          <li class="mb-2"><a routerLink="/design-services"
+              class="text-muted text-decoration-none hover-text-dark">Design Services</a></li>
+          <li class="mb-2"><a routerLink="/private-events"
+              class="text-muted text-decoration-none hover-text-dark">Private Events</a></li>
+          <li class="mb-2"><a routerLink="/dining" class="text-muted text-decoration-none hover-text-dark">Dining</a>
+          </li>
+          <li class="mb-2"><a routerLink="/trade" class="text-muted text-decoration-none hover-text-dark">Trade
+              Account</a></li>
+          <li class="mb-2"><a routerLink="/gift-cards" class="text-muted text-decoration-none hover-text-dark">Gift
+              Cards</a></li>
+          <li class="mb-2"><a routerLink="/afterpay"
+              class="text-muted text-decoration-none hover-text-dark">Afterpay</a></li>
+        </ul>
+      </div>
+
+      <!-- CỘT 4: Connect -->
+      <div class="col">
+        <h5 class="fw-bold mb-3">Connect</h5>
+        <ul class="list-unstyled text-small">
+          <li class="mb-2"><a routerLink="/contact" class="text-muted text-decoration-none hover-text-dark">Contact
+              Us</a></li>
+          <li class="mb-2"><a routerLink="/events" class="text-muted text-decoration-none hover-text-dark">Store Events
+              + Workshops</a></li>
+          <li class="mb-2"><a routerLink="/blog" class="text-muted text-decoration-none hover-text-dark">Blog</a></li>
+        </ul>
+      </div>
+
+      <!-- CỘT 5: Store Locator + Icons -->
+      <div class="col">
+        <ul class="list-unstyled text-small">
+          <li class="mb-3 d-flex align-items-center gap-2">
+            <i class="fas fa-map-marker-alt text-muted"></i>
+            <a routerLink="/store-locator" class="text-muted text-decoration-none hover-text-dark">Store Locator</a>
+          </li>
+          <li class="mb-3 d-flex align-items-center gap-2">
+            <i class="fas fa-envelope text-muted"></i>
+            <a routerLink="/get-email" class="text-muted text-decoration-none hover-text-dark">Get Email</a>
+          </li>
+          <li class="mb-3 d-flex align-items-center gap-2">
+            <i class="fas fa-comment-dots text-muted"></i>
+            <a routerLink="/sign-up-texts" class="text-muted text-decoration-none hover-text-dark">Sign Up For Texts</a>
+          </li>
+          <li class="mb-3 d-flex align-items-center gap-2">
+            <i class="fas fa-comment text-muted"></i>
+            <a routerLink="/chat" class="text-muted text-decoration-none hover-text-dark">Chat With Us</a>
+          </li>
         </ul>
       </div>
     </div>
 
-    <!-- Phần 3: Thanh cuối -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center border-top border-secondary pt-4 mt-4">
-      <div class="d-flex align-items-center gap-3 mb-3 mb-md-0">
-        <img [src]="logoUrl" alt="Certification Badge" class="img-fluid" style="width: 150px; height: 100%;">
-        <p class="text-muted text-xs">&copy; 2013-2025 manhtuong.net. All rights reserved.</p>
+    <!-- PHẦN 3: SOCIAL + COPYRIGHT -->
+    <div class="row align-items-center border-top pt-4">
+      <div class="col-md-6 mb-3 mb-md-0">
+        <div class="d-flex gap-3 justify-content-center justify-content-md-start">
+          <a href="#" class="text-muted fs-4"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="text-muted fs-4"><i class="fab fa-pinterest"></i></a>
+          <a href="#" class="text-muted fs-4"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="text-muted fs-4"><i class="fab fa-tiktok"></i></a>
+        </div>
+      </div>
+      <div class="col-md-6 text-center text-md-end">
+        <p class="text-xs text-muted mb-1">
+          <a href="#" class="text-muted text-decoration-underline me-2">Privacy Policy</a> |
+          <a href="#" class="text-muted text-decoration-underline mx-2">Terms of Use</a> |
+          <a href="#" class="text-muted text-decoration-underline mx-2">CA Transparency</a> |
+          <a href="#" class="text-muted text-decoration-underline mx-2">Accessibility</a> |
+          <a href="#" class="text-muted text-decoration-underline mx-2">URBN.com</a> |
+          <a href="#" class="text-muted text-decoration-underline mx-2">Support Code</a> |
+          <a href="#" class="text-muted text-decoration-underline ms-2">Your Privacy Choices</a>
+        </p>
+        <p class="text-xs text-muted mb-0">&copy; 2025 URBN.com. All Rights Reserved.</p>
       </div>
     </div>
+
   </div>
 </footer>

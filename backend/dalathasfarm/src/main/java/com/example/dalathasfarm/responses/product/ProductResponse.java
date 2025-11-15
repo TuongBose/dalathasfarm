@@ -19,6 +19,7 @@ public class ProductResponse extends BaseResponse {
     private String name;
     private BigDecimal price;
     private String description;
+    private String components;
     private Integer stockQuantity;
     private Integer categoryId;
     private Integer occasionId;
@@ -33,9 +34,10 @@ public class ProductResponse extends BaseResponse {
                 .name(product.getName())
                 .price(product.getPrice())
                 .description(product.getDescription())
+                .components(product.getComponents())
                 .stockQuantity(product.getStockQuantity())
                 .categoryId(product.getCategory().getId())
-                .occasionId(product.getOccasion().getId())
+                .occasionId(product.getOccasion() != null ? product.getOccasion().getId() : null)
                 .thumbnail(product.getThumbnail())
                 .totalPages(0)
                 .build();
@@ -51,9 +53,10 @@ public class ProductResponse extends BaseResponse {
                 .name(product.getName())
                 .price(product.getPrice())
                 .description(product.getDescription())
+                .components(product.getComponents())
                 .stockQuantity(product.getStockQuantity())
                 .categoryId(product.getCategory().getId())
-                .occasionId(product.getOccasion().getId())
+                .occasionId(product.getOccasion() != null ? product.getOccasion().getId() : null)
                 .thumbnail(product.getThumbnail())
                 .totalPages(0)
                 .productImageResponses(productImageResponses)

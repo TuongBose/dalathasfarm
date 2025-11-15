@@ -1,47 +1,73 @@
-footer {
-  background-color: #181818;
-  color: white;
-  padding: 3rem 0 2rem;
+.footer {
+  background-color: #f2f0eb;
+  color: #212529;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
 
-  .border-secondary {
-    border-color: #6c757d !important;
+  .newsletter-section {
+    .form-control {
+      border: 1px solid #ced4da;
+      border-radius: 0;
+      font-size: 1rem;
+      padding: 0.75rem 1rem;
+
+      &:focus {
+        border-color: #198754;
+        box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+      }
+    }
+
+    .btn-success {
+      background-color: #3b6b55;
+      border: none;
+      border-radius: 0;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
   }
 
-  .text-muted {
-    color: #6c757d !important; 
+  h3, h5 {
+    font-weight: 600;
+    letter-spacing: 0.5px;
   }
 
-  .fw-medium {
-    font-weight: 500;
+  a {
+    transition: color 0.2s ease;
+
+    &.hover-text-dark:hover {
+      color: #212529 !important;
+    }
+  }
+
+  .text-small {
+    font-size: 0.875rem;
+    line-height: 1.6;
   }
 
   .text-xs {
     font-size: 0.75rem;
+    line-height: 1.4;
   }
 
-  .btn-light,
-  .btn-secondary {
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .border-bottom {
+    border-color: #dee2e6 !important;
   }
 
-  .btn-light img,
-  .btn-secondary img {
-    width: 24px;
-    height: 24px;
-  }
-}
+  .social-icons {
+    a {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border-radius: 50%;
+      transition: all 0.3s ease;
 
-@media (max-width: 768px) {
-  footer {
-    padding: 2rem 0 1.5rem;
-
-    .row-cols-md-3 > .col,
-    .row-cols-md-4 > .col {
-      flex: 0 0 100%; 
+      &:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+      }
     }
   }
 }

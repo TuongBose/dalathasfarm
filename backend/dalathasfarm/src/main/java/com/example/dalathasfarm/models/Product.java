@@ -31,6 +31,7 @@ public class Product extends BaseEntity{
     private BigDecimal price;
 
     private String description;
+    private String components;
 
     @Column(name = "stock_quantity")
     @Min(0)

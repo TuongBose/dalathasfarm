@@ -1,5 +1,105 @@
 @import '../../styles/shared-styles.scss'; 
 
+.product-minimal {
+  display: flex;
+  flex-direction: column;
+  height: 100%;           // Đảm bảo card cùng chiều cao
+  padding: 1rem;
+  border-radius: 12px;
+  background: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-subtitle {
+    flex-grow: 1;
+    min-height: 4.5em;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.5;
+    font-size: 0.8rem !important;
+  }
+
+.about-bloom-section {
+  background: #fff;
+  padding: 100px 0;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+
+  .display-5 {
+    font-size: 2.8rem;
+    line-height: 1.15;
+    color: #1a1a1a;
+  }
+
+  .lead {
+    font-size: 1.1rem;
+    line-height: 1.75;
+    color: #444;
+  }
+
+  .btn-read-more {
+    color: #1a1a1a;
+    text-decoration: none;
+    border-bottom: 2px solid #1a1a1a;
+    padding-bottom: 4px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+
+    &:hover {
+      color: #d4af37;
+      border-color: #d4af37;
+
+      i {
+        transform: translateX(4px);
+      }
+    }
+
+    i {
+      font-size: 0.9rem;
+      transition: transform 0.3s ease;
+    }
+  }
+
+  h3.h4 {
+    font-weight: 600;
+    color: #1a1a1a;
+    letter-spacing: 0.5px;
+  }
+
+  .text-small {
+    font-size: 0.925rem;
+    line-height: 1.6;
+  }
+
+  a {
+    color: #333;
+    transition: color 0.2s ease;
+
+    &.hover-underline {
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 1.5px;
+        background: #d4af37;
+        transition: width 0.3s ease;
+      }
+
+      &:hover::after {
+        width: 100%;
+      }
+
+      &:hover {
+        color: #1a1a1a !important;
+      }
+    }
+  }
+}
 
 .greeting-card-section-forone {
   background: #f2f0eb;

@@ -29,6 +29,7 @@ import { Occasion } from '../../models/occasion';
 export class HomeComponent extends BaseComponent implements OnInit {
   products: Product[] = [];
   occasions: Occasion[] = [];
+  occasionsForToday: Occasion[] = [];
   categories: Category[] = [];
   currentPage: number = 0;
   itemsPerPage: number = 12;
@@ -52,6 +53,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.getAllProduct(this.keyword, this.selectedCategoryId, this.selectedOccasionId, this.currentPage, this.itemsPerPage);
     this.getAllCategory(0, 6);
+    this.getAllOccasion(0, 6);
     this.getTodayOccasions();
     this.currentPage = Number(localStorage.getItem('currentProductPage')) || 0;
     this.bannerUrl = `${environment.apiBaseUrl}/products/images/${this.bannerName}`;
@@ -61,7 +63,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
     this.occasionService.getTodayOccasions().subscribe({
       next: (response: ApiResponse) => {
         debugger
-        this.occasions = response.data;
+        this.occasionsForToday = response.data;
       },
       complete: () => { debugger },
       error: (error: HttpErrorResponse) => {
@@ -75,8 +77,22 @@ export class HomeComponent extends BaseComponent implements OnInit {
     return `${environment.apiBaseUrl}/products/images/${thumbnail}`;
   }
 
-  getOccasionBannerUrl(banner:string):string{
+  getOccasionBannerUrl(banner: string): string {
     return `${environment.apiBaseUrl}/products/images/${banner}`;
+  }
+
+  getAllOccasion(page: number, limit: number) {
+    this.occasionService.getAllOccasion(page, limit).subscribe({
+      next: (response: ApiResponse) => {
+        debugger
+        this.occasions = response.data.slice(0, 5);
+      },
+      complete: () => { debugger },
+      error: (error: HttpErrorResponse) => {
+        debugger;
+        console.error('Error fetching category: ', error)
+      }
+    })
   }
 
   getAllCategory(page: number, limit: number) {
@@ -99,7 +115,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
     }
 
     // Gọi API lấy sản phẩm theo occasion
-    this.productService.getAllProduct('', 0, occasionId, 0, 6).subscribe({
+    this.productService.getAllProduct('', 0, occasionId, 0, 4).subscribe({
       next: (response: ApiResponse) => {
         const products = response.data.productResponses.map((p: Product) => {
           p.thumbnailUrl = `${environment.apiBaseUrl}/products/images/${p.thumbnail}`;
@@ -123,7 +139,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
     }
 
     // Gọi API lấy sản phẩm theo occasion
-    this.productService.getAllProduct('', categoryId, 0, 0, 6).subscribe({
+    this.productService.getAllProduct('', categoryId, 0, 0, 4).subscribe({
       next: (response: ApiResponse) => {
         const products = response.data.productResponses.map((p: Product) => {
           p.thumbnailUrl = `${environment.apiBaseUrl}/products/images/${p.thumbnail}`;

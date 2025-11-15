@@ -6,6 +6,7 @@ CREATE TABLE categories
 (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL,
+    description VARCHAR(500),
     thumbnail VARCHAR(300) UNIQUE
 );
 
@@ -34,6 +35,7 @@ CREATE TABLE products (
     name VARCHAR(255) NOT NULL,
     price DECIMAL(10,2) NOT NULL CHECK (price >= 0),
     description VARCHAR(500),
+    components VARCHAR(500),
     stock_quantity INT CHECK (stock_quantity >= 0),
     created_at DATETIME,
     updated_at DATETIME,
@@ -253,23 +255,23 @@ CREATE TABLE product_discount_items (
 );
 
 -- BẢNG DỮ LIỆU CATEGORIES
-INSERT INTO categories (name, thumbnail) VALUES
-('Hoa cưới', 'hoa-cuoi.jpg'),
-('Hoa chúc mừng', 'hoa-chuc-mung.jpg'),
-('Hoa chia buồn', 'hoa-chia-buon.jpg'),
-('Hoa sinh nhật', 'hoa-sinh-nhat.jpg'),
-('Hoa ngày lễ', 'hoa-le.jpg'),
-('Hoa tình yêu', 'hoa-tinh-yeu.jpg'),
-('Hoa khai trương', 'hoa-khai-truong.jpg'),
-('Hoa tặng mẹ', 'hoa-tang-me.jpg'),
-('Hoa văn phòng', 'hoa-van-phong.jpg'),
-('Hoa nghệ thuật', 'hoa-nghe-thuat.jpg'),
-('Bó hoa cao cấp', 'hoa-cao-cap.jpg'),
-('Giỏ hoa', 'gio-hoa.jpg'),
-('Lẵng hoa', 'lang-hoa.jpg'),
-('Hoa để bàn', 'hoa-de-ban.jpg'),
-('Hoa nhập khẩu', 'hoa-nhap-khau.jpg'),
-('Hoa cắm bình', 'hoa-cam-binh.jpg');
+INSERT INTO categories (name, thumbnail, description) VALUES
+('Hoa cưới', 'hoa-cuoi.jpg','Những mẫu hoa cưới sang trọng, tinh tế với tông màu nhã nhặn, giúp tôn lên vẻ đẹp và ý nghĩa thiêng liêng của ngày trọng đại.'),
+('Hoa chúc mừng', 'hoa-chuc-mung.jpg','Bộ sưu tập hoa chúc mừng tươi sáng, biểu trưng cho sự thành công, may mắn và niềm vui trong các dịp đặc biệt.'),
+('Hoa chia buồn', 'hoa-chia-buon.jpg','Các mẫu hoa chia buồn trang nhã, thể hiện sự trân trọng và sẻ chia sâu sắc trong những thời khắc mất mát.'),
+('Hoa sinh nhật', 'hoa-sinh-nhat.jpg','Hoa sinh nhật rực rỡ, đa sắc màu, mang đến niềm vui và lời chúc ý nghĩa dành cho người thân yêu.'),
+('Hoa ngày lễ', 'hoa-le.jpg','Hoa tươi được thiết kế theo chủ đề các ngày lễ lớn trong năm, mang phong cách hiện đại và sang trọng.'),
+('Hoa tình yêu', 'hoa-tinh-yeu.jpg','Những mẫu hoa lãng mạn với sắc đỏ – hồng chủ đạo, thay lời yêu thương gửi đến người đặc biệt.'),
+('Hoa khai trương', 'hoa-khai-truong.jpg','Hoa khai trương mang ý nghĩa hồng phát – may mắn, phù hợp tặng đối tác, bạn bè trong ngày mở cửa hàng.'),
+('Hoa tặng mẹ', 'hoa-tang-me.jpg','Những mẫu hoa trang nhã, ấm áp, gửi trọn tình yêu và sự biết ơn đến người mẹ yêu dấu.'),
+('Hoa văn phòng', 'hoa-van-phong.jpg','Hoa trang trí văn phòng phong cách tối giản – hiện đại, mang lại cảm giác tươi mới và thanh lịch.'),
+('Hoa nghệ thuật', 'hoa-nghe-thuat.jpg','Những thiết kế hoa độc đáo, sáng tạo, mang đậm chất nghệ thuật phù hợp trưng bày hoặc tặng người yêu nghệ thuật.'),
+('Bó hoa cao cấp', 'hoa-cao-cap.jpg','Các bó hoa sang trọng sử dụng hoa cao cấp như hồng Ecuador, tulip, mẫu đơn, mang đẳng cấp tinh tế và khác biệt.'),
+('Giỏ hoa', 'gio-hoa.jpg','Giỏ hoa thiết kế hài hòa, tỉ mỉ, phù hợp nhiều dịp như khai trương, kỷ niệm và chúc mừng. Dễ dàng vận chuyển và trưng bày.'),
+('Lẵng hoa', 'lang-hoa.jpg','Lẵng hoa kích thước lớn, thể hiện tính trang trọng và sự đầu tư, thích hợp cho sự kiện, hội nghị hoặc chúc mừng quan trọng.'),
+('Hoa để bàn', 'hoa-de-ban.jpg','Hoa để bàn phong cách thanh lịch, phù hợp trang trí tại nhà, văn phòng hoặc sự kiện nhỏ, tạo điểm nhấn nhẹ nhàng.'),
+('Hoa nhập khẩu', 'hoa-nhap-khau.jpg','Các loại hoa nhập khẩu chất lượng cao như tulip Hà Lan, mẫu đơn châu Âu, mang vẻ đẹp sang trọng và độ bền vượt trội.'),
+('Hoa cắm bình', 'hoa-cam-binh.jpg','Hoa cắm bình đa dạng phong cách, từ hiện đại đến cổ điển, mang đến vẻ đẹp nhẹ nhàng và tinh tế cho không gian sống.');
 
 -- BẢNG DỮ LIỆU OCCASIONS
 INSERT INTO occasions (name, thumbnail, start_date, end_date, banner_image, is_active) VALUES
@@ -296,17 +298,27 @@ INSERT INTO suppliers (name, address, phone_number, email) VALUES
 ('Công ty TNHH Vườn Hoa Cúc Trắng', '66 Võ Thị Sáu, Cần Thơ', '0908456123', 'support@hoacuctrang.vn');
 
 -- BẢNG DỮ LIỆU PRODUCTS
-INSERT INTO products (supplier_id, name, price, description, stock_quantity, created_at, updated_at, category_id, occasion_id, thumbnail) VALUES
-(1, 'Bó hoa hồng đỏ Tết Nguyên Đán', 450000, 'Bó hoa hồng đỏ rực rỡ chào năm mới, biểu tượng của may mắn và thịnh vượng.', 20, NOW(), NOW(), 1, 2, 'hongdo_tet.jpg'),
-(2, 'Giỏ hoa lan chúc mừng 30/4', 520000, 'Giỏ hoa lan vàng sang trọng, phù hợp tặng dịp lễ 30/4 - 1/5.', 15, NOW(), NOW(), 2, 4, 'lanvang_304.jpg'),
-(3, 'Bình hoa cúc vàng Quốc khánh', 360000, 'Hoa cúc vàng tượng trưng cho niềm vui, thích hợp trang trí lễ Quốc khánh 2/9.', 25, NOW(), NOW(), 3, 7, 'cucvang_29.jpg'),
-(4, 'Bó hoa ly trắng tri ân Nhà giáo', 390000, 'Hoa ly trắng thanh khiết, tặng thầy cô nhân ngày 20/11.', 18, NOW(), NOW(), 4, 8, 'lytrang_2011.jpg'),
-(5, 'Bó hoa tulip hồng 20/10', 480000, 'Hoa tulip hồng nhẹ nhàng, tặng phái đẹp nhân ngày Phụ nữ Việt Nam.', 12, NOW(), NOW(), 5, 1, 'tulip_2010.jpg'),
-(6, 'Giỏ hoa sen hồng tri ân 27/7', 410000, 'Hoa sen biểu tượng của lòng biết ơn, phù hợp tặng ngày Thương binh Liệt sĩ.', 14, NOW(), NOW(), 6, 2, 'senhong_277.jpg'),
-(7, 'Bó hoa baby trắng Trung Thu', 270000, 'Hoa baby trắng nhẹ nhàng, thích hợp làm quà Trung Thu.', 30, NOW(), NOW(), 7, 8, 'babytrang_tt.jpg'),
-(8, 'Bó hoa hướng dương chúc mừng Quốc tế Lao động', 320000, 'Hoa hướng dương tượng trưng cho năng lượng tích cực và hy vọng.', 22, NOW(), NOW(), 8, 5, 'huongduong_15.jpg'),
-(9, 'Giỏ hoa đồng tiền Giỗ Tổ Hùng Vương', 300000, 'Hoa đồng tiền đỏ tượng trưng cho thành công và tôn vinh cội nguồn.', 20, NOW(), NOW(), 1, 3, 'dongtien_giotohungvuong.jpg'),
-(10, 'Bó hoa cẩm chướng ấm áp Tết Dương Lịch', 340000, 'Hoa cẩm chướng mang thông điệp yêu thương và may mắn đầu năm.', 16, NOW(), NOW(), 2, 1, 'camchuong_tetduonglich.jpg');
+INSERT INTO products (supplier_id, name, price, description, stock_quantity, created_at, updated_at, category_id, occasion_id, thumbnail, components) VALUES
+(3, 'Bó Hoa Hồng Trắng Pure Love', 599000, 'Bó hoa hồng trắng tinh khôi, được gói đẹp mắt và thanh lịch. Sự lựa chọn hoàn hảo để thể hiện tình yêu thuần khiết trong các dịp đặc biệt.', 15, NOW(), NOW(), 6, 3, 'purelove.jpg', 'Chi tiết sản phẩm:<br>Pure Love (Cơ bản) gồm:<br>6 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>Pure Love (Nâng Cấp) gồm:<br>12 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>*Giá trên áp dụng cho bản Cơ Bản.<br>*Lưu ý: Sản phẩm làm thủ công, màu hoa có thể thay đổi theo mùa'),
+(8, 'Bó Hoa Đồng Tiền Ngại Ngùng', 769000, 'Bó hoa tone hồng nhẹ nhàng, lãng mạn, gửi gắm sự e ấp và hạnh phúc. Món quà dễ thương để bày tỏ tình cảm chân thành.', 15, NOW(), NOW(), 6, 1, 'ngai_ngung.jpg', 'Chi tiết sản phẩm:<br>Pure Love (Cơ bản) gồm:<br>6 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>Pure Love (Nâng Cấp) gồm:<br>12 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>*Giá trên áp dụng cho bản Cơ Bản.<br>*Lưu ý: Sản phẩm làm thủ công, màu hoa có thể thay đổi theo mùa'),
+(2, 'Hộp Hoa Dịu Ngọt Yêu Thương', 1550000, 'Thiết kế hộp hoa cao cấp kết hợp Nến Thơm Lavender Moon, mang vẻ đẹp sang trọng và ý nghĩa tốt lành. Là tác phẩm nghệ thuật gửi trao cảm xúc yêu thương sâu lắng.', 15, NOW(), NOW(), 10, 2, 'hop_diu_ngot_713.jpg', 'Chi tiết sản phẩm:<br>Pure Love (Cơ bản) gồm:<br>6 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>Pure Love (Nâng Cấp) gồm:<br>12 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>*Giá trên áp dụng cho bản Cơ Bản.<br>*Lưu ý: Sản phẩm làm thủ công, màu hoa có thể thay đổi theo mùa'),
+(9, 'Chậu Hoa Thiết Kế Tinh Khôi', 410000, 'Chậu hoa Cúc Họa Mi mang vẻ đẹp tinh khiết, trong sáng, dễ chăm sóc với độ bền cao. Phù hợp trang trí không gian sống hoặc làm quà tặng ý nghĩa.', 15, NOW(), NOW(), 14, 1, 'chau_tinh_khoi_206.jpg', 'Chi tiết sản phẩm:<br>Pure Love (Cơ bản) gồm:<br>6 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>Pure Love (Nâng Cấp) gồm:<br>12 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>*Giá trên áp dụng cho bản Cơ Bản.<br>*Lưu ý: Sản phẩm làm thủ công, màu hoa có thể thay đổi theo mùa'),
+(4, 'Bó Hoa Hồng Forever', 469000, 'Bó hoa Hồng đỏ đầy lãng mạn, là món quà hoàn hảo thay lời muốn nói. Thích hợp cho Valentine, kỷ niệm hoặc sinh nhật người thương.', 15, NOW(), NOW(), 6, 1, 'hong_forever_18.jpg', 'Chi tiết sản phẩm:<br>Pure Love (Cơ bản) gồm:<br>6 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>Pure Love (Nâng Cấp) gồm:<br>12 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>*Giá trên áp dụng cho bản Cơ Bản.<br>*Lưu ý: Sản phẩm làm thủ công, màu hoa có thể thay đổi theo mùa'),
+(7, 'Bó Hoa Cưới', 950000, 'Bó hoa cưới cầm tay sang trọng, thiết kế tinh tế giúp cô dâu thêm rạng rỡ. Gửi trọn thông điệp hạnh phúc và khởi đầu viên mãn.', 15, NOW(), NOW(), 1, 2, 'hoa_cuoi_050.jpg', 'Chi tiết sản phẩm:<br>Pure Love (Cơ bản) gồm:<br>6 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>Pure Love (Nâng Cấp) gồm:<br>12 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>*Giá trên áp dụng cho bản Cơ Bản.<br>*Lưu ý: Sản phẩm làm thủ công, màu hoa có thể thay đổi theo mùa'),
+(1, 'Kệ Hoa Chúc Mừng', 2300000, 'Kệ hoa chúc mừng tông màu tươi sáng, hướng đến sự phát triển thuận lợi, may mắn và thành công. Thiết kế tiện lợi có thể tháo rời giỏ hoa.', 15, NOW(), NOW(), 7, 2, 'ke_chuc_mung_040.jpg', 'Chi tiết sản phẩm:<br>Pure Love (Cơ bản) gồm:<br>6 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>Pure Love (Nâng Cấp) gồm:<br>12 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>*Giá trên áp dụng cho bản Cơ Bản.<br>*Lưu ý: Sản phẩm làm thủ công, màu hoa có thể thay đổi theo mùa'),
+(10, 'Kệ Hoa Chia Buồn Chốn Bình Yên', 2450000, 'Kệ hoa chia buồn tông trắng trang trọng, tinh tế. Gửi đi những lời chia sẻ, kính trọng và tình cảm chân thành trong giây phút trang nghiêm.', 15, NOW(), NOW(), 3, 2, 'ke_chia_buon_002.jpg', 'Chi tiết sản phẩm:<br>Pure Love (Cơ bản) gồm:<br>6 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>Pure Love (Nâng Cấp) gồm:<br>12 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>*Giá trên áp dụng cho bản Cơ Bản.<br>*Lưu ý: Sản phẩm làm thủ công, màu hoa có thể thay đổi theo mùa'),
+(5, 'Bình Hoa Dịu Ngọt Yêu Thương', 800000, 'Bình hoa trang trí với sự kết hợp hài hòa, mang vẻ đẹp ngọt ngào và lãng mạn. Phù hợp trang trí không gian sống hoặc tặng người trân quý.', 15, NOW(), NOW(), 14, 1, 'binh_diu_ngot_351.jpg', 'Chi tiết sản phẩm:<br>Pure Love (Cơ bản) gồm:<br>6 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>Pure Love (Nâng Cấp) gồm:<br>12 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>*Giá trên áp dụng cho bản Cơ Bản.<br>*Lưu ý: Sản phẩm làm thủ công, màu hoa có thể thay đổi theo mùa'),
+(6, 'Bó Hoa Yêu Thương Rực Rỡ', 740000, 'Bó hoa rực rỡ sắc màu, mang thông điệp vui vẻ, may mắn và hạnh phúc. Món quà hoàn hảo để gửi gắm tình cảm chân thành nhất.', 15, NOW(), NOW(), 2, 2, 'bo_yeu_thuong_661.jpg', 'Chi tiết sản phẩm:<br>Pure Love (Cơ bản) gồm:<br>6 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>Pure Love (Nâng Cấp) gồm:<br>12 Bông Hồng Trắng và Hoa/Lá phụ trang trí khác.<br>*Giá trên áp dụng cho bản Cơ Bản.<br>*Lưu ý: Sản phẩm làm thủ công, màu hoa có thể thay đổi theo mùa'),
+(7, 'Bó Hoa Cưới', 1750000, 'Bó hoa cưới cầm tay rực rỡ và lãng mạn. Từng loại hoa mang ý nghĩa đặc biệt, là lựa chọn hoàn hảo cho ngày hạnh phúc, gửi trọn những thông điệp yêu thương.', 15, NOW(), NOW(), 1, NULL, 'hoa_cuoi_043.jpg', 'Sản phẩm bao gồm:<br>Hoa Tulip: 15 Cành<br>Hoa Tweedia: 5 Cành<br>Phụ kiện: 1 Bộ'),
+(5, 'Kệ Hoa Chúc Mừng', 3000000, 'Kệ hoa chúc mừng tông đỏ rực rỡ, biểu tượng của may mắn và thịnh vượng. Thiết kế tỉ mỉ, ấn tượng, truyền tải thông điệp chúc mừng thành công và phát triển thuận lợi.', 15, NOW(), NOW(), 7, NULL, 'ke_chuc_mung_045.jpg', 'Sản phẩm bao gồm:<br>Hoa Cẩm Tú Cầu: 5 Cành<br>Rose Red Naomi Premium: 30 Cành<br>Hồng Môn: 10 Cành<br>Hoa Cúc Mẫu Đơn nhuộm: 15 Cành<br>Hoa Thủy Tiên: 10 Cành<br>Trầu Bà Nam Mỹ xịt màu: 2 Lá<br>Lá Dương Xỉ: 20 Cành<br>Lá Trầu Bà Chân Vịt xịt màu: 1 Bó<br>Kệ Vẽ + Foam + Giấy, Nơ: 1 Bộ'),
+(4, 'Bó Hoa Hồng La Vie En Rose', 549000, 'Bó hoa mang gam màu pastel nhẹ nhàng, đầy trang nhã và duyên dáng. Món quà bất ngờ và hoàn hảo dành tặng người thân yêu, gia đình hoặc bạn bè.', 15, NOW(), NOW(), 6, NULL, 'lavieenrose.jpg', 'Sản phẩm bao gồm:<br>Bó Cơ Bản: 20 bông Hoa Hồng<br>Các loại Hoa và Lá phụ trang trí khác<br>*Bó Nâng Cấp: 30 bông Hoa Hồng'),
+(9, 'Lan Hồ Điệp Trắng The Snowy Orchid', 722000, 'Chậu Lan Hồ Điệp 3 cành (3 head) thanh lịch, dễ chăm sóc. Mang lại vẻ đẹp sang trọng và sự tinh tế cho không gian nhà bạn. Kèm theo mẹo chăm sóc cây dễ dàng.', 15, NOW(), NOW(), 14, NULL, 'snowy_orchid.jpg', 'Sản phẩm bao gồm:<br>Cây Lan Hồ Điệp 3 cành<br>Chậu thủy tinh viền vàng<br>Rêu, cành bạch dương khô và đèn trang trí (LED)'),
+(6, 'Cây Lan Ý The Peace Lily', 629000,'Cây Lan Ý đẹp mắt, dễ chăm sóc và có khả năng lọc không khí. Là món quà toàn diện, rất phù hợp với người hay quên vì cây sẽ báo hiệu khi cần nước bằng cách rũ lá.', 15, NOW(), NOW(), 14, NULL, 'peace_lily.jpg', 'Sản phẩm bao gồm:<br>Cây Lan Ý (cao khoảng 25-40cm)<br>Chậu gốm (13cm x 13.5cm)<br>Kèm theo mẹo chăm sóc cây dễ dàng'),
+(10, 'Tiểu Cảnh Giáng Sinh Mini Festive Garden', 659000, 'Tiểu cảnh mini mang không khí Giáng Sinh ấm áp. Kết hợp Cyclamen đỏ, cây thông mini và thường xuân. Đặt trong hộp trồng có đèn LED lấp lánh (kèm pin).', 15, NOW(), NOW(), 5, 8, 'mini_festive_garden.jpg', 'Sản phẩm bao gồm:<br>Cyclamen đỏ (Cyclamens)<br>Cây thông mini (Mini tree)<br>Cây thường xuân (Ivy plant)<br>Hộp trồng chủ đề mùa đông (8 x 7.5 x 31.5cm)<br>Đèn LED nhấp nháy (kèm pin)'),
+(8, 'Bình Hoa Thủy Tiên Rừng Đông', 700000, 'Lựa chọn hoàn hảo cho những người yêu thích làm vườn. Gồm củ hoa Thủy Tiên trắng trong chậu kim loại, kèm nón thông và cành bạch dương để trang trí theo chủ đề mùa đông.', 15, NOW(), NOW(), 14, 8, 'winter_forest_trough.jpg', 'Sản phẩm bao gồm:<br>Củ hoa Thủy Tiên trắng (Hyacinth bulbs, cao khoảng 12cm)<br>Nón thông (Pinecones) và cành bạch dương khô (birch twigs)<br>Chậu kim loại màu bạc (silver metal trough)'),
+(1, 'Bó Hoa Lily Tinh Khôi', 599000, 'Bó hoa Lily được kết hợp với giấy gói hài hòa và trang nhã. Lựa chọn hoàn hảo cho ngày Valentine hoặc bất kỳ dịp đặc biệt nào.', 15, NOW(), NOW(), 6, 1, 'lily_tinhkhoi.jpg', 'Sản phẩm bao gồm:<br>Bó Cơ Bản: 5 Cành Hoa Ly Hồng<br>*Bó Nâng Cấp: 5 Cành Hoa Ly Hồng, 2 Cẩm Tú Cầu, 2 Hồng Trắng'),
+(2, 'Bó Hoa Hồng True Love (99 Bông)', 1599000, 'Bó hoa sang trọng và lộng lẫy với 99 bông Hồng đỏ rực rỡ, biểu tượng của tình yêu vĩnh cửu. Món quà hoàn hảo cho Valentine hoặc kỷ niệm đặc biệt.', 15, NOW(), NOW(), 6, 1, 'truelove_99.jpg', 'Sản phẩm bao gồm:<br>99 Bông Hồng<br>*Có phiên bản Khổng Lồ: 200 Bông Hồng'),
+(3, 'Kệ Hoa Chia Buồn Chốn Bình Yên', 1550000, 'Kệ hoa chia buồn tông trắng trang trọng, tinh tế. Gửi đi những lời chia sẻ từ trái tim, là biểu tượng của kính trọng và tình cảm chân thành đối với người đã khuất.', 15, NOW(), NOW(), 3, NULL, 'ke_chia_buon_011.jpg', 'Sản phẩm bao gồm:<br>Hoa Cúc Nhánh: 60 Cành<br>Hồng Môn hoặc Lily hoặc Cúc Magnum: 5 Cành<br>Lá Dương Xỉ: 20 Cành<br>Kệ + Foam, Giấy, Nơ: 1 Bộ');
 
 -- BẢNG DỮ LIỆU ROLES
 INSERT INTO roles (name) VALUES 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BaseComponent } from '../base/base.component';
 import { environment } from '../../environments/environment';
 import { NotificationResponse } from '../../responses/notification.response';
@@ -9,6 +9,7 @@ import { ApiResponse } from '../../responses/api.response';
 import { UserResponse } from '../../responses/user/user.response';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Category } from '../../models/category';
+import { AuthModalComponent } from '../auth-modal/auth-modal.component';
 
 @Component({
   selector: 'app-header',
@@ -41,7 +42,7 @@ export class HeaderComponent extends BaseComponent implements OnInit {
     { name: 'Liên hệ', route: '/contact' },
   ];
 
-  constructor() {
+  constructor(private modalService: NgbModal) {
     super();
     this.cartService.cartItemCount$.subscribe(count => {
       this.cartItemCount = count;
@@ -82,6 +83,14 @@ export class HeaderComponent extends BaseComponent implements OnInit {
     });
 
     this.getAllCategory(0, 20);
+  }
+
+  openAuthModal() {
+    this.modalService.open(AuthModalComponent, {
+      centered: true,
+      size: 'md',
+      windowClass: 'auth-modal-window'
+    });
   }
 
   updateCartCount(): void {
@@ -146,5 +155,5 @@ export class HeaderComponent extends BaseComponent implements OnInit {
     })
   }
 
-  
+
 }

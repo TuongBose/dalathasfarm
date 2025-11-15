@@ -42,6 +42,7 @@ public class ProductService implements IProductService{
                 .category(existingCategory)
                 .occasion(existingOccasion)
                 .description(productDto.getDescription())
+                .components(productDto.getComponents())
                 .stockQuantity(productDto.getStockQuantity())
                 .thumbnail(productDto.getThumbnail())
                 .build();
@@ -90,6 +91,10 @@ public class ProductService implements IProductService{
 
         if (productDto.getDescription() != null && !productDto.getDescription().isEmpty()) {
             existingProduct.setDescription(productDto.getDescription());
+        }
+
+        if (productDto.getComponents() != null && !productDto.getComponents().isEmpty()) {
+            existingProduct.setComponents(productDto.getComponents());
         }
 
         if (productDto.getThumbnail() != null && !productDto.getThumbnail().isEmpty()) {

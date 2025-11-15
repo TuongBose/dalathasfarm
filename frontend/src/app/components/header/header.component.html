@@ -6,7 +6,7 @@
                 <a routerLink="/introduce"><i class="fas fa-info-circle"></i>Giới thiệu</a>
                 <a routerLink="/contact"><i class="fas fa-envelope"></i>Liên hệ</a>
                 @if(!user){
-                <a routerLink="/login"><i class="fas fa-sign-in-alt"></i>Đăng nhập / Đăng ký</a>
+                <a class="pointer" (click)="openAuthModal()"><i class="fas fa-sign-in-alt"></i>Đăng nhập / Đăng ký</a>
                 }@else{
                 <div class="user-menu" ngbDropdown>
                     <a ngbDropdownToggle class="nav-link dropdown-toggle" id="userDropdown" role="button">
@@ -59,14 +59,16 @@
         </div>
     </nav>
     <div class="category-bar">
-    <div class="container">
-      <ul class="category-list">
-        <li class="category-item" *ngFor="let category of categories">
-          <a routerLink="/category/{{ category.id }}" class="category-link">
-            {{ category.name }}
-          </a>
-        </li>
-      </ul>
+        <div class="container">
+            <ul class="category-list">
+                @for(category of categories;track category.id){
+                <li class="category-item">
+                    <a routerLink="/category/{{ category.id }}" class="category-link">
+                        {{ category.name }}
+                    </a>
+                </li>
+                }
+            </ul>
+        </div>
     </div>
-  </div>
 </header>

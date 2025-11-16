@@ -90,7 +90,7 @@
             <div class="mb-3">
                 <label class="form-label small fw-medium">Mật khẩu*</label>
                 <input type="password" class="form-control" [(ngModel)]="passwordRegister"
-                    (input)="validatePasswordMatch()" placeholder="Nhập mật khẩu" name="passwordRegister"
+                    (input)="validatePassword()" placeholder="Nhập mật khẩu" name="passwordRegister"
                     [class.is-invalid]="passwordError">
                 @if(passwordError){
                 <div class="invalid-feedback">{{ passwordError }}</div>

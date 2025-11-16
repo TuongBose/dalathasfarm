@@ -31,7 +31,7 @@ services:
   backend-container:
     container_name: backend-container
     build:
-      context: /backend/dalathasfarm
+      context: ./backend/dalathasfarm
       dockerfile: Dockerfile
     ports:
       - "8099:8080"
@@ -53,7 +53,7 @@ services:
   dalathasfarm-angular-container:
     container_name: dalathasfarm-angular-container
     build:
-      context: /frontend
+      context: ./frontend
       dockerfile: Dockerfile
     ports:
      - "4200:80"

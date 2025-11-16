@@ -14,9 +14,11 @@ import java.util.Date;
 @Setter
 public class UserDto {
     @NotBlank(message = "Password không được bỏ trống")
+    @Size(min = 6, max = 50, message = "Password phải từ 6 đến 50 ký tự")
     private String password;
 
     @NotBlank(message = "Nhập lại mật khẩu không được bỏ trống")
+    @Size(min = 6, max = 50, message = "Retype Password phải từ 6 đến 50 ký tự")
     private String retypePassword;
 
     @NotBlank(message = "Họ tên không được bỏ trống")

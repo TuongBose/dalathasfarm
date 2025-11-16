@@ -32,6 +32,12 @@
       text-decoration: none;
       margin-left: 20px;
       font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      line-height: 1.5;
+      padding: 0;
+      border: none;
 
       i {
         margin-right: 5px;
@@ -42,8 +48,66 @@
       }
     }
 
-    .user-menu .dropdown-toggle::after {
-      display: none;
+    .user-menu {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+
+      .dropdown-menu {
+        height: 90px;
+
+        a.dropdown-item {
+          display: block !important;
+          white-space: nowrap;
+        }
+
+        .dropdown-item {
+          width: auto !important;
+
+          &:hover {
+            background-color: #f2f2f2 !important;
+          }
+        }
+      }
+
+      .dropdown-toggle {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        margin-left: 20px !important;
+        font-size: 13px !important;
+        color: #666 !important;
+        line-height: 1.5 !important;
+        height: auto !important;
+        display: inline-flex;
+        align-items: center;
+
+        &::after {
+          display: none; // Ẩn mũi tên mặc định
+        }
+
+        &:hover {
+          color: #000 !important;
+        }
+      }
+
+      // Thêm mũi tên nhỏ gọn
+      .dropdown-toggle::after {
+        content: '';
+        display: inline-block;
+        width: 0;
+        height: 0;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 4px solid #666;
+        margin-left: 6px;
+        transition: transform 0.2s ease;
+      }
+
+      .dropdown-toggle[aria-expanded="true"]::after {
+        transform: rotate(180deg);
+      }
     }
   }
 }
@@ -136,7 +200,7 @@
   font-family: 'Sainte Colombe';
 
   .container {
-    padding-left: 0; 
+    padding-left: 0;
   }
 
   .category-list {

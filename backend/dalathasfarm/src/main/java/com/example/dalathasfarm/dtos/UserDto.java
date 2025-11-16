@@ -19,7 +19,9 @@ public class UserDto {
     @NotBlank(message = "Nhập lại mật khẩu không được bỏ trống")
     private String retypePassword;
 
+    @NotBlank(message = "Họ tên không được bỏ trống")
     private String fullName;
+
     private String address;
 
     @NotBlank(message = "Số điện thoại không được bỏ trống")

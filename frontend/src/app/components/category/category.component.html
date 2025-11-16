@@ -1,0 +1,105 @@
+<app-header></app-header>
+<!-- CATEGORIES WITH PRODUCTS SECTION -->
+<div id="product-section">
+  @if(category){
+  <div class="greeting-card-section-forone py-5">
+    <div class="container">
+      <div class="row align-items-center g-5">
+
+        <!-- CỘT TRÁI -->
+        <div class="col-lg-6">
+          <h2 class="display-4 fw-bold mb-4 lh-sm" style="font-family: 'Playfair Display', serif;">
+            {{ category.name }}
+          </h2>
+          <p class="lead mb-4 text-dark opacity-90">
+            {{ category.description }}
+          </p>
+          <a routerLink="/cards" class="btn-cta-link fw-medium fs-5">
+            Các sản phẩm liên quan
+            <i class="fas fa-arrow-right ms-2"></i>
+          </a>
+        </div>
+
+        <!-- CỘT PHẢI: ẢNH THIỆP -->
+        <div class="col-lg-6 position-relative">
+          <div class="card-image-wrapper">
+            <img [src]="getOccasionThumbnailUrl(category.thumbnail)" alt="Small Card {{ category.id }}"
+              class="card-main shadow">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="featured-products-section py-5 bg-white">
+    <div class="container">
+      <div class="occasion-block mb-5">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 g-lg-5">
+          @for (product of products; track product.id) {
+          <div class="col">
+            <div class="product-minimal" (click)="onProductClick(product.id)">
+
+              <img [src]="product.thumbnailUrl" [alt]="product.name" class="product-img img-fluid rounded-2 mb-2">
+
+              <h3 class="product-name fs-6 fw-medium text-dark mb-1" style="font-family: 'Playfair Display', serif;">{{
+                product.name }}</h3>
+              <p class="product-subtitle text-muted small mb-2" style="font-size: 12px;font-style: italic;">
+                {{ product.description || 'The design darling' }}
+              </p>
+              <p class="product-price mb-1">${{ product.price }}</p>
+              <div class="product-actions d-flex gap-1 mt-2">
+                <button class=" btn-sm btn-outline-light-product flex-fill"
+                  (click)="$event.stopPropagation(); addToCart($event, product.id)">
+                  Thêm vào giỏ
+                </button>
+              </div>
+            </div>
+          </div>
+          } @empty {
+          <div class="col-12 text-center py-4 text-muted">
+            <p>Chưa có sản phẩm cho danh mục này</p>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+  } @else {
+  <div class="text-center py-5">
+    <p class="text-muted">Không có danh mục sản phẩm nào</p>
+  </div>
+  }
+</div>
+
+<!-- Pagination -->
+<div class="d-flex justify-content-center mt-5">
+  <nav aria-label="Page navigation">
+    <ul class="pagination">
+      @if (currentPage > 0) {
+      <li class="page-item">
+        <button class="page-link" href="#" (click)="onPageChange(0)">First</button>
+      </li>
+      <li class="page-item">
+        <button class="page-link" href="#" (click)="onPageChange(currentPage - 1)">
+          <i class="fa fa-chevron-left"></i>
+        </button>
+      </li>
+      }
+      @for (page of visiblePages; track page) {
+      <li class="page-item" [ngClass]="{'active': page === currentPage}">
+        <button class="page-link" href="#" (click)="onPageChange(page)">{{ page + 1 }}</button>
+      </li>
+      }
+      @if (currentPage < totalPages - 1) { <li class="page-item">
+        <button class="page-link" href="#" (click)="onPageChange(currentPage + 1)">
+          <i class="fa fa-chevron-right"></i>
+        </button>
+        </li>
+        <li class="page-item">
+          <button class="page-link" href="#" (click)="onPageChange(totalPages)">Last</button>
+        </li>
+        }
+    </ul>
+  </nav>
+</div>
+<app-footer></app-footer>

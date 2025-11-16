@@ -40,12 +40,12 @@ export class CartService {
 
         try {
             const userResponse = JSON.parse(userResponseJSON);
-            if (!userResponse || typeof userResponse.userid !== 'number') {
+            if (!userResponse || typeof userResponse.id !== 'number') {
                 console.warn('Dữ liệu tài khoản không hợp lệ.');
                 return 'cart:anonymous'; // hoặc throw new Error(...)
             }
 
-            return `cart:${userResponse.userid}`;
+            return `cart:${userResponse.id}`;
         } catch (err) {
             console.error('Lỗi khi parse user từ localStorage:', err);
             return 'cart:anonymous';

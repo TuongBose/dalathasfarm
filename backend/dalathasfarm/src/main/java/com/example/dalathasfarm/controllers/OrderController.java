@@ -35,7 +35,7 @@ public class OrderController {
     private final SecurityUtils securityUtils;
 
     @PostMapping("")
-//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_EMPLOYEE')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER') or hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity<ResponseObject> createOrder(
             @RequestBody @Valid OrderDto orderDto,
             BindingResult result
@@ -60,7 +60,7 @@ public class OrderController {
     }
 
     @GetMapping("/user/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_EMPLOYEE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER') or hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity<ResponseObject> getOrderByUserId(@Valid @PathVariable Integer id) throws Exception {
         User loginUser = securityUtils.getLoggedInUser();
         boolean isUserIdBlank = id <= 0;
@@ -73,7 +73,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_EMPLOYEE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER') or hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity<ResponseObject> getOrderById(@Valid @PathVariable Integer id) throws Exception {
         OrderResponse orderResponse = orderService.getOrderById(id);
         return ResponseEntity.ok(ResponseObject.builder()
@@ -84,7 +84,7 @@ public class OrderController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_EMPLOYEE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER') or hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity<ResponseObject> updateOrder(
             @Valid @PathVariable Integer id,
             @Valid @RequestBody OrderDto orderDto
@@ -116,7 +116,7 @@ public class OrderController {
     }
 
     @PutMapping("/status")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_EMPLOYEE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER') or hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity<ResponseObject> updateStatusOrder(
             @RequestParam(name = "status") String status,
             @RequestParam(name = "vnpTxnRef") String vnpTxnRef
@@ -158,7 +158,7 @@ public class OrderController {
     }
 
     @PutMapping("/cancel/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_EMPLOYEE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER') or hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity<ResponseObject> cancelOrder(@Valid @PathVariable Integer id) throws Exception {
         OrderResponse orderResponse = orderService.getOrderById(id);
 

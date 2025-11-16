@@ -121,9 +121,161 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_PREFIX}}categories?page=1&limit=100",
+							"raw": "{{API_PREFIX}}categories?page=1&limit=6",
 							"host": [
 								"{{API_PREFIX}}categories"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getCategoryById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}categories/3",
+							"host": [
+								"{{API_PREFIX}}categories"
+							],
+							"path": [
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "occasions",
+			"item": [
+				{
+					"name": "deleteOccasion",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/loaisanphams/10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"loaisanphams",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateOccasion",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tenloaisanpham\":\"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/loaisanphams/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"loaisanphams",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createOccasion",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tenloaisanpham\": \"Phu kien d\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}categories",
+							"host": [
+								"{{API_PREFIX}}categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllOccasion",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}occasions?page=1&limit=100",
+							"host": [
+								"{{API_PREFIX}}occasions"
 							],
 							"query": [
 								{
@@ -140,7 +292,7 @@
 					"response": []
 				},
 				{
-					"name": "getLoaiSanPhamById",
+					"name": "getOccasionById",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -151,6 +303,24 @@
 							],
 							"path": [
 								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllOccasionToday",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}occasions/active/today",
+							"host": [
+								"{{API_PREFIX}}occasions"
+							],
+							"path": [
+								"active",
+								"today"
 							]
 						}
 					},
@@ -320,10 +490,10 @@
 			]
 		},
 		{
-			"name": "SanPhams",
+			"name": "products",
 			"item": [
 				{
-					"name": "getAllSanPham",
+					"name": "getAllProduct",
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -331,9 +501,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_PREFIX}}sanphams?page=0&limit=10&keyword=&MALOAISANPHAM=",
+							"raw": "{{API_PREFIX}}products?page=0&limit=10&keyword=&categoryId=3&occasionId=",
 							"host": [
-								"{{API_PREFIX}}sanphams"
+								"{{API_PREFIX}}products"
 							],
 							"query": [
 								{
@@ -349,7 +519,11 @@
 									"value": ""
 								},
 								{
-									"key": "MALOAISANPHAM",
+									"key": "categoryId",
+									"value": "3"
+								},
+								{
+									"key": "occasionId",
 									"value": ""
 								}
 							]
@@ -537,17 +711,17 @@
 									"key": "files",
 									"type": "file",
 									"src": [
-										"/D:/HocTap/LTW_MVC/ShopBanDienThoai_Web/DoAn_LTW/Images/HinhAnhSP/AcerAspire3.jpg",
-										"/D:/HocTap/LTW_MVC/ShopBanDienThoai_Web/DoAn_LTW/Images/HinhAnhSP/airpods_pro.jpg",
-										"/D:/HocTap/LTW_MVC/ShopBanDienThoai_Web/DoAn_LTW/Images/HinhAnhSP/Asus_Vivobook.jpg",
-										"/D:/HocTap/LTW_MVC/ShopBanDienThoai_Web/DoAn_LTW/Images/HinhAnhSP/cu_sac_nhanh_20w.jpg",
-										"/D:/HocTap/LTW_MVC/ShopBanDienThoai_Web/DoAn_LTW/Images/HinhAnhSP/Dell_Inspiron.jpg"
+										"/D:/product/product/pd1/2.jpg",
+										"/D:/product/product/pd1/3.jpg",
+										"/D:/product/product/pd1/4.jpg",
+										"/D:/product/product/pd1/5.jpg",
+										"/D:/product/product/pd1/6.jpg"
 									]
 								}
 							]
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/v1/sanphams/uploads/3",
+							"raw": "http://localhost:8080/api/v1/products/uploads/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -556,9 +730,9 @@
 							"path": [
 								"api",
 								"v1",
-								"sanphams",
+								"products",
 								"uploads",
-								"3"
+								"1"
 							]
 						}
 					},
@@ -640,7 +814,7 @@
 			]
 		},
 		{
-			"name": "Accounts",
+			"name": "users",
 			"item": [
 				{
 					"name": "register",
@@ -649,7 +823,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"password\": \"123\",\r\n    \"retypepassword\": \"123\",\r\n    \"email\": \"tuong@124gmail.com\",\r\n    \"fullname\": \"LE MANH TUONG\",\r\n    \"diachi\": \"123 LE TRONG TAN\",\r\n    \"sodienthoai\": \"090909\",\r\n    \"ngaysinh\": \"2004-09-21\",\r\n    \"FACEBOOK_ACCOUNT_ID\": \"\",\r\n    \"GOOGLE_ACCOUNT_ID\": \"\"\r\n}",
+							"raw": "{\r\n    \"password\": \"123\",\r\n    \"retypePassword\": \"123\",\r\n    \"phoneNumber\": \"0708692867\",\r\n    \"fullName\": \"LE MANH TUONG\"\r\n    // \"email\": \"tuong@124gmail.com\",\r\n    // \"diachi\": \"123 LE TRONG TAN\",\r\n    // \"ngaysinh\": \"2004-09-21\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -657,7 +831,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/v1/accounts/register",
+							"raw": "http://localhost:8080/api/v1/users/register",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -666,7 +840,7 @@
 							"path": [
 								"api",
 								"v1",
-								"accounts",
+								"users",
 								"register"
 							]
 						}
@@ -757,7 +931,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"password\": \"123\",\r\n    \"sodienthoai\": \"111111\"\r\n}",
+							"raw": "{\r\n    \"password\": \"123\",\r\n    \"phoneNumber\": \"0708692867\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -765,7 +939,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/v1/accounts/login",
+							"raw": "http://localhost:8080/api/v1/users/login",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -774,7 +948,7 @@
 							"path": [
 								"api",
 								"v1",
-								"accounts",
+								"users",
 								"login"
 							]
 						}
@@ -895,7 +1069,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/accounts/details",
+							"raw": "http://localhost:8080/api/v1/users/details",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -904,7 +1078,7 @@
 							"path": [
 								"api",
 								"v1",
-								"accounts",
+								"users",
 								"details"
 							]
 						}
@@ -1901,6 +2075,16 @@
 				{
 					"name": "getNotificationByUserId",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN_USER}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -1913,28 +2097,6 @@
 					"response": []
 				}
 			]
-		},
-		{
-			"name": "New Request",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8099/api/v1/actuator/health",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8099",
-					"path": [
-						"api",
-						"v1",
-						"actuator",
-						"health"
-					]
-				}
-			},
-			"response": []
 		}
 	]
 }

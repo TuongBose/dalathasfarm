@@ -27,7 +27,7 @@ public class OrderDetailController {
     private final LocalizationUtils localizationUtils;
 
     @PostMapping("")
-//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_EMPLOYEE')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER') or hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity<ResponseObject> createOrderDetail(
             @Valid @RequestBody OrderDetailDto orderDetailDto,
             BindingResult result
@@ -49,7 +49,7 @@ public class OrderDetailController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_EMPLOYEE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER') or hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity<ResponseObject> getOrderDetailById(@Valid @PathVariable Integer id) throws Exception{
         OrderDetail newOrderDetail = orderDetailService.getOrderDetailById(id);
         OrderDetailResponse newOrderDetailResponse = OrderDetailResponse.fromOrderDetail(newOrderDetail);
@@ -61,7 +61,7 @@ public class OrderDetailController {
     }
 
     @GetMapping("/order/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_EMPLOYEE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER') or hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity<ResponseObject> getOrderDetailByOrderId(@Valid @PathVariable Integer id) throws Exception {
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(id);
         List<OrderDetailResponse> orderDetailResponses = orderDetails.stream().map(OrderDetailResponse::fromOrderDetail).toList();
@@ -73,7 +73,7 @@ public class OrderDetailController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_EMPLOYEE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER') or hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity<ResponseObject> updateOrderDetail(
             @Valid @PathVariable Integer id,
             @RequestBody OrderDetailDto orderDetailDto

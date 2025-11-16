@@ -42,7 +42,7 @@ public class FeedbackController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<ResponseObject> updateFeedback(
             @PathVariable Integer id,
             @RequestBody FeedbackDto feedbackDto
@@ -66,7 +66,7 @@ public class FeedbackController {
     }
 
     @PostMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<ResponseObject> insertFeedback(
             @Valid @RequestBody FeedbackDto feedbackDto
     ) throws Exception {

@@ -6,13 +6,14 @@
                 <a routerLink="/introduce"><i class="fas fa-info-circle"></i>Giới thiệu</a>
                 <a routerLink="/contact"><i class="fas fa-envelope"></i>Liên hệ</a>
                 @if(!user){
-                <a class="pointer" (click)="openAuthModal()"><i class="fas fa-sign-in-alt"></i>Đăng nhập / Đăng ký</a>
+                <a class="pointer" style="cursor: pointer;" (click)="openAuthModal()"><i
+                        class="fas fa-sign-in-alt"></i>Đăng nhập / Đăng ký</a>
                 }@else{
                 <div class="user-menu" ngbDropdown>
                     <a ngbDropdownToggle class="nav-link dropdown-toggle" id="userDropdown" role="button">
-                        {{ user.fullName }}
+                        <i class="fas fa-user"></i>{{ user.fullName }}
                     </a>
-                    <div ngbDropdownMenu aria-labelledby="userDr    opdown">
+                    <div ngbDropdownMenu aria-labelledby="userDropdown">
                         <a ngbDropdownItem routerLink="/user-profile">Tài khoản của tôi</a>
                         <a ngbDropdownItem routerLink="/orders"><i class="fas fa-history"></i>Đơn mua</a>
                         <a ngbDropdownItem (click)="logout()">Đăng xuất</a>

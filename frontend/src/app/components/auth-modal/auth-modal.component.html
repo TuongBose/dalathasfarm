@@ -42,7 +42,7 @@
                 </label>
             </div>
 
-            <button type="button" class="btn btn-next w-100 mb-3"
+            <button type="button" class="btn btn-next w-100 mb-3" (click)="login()"
                 [disabled]="phoneError || passwordError || !phoneNumber || !password">NEXT</button>
 
             <div class="divider my-3 py-2"></div>
@@ -113,7 +113,7 @@
                 </label>
             </div> -->
 
-            <button type="button" class="btn btn-next w-100 mb-3" [disabled]="fullNameError || phoneError || passwordError || retypePasswordError ||
+            <button type="button" class="btn btn-next w-100 mb-3" (click)="register()" [disabled]="fullNameError || phoneError || passwordError || retypePasswordError ||
                        !fullName || !phoneNumberRegister || !passwordRegister || !retypePassword">NEXT</button>
 
             <p class="text-muted small mb-2">

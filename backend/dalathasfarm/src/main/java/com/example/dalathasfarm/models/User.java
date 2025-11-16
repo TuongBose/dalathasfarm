@@ -46,7 +46,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "profile_image", unique = true)
     private String profileImage;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 

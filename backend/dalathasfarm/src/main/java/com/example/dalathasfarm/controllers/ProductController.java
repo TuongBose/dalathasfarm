@@ -335,7 +335,7 @@ public class ProductController {
     }
 
 //    @PostMapping("/like/{productId}")
-//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
 //    public ResponseEntity<ResponseObject> likeProduct(@PathVariable int productId) throws Exception {
 //        Account loginUser = securityUtils.getLoggedInUser();
 //        SanPham likedProduct = sanPhamService.likeProduct(loginUser.getUSERID(), productId);
@@ -347,7 +347,7 @@ public class ProductController {
 //    }
 //
 //    @PostMapping("/unlike/{productId}")
-//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
 //    public ResponseEntity<ResponseObject> unlikeProduct(@PathVariable int productId) throws Exception {
 //        Account loginUser = securityUtils.getLoggedInUser();
 //        SanPham unlikedProduct = sanPhamService.unlikeProduct(loginUser.getUSERID(), productId);
@@ -359,7 +359,7 @@ public class ProductController {
 //    }
 //
 //    @PostMapping("/favorite-products")
-//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
 //    public ResponseEntity<ResponseObject> findFavoriteProductsByUserId() throws Exception {
 //        Account loginUser = securityUtils.getLoggedInUser();
 //        List<SanPhamResponse> favoriteProducts = sanPhamService.findFavoriteProductsByUserId(loginUser.getUSERID());

@@ -6,7 +6,7 @@ import { BaseComponent } from '../base/base.component';
 import { LoginDto } from '../../dtos/user/login.dto';
 import { ApiResponse } from '../../responses/api.response';
 import { HttpErrorResponse } from '@angular/common/http';
-import { catchError, finalize, of, switchMap, tap } from 'rxjs';
+import { catchError, delay, finalize, of, switchMap, tap } from 'rxjs';
 import { RegisterDto } from '../../dtos/user/register.dto';
 import { FormsModule } from '@angular/forms';
 
@@ -159,9 +159,9 @@ export class AuthModalComponent extends BaseComponent {
         const { token } = apiResponse.data;
         return this.userService.getUserDetails(token).pipe(
           tap((apiResponse2: ApiResponse) => {
-            this.userService = {
+            this.userResponse = {
               ...apiResponse2.data,
-              ngaysinh: new Date(apiResponse2.data.ngaysinh),
+              dateOfBirth: new Date(apiResponse2.data.dateOfBirth),
             };
             this.userService.saveUserToLocalStorage(this.userResponse, this.rememberMe);
           }),
@@ -182,7 +182,10 @@ export class AuthModalComponent extends BaseComponent {
           delay: 3000,
           type: 'success'
         });
-        this.router.navigate(['/']);
+        this.activeModal.dismiss();
+        setTimeout(() => {
+  window.location.reload();
+}, 2000);
       },
       error: (error: HttpErrorResponse) => {
         this.toastService.showToast({

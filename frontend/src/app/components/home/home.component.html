@@ -1,6 +1,5 @@
-<!-- Hero Section -->
 <app-header></app-header>
-<!-- HERO SECTION - GIỐNG H.BLOOM -->
+<!-- HERO SECTION -->
 <div class="hero-hbloom position-relative overflow-hidden">
   <!-- Background Image -->
   <div class="hero-bg">
@@ -152,7 +151,7 @@
           từ niềm vui, nỗi buồn đến những điều dịu dàng ở giữa.
           Tất cả được hiện thị ngay bên đây và rất vui khi nó có thể giúp ích được cho bạn.
         </p>
-        <a routerLink="/cards" class="btn-cta-link fw-medium fs-5">
+        <a routerLink="/categories" class="btn-cta-link fw-medium fs-5">
           Xem thêm danh mục
           <i class="fas fa-arrow-right ms-2"></i>
         </a>
@@ -189,7 +188,7 @@
         <p class="lead mb-4 text-dark opacity-90">
           {{ category.description }}
         </p>
-        <a routerLink="/cards" class="btn-cta-link fw-medium fs-5">
+        <a routerLink="/category/{{ category.id }}" class="btn-cta-link fw-medium fs-5">
           Các sản phẩm liên quan
           <i class="fas fa-arrow-right ms-2"></i>
         </a>
@@ -216,7 +215,7 @@
       </div> -->
       <!-- Danh sách sản phẩm theo occasion -->
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 g-lg-5">
-        @for (product of getProductsByOccasion(category.id); track product.id) {
+        @for (product of getProductsByCategory(category.id); track product.id) {
         <div class="col">
           <div class="product-minimal" (click)="onProductClick(product.id)">
 

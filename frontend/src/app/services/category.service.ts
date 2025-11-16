@@ -19,4 +19,9 @@ export class CategoryService {
 
         return this.http.get<ApiResponse>(this.apiGetAllCategory, { params });
     }
+
+    getCategoryById(categoryId:number):Observable<ApiResponse>{
+        debugger;
+        return this.http.get<ApiResponse>(`${this.apiGetAllCategory}/${categoryId}`)
+    }
 }

@@ -23,7 +23,7 @@ public class NotificationController {
     private final INotificationService notificationService;
 
     @GetMapping("")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<ResponseObject> getNotificationByUserId() throws Exception {
         User loginUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         int userId = loginUser.getId();
@@ -37,7 +37,7 @@ public class NotificationController {
     }
 
     @PatchMapping("mark-as-read/{notificationId}")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<ResponseObject> markAsReadNotification(@PathVariable int notificationId) throws Exception {
         User loginUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         int userId = loginUser.getId();
@@ -51,7 +51,7 @@ public class NotificationController {
     }
 
     @GetMapping("/unread")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<ResponseObject> getUnreadNotifications() throws Exception{
         User loginUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         int userId = loginUser.getId();
@@ -65,7 +65,7 @@ public class NotificationController {
     }
 
     @DeleteMapping("/delete/{notificationId}")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<ResponseObject> deleteNotificationById(@PathVariable int notificationId) throws Exception{
         User loginUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         int userId = loginUser.getId();
@@ -79,7 +79,7 @@ public class NotificationController {
     }
 
     @PostMapping("/mark-all-as-read")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<ResponseObject> markAllAsRead() throws Exception {
         User loginUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         int userId = loginUser.getId();

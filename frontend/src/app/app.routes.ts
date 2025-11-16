@@ -13,6 +13,8 @@ import { NotificationComponent } from './components/notification/notification.co
 import { OrderConfirmComponent } from './components/order-confirm/order-confirm.component';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './components/terms-of-service/terms-of-service.component';
+import { CategoriesComponent } from './components/categories/categories.component';
+import { CategoryComponent } from './components/category/category.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -28,4 +30,6 @@ export const routes: Routes = [
     { path: 'orders/:id', component: OrderConfirmComponent },
     { path: 'privacy-policy', component: PrivacyPolicyComponent },
     { path: 'terms-of-service', component: TermsOfServiceComponent },
+    { path: 'categories', component: CategoriesComponent },
+    { path: 'category/:id', component: CategoryComponent },
 ];

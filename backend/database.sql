@@ -375,41 +375,18 @@ INSERT INTO coupon_conditions (coupon_id, attribute, operator, value, discount_a
 -- BẢNG DỮ LIỆU PRODUCT_DISCOUNTS
 INSERT INTO product_discounts 
 (name, description, discount_type, discount_value, start_date, end_date, is_active) VALUES
-('Valentine Flowers', 'Giảm 15% cho tất cả các loại hoa bó và hoa hồng nhân dịp Valentine', 
- 'Percentage', 15.00, '2025-02-01', '2025-02-15', 1),
-
-('International Womens Day', 'Giảm 10% cho tất cả sản phẩm hoa tươi nhân ngày 8/3', 
- 'Percentage', 10.00, '2025-03-01', '2025-03-10', 1),
-
-('Hasfarm Anniversary', 'Giảm 20% toàn bộ sản phẩm nhân dịp kỷ niệm thành lập công ty Hasfarm', 
- 'Percentage', 20.00, '2025-10-01', '2025-10-07', 1),
-
-('Tet Holiday Discount', 'Giảm 30.000đ cho đơn hàng hoa chậu và cây cảnh trang trí Tết', 
- 'Fixed_amount', 30000.00, '2025-01-20', '2025-02-05', 1),
-
-('Mothers Day Special', 'Giảm 15% cho các bó hoa tặng mẹ', 
- 'Percentage', 15.00, '2025-05-05', '2025-05-15', 1),
-
-('Teachers Day Promotion', 'Giảm 10% cho hoa bó tặng thầy cô ngày 20/11', 
- 'Percentage', 10.00, '2025-11-10', '2025-11-20', 1),
-
-('Christmas Sale', 'Giảm 20.000đ cho sản phẩm cây thông mini và hoa trang trí Noel', 
- 'Fixed_amount', 20000.00, '2025-12-10', '2025-12-26', 1),
-
-('Summer Bloom', 'Giảm 20% cho hoa hướng dương và hoa cúc mùa hè', 
- 'Percentage', 20.00, '2025-06-01', '2025-08-15', 1),
-
-('MidYear Clearance', 'Giảm 25% cho các sản phẩm hoa tồn kho giữa năm', 
- 'Percentage', 25.00, '2025-07-01', '2025-07-10', 1),
-
-('Customer Appreciation', 'Giảm 10% cho tất cả đơn hàng trên 1 triệu đồng', 
- 'Percentage', 10.00, '2025-09-01', '2025-09-30', 1),
-
-('Black Friday', 'Giảm 35% cho tất cả sản phẩm hoa tươi trong tuần lễ Black Friday', 
- 'Percentage', 35.00, '2025-11-25', '2025-11-30', 1),
-
-('Cyber Monday', 'Giảm 30% cho đơn hàng online qua website Hasfarm', 
- 'Percentage', 30.00, '2025-12-01', '2025-12-03', 1);
+('Valentine Flowers', 'Giảm 15% cho tất cả các loại hoa bó và hoa hồng nhân dịp Valentine', 'Percentage', 15.00, '2025-02-01', '2025-02-15', 1),
+('International Womens Day', 'Giảm 10% cho tất cả sản phẩm hoa tươi nhân ngày 8/3', 'Percentage', 10.00, '2025-03-01', '2025-03-10', 1),
+('Hasfarm Anniversary', 'Giảm 20% toàn bộ sản phẩm nhân dịp kỷ niệm thành lập công ty Hasfarm', 'Percentage', 20.00, '2025-10-01', '2025-10-07', 1),
+('Tet Holiday Discount', 'Giảm 30.000đ cho đơn hàng hoa chậu và cây cảnh trang trí Tết', 'Fixed_amount', 30000.00, '2025-01-20', '2025-02-05', 1),
+('Mothers Day Special', 'Giảm 15% cho các bó hoa tặng mẹ', 'Percentage', 15.00, '2025-05-05', '2025-05-15', 1),
+('Teachers Day Promotion', 'Giảm 10% cho hoa bó tặng thầy cô ngày 20/11', 'Percentage', 10.00, '2025-11-10', '2025-11-20', 1),
+('Christmas Sale', 'Giảm 20.000đ cho sản phẩm cây thông mini và hoa trang trí Noel', 'Fixed_amount', 20000.00, '2025-12-10', '2025-12-26', 1),
+('Summer Bloom', 'Giảm 20% cho hoa hướng dương và hoa cúc mùa hè', 'Percentage', 20.00, '2025-06-01', '2025-08-15', 1),
+('MidYear Clearance', 'Giảm 25% cho các sản phẩm hoa tồn kho giữa năm', 'Percentage', 25.00, '2025-07-01', '2025-07-10', 1),
+('Customer Appreciation', 'Giảm 10% cho tất cả đơn hàng trên 1 triệu đồng', 'Percentage', 10.00, '2025-09-01', '2025-09-30', 1),
+('Black Friday', 'Giảm 35% cho tất cả sản phẩm hoa tươi trong tuần lễ Black Friday', 'Percentage', 35.00, '2025-11-25', '2025-11-30', 1),
+('Cyber Monday', 'Giảm 30% cho đơn hàng online qua website Hasfarm', 'Percentage', 30.00, '2025-12-01', '2025-12-03', 1);
 
 -- BẢNG DỮ LIỆU PRODUCT_DISCOUNT_ITEMS
 -- GIẢ ĐỊNH 10 SẢN PHẨM TRONG BẢNG PRODUCTS

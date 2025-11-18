@@ -107,7 +107,7 @@
             <p class="product-subtitle text-muted small mb-2 line-clamp-3" style="font-size: 12px;font-style: italic;">
               {{ product.description || 'The design darling' }}
             </p>
-            <p class="product-price mb-1">${{ product.price }}</p>
+            <p class="product-price mb-1">{{ product.price | currency: 'VND':'symbol':'1.0-0'}}</p>
             <div class="product-actions mt-auto">
               <button class=" btn-sm btn-outline-light-product w-100"
                 (click)="$event.stopPropagation(); addToCart($event, product.id)">
@@ -226,7 +226,7 @@
             <p class="product-subtitle text-muted small mb-2" style="font-size: 12px;font-style: italic;">
               {{ product.description || 'The design darling' }}
             </p>
-            <p class="product-price mb-1">${{ product.price }}</p>
+            <p class="product-price mb-1">{{ product.price | currency: 'VND':'symbol':'1.0-0'}}</p>
             <div class="product-actions d-flex gap-1 mt-2">
               <button class=" btn-sm btn-outline-light-product flex-fill"
                 (click)="$event.stopPropagation(); addToCart($event, product.id)">
@@ -352,7 +352,7 @@
           <div class="col">
             <ul class="list-unstyled text-small">
               <li class="mb-2"><a routerLink="/london" class="text-dark text-decoration-none hover-underline">Giao hoa
-                  Hà Nội</a></li>
+                  TP.HCM</a></li>
               <li class="mb-2"><a routerLink="/by-post" class="text-dark text-decoration-none hover-underline">Giao hoa
                   qua bưu điện</a></li>
               <li class="mb-2"><a routerLink="/birthday-gifts"
@@ -371,10 +371,10 @@
           <!-- CỘT 2 -->
           <div class="col">
             <ul class="list-unstyled text-small">
-              <li class="mb-2"><a routerLink="/competitions" class="text-dark text-decoration-none hover-underline">Hoa
+              <li class="mb-2"><a routerLink="/categories" class="text-dark text-decoration-none hover-underline">Hoa
                   theo danh mục</a></li>
               @for(category of categories; track category.id){
-              <li class="mb-2"><a routerLink="/ireland" class="text-dark text-decoration-none hover-underline">{{
+              <li class="mb-2"><a routerLink="/category/{{ category.id }}" class="text-dark text-decoration-none hover-underline">{{
                   category.name }}</a></li>
               }
             </ul>
@@ -386,7 +386,7 @@
               <li class="mb-2"><a routerLink="/occasions" class="text-dark text-decoration-none hover-underline">Hoa
                   theo dịp</a></li>
               @for(occasion of occasions; track occasion.id){
-              <li class="mb-2"><a routerLink="/birthday" class="text-dark text-decoration-none hover-underline">{{
+              <li class="mb-2"><a routerLink="/occasion/{{ occasion.id }}" class="text-dark text-decoration-none hover-underline">{{
                   occasion.name }}</a></li>
               }
             </ul>

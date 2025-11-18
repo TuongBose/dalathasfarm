@@ -87,7 +87,7 @@ export class CategoriesComponent extends BaseComponent implements OnInit {
         this.categoryProductsMap[categoryId] = products;
       },
       error: (err) => {
-        console.error(`Lỗi tải sản phẩm cho occasion ${categoryId}:`, err);
+        console.error(`Lỗi tải sản phẩm cho category ${categoryId}:`, err);
         this.categoryProductsMap[categoryId] = [];
       }
     });

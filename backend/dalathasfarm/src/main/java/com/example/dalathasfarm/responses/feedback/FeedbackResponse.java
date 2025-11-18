@@ -16,8 +16,9 @@ public class FeedbackResponse extends BaseResponse {
     private String content;
     private Integer star;
     private Integer productId;
+    private Double average;
 
-    public static FeedbackResponse fromFeedback(Feedback feedback)
+    public static FeedbackResponse fromFeedback(Feedback feedback, Double average)
     {
         FeedbackResponse newFeedbackResponse = FeedbackResponse.builder()
                 .id(feedback.getId())
@@ -25,6 +26,7 @@ public class FeedbackResponse extends BaseResponse {
                 .content(feedback.getContent())
                 .star(feedback.getStar())
                 .productId(feedback.getProduct().getId())
+                .average(average)
                 .build();
         newFeedbackResponse.setCreatedAt(feedback.getCreatedAt());
         newFeedbackResponse.setUpdatedAt(feedback.getUpdatedAt());

@@ -51,7 +51,7 @@ public class UserService implements IUserService {
             throw new DataIntegrityViolationException("Email already exists");
 
         Role roleCustomer = roleRepository.findById(Role.CUSTOMER)
-                .orElseThrow(()-> new DataNotFoundException("Role Customer does not exists"));
+                .orElseThrow(() -> new DataNotFoundException("Role Customer does not exists"));
 
         User newUser = User.builder()
                 .fullName(userDto.getFullName())
@@ -142,6 +142,15 @@ public class UserService implements IUserService {
     public String login(UserLoginDto userLoginDto) throws Exception {
         Optional<User> userOptional = Optional.empty();
         String subject = null;
+        Role roleUser;
+
+        if (userLoginDto.getRoleId() == null) {
+            roleUser = roleRepository.findById(Role.CUSTOMER)
+                    .orElseThrow(() -> new DataNotFoundException("Phone number or password is incorrect"));
+        } else {
+            roleUser = roleRepository.findById(userLoginDto.getRoleId())
+                    .orElseThrow(() -> new DataNotFoundException("Phone number or password is incorrect"));
+        }
 
         // Check if the user exists by phone number
         if (userLoginDto.getPhoneNumber() != null && !userLoginDto.getPhoneNumber().isBlank()) {
@@ -156,7 +165,11 @@ public class UserService implements IUserService {
 
         // Check password
         if (!passwordEncoder.matches(userLoginDto.getPassword(), existingUser.getPassword())) {
-            throw new BadCredentialsException("Phone number/email or password is incorrect");
+            throw new BadCredentialsException("Phone number or password is incorrect");
+        }
+
+        if (existingUser.getRole() != roleUser) {
+            throw new DataNotFoundException("Phone number or password is incorrect");
         }
 
         // check user is active

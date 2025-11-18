@@ -7,7 +7,7 @@ export interface Product {
     price: number;
     description: string;
     components: string;
-    stock_quantity: number;
+    stockQuantity: number;
     category: Category;
     thumbnail:string;
     thumbnailUrl:string;

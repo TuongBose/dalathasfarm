@@ -117,11 +117,14 @@ export class AuthModalComponent extends BaseComponent {
     debugger
     this.userService.register(registerDto).subscribe({
       next: (apiResponse: ApiResponse) => {
-        const confirmation = window.confirm('Đăng ký thành công, mời bạn đăng nhập. Bấm "OK" để chuyển đến trang đăng nhập.');
-        debugger
-        if (confirmation) {
-          this.router.navigate(['/login']);
-        }
+        this.toastService.showToast({
+          defaultMsg: 'Đăng ký thành công',
+          title: 'Thông báo',
+          delay: 3000,
+          type: 'success'
+        });
+        this.isSignIn = true;
+        this.resetFormRegister();
       },
       complete: () => { debugger },
       error: (error: HttpErrorResponse) => {
@@ -184,8 +187,9 @@ export class AuthModalComponent extends BaseComponent {
         });
         this.activeModal.dismiss();
         setTimeout(() => {
-  window.location.reload();
-}, 2000);
+          this.resetFormLogin();
+          window.location.reload();
+        }, 2000);
       },
       error: (error: HttpErrorResponse) => {
         this.toastService.showToast({
@@ -198,5 +202,17 @@ export class AuthModalComponent extends BaseComponent {
         console.error('Lỗi đăng nhập:', error?.error?.message ?? '');
       }
     });
+  }
+
+  resetFormLogin() {
+    this.phoneNumber = '';
+    this.password = '';
+  }
+
+  resetFormRegister() {
+    this.phoneNumberRegister = '';
+    this.fullName = '';
+    this.passwordRegister = '';
+    this.retypePassword = '';
   }
 }

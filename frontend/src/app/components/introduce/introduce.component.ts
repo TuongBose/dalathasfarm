@@ -18,17 +18,17 @@ import { BaseComponent } from '../base/base.component';
 export class IntroduceComponent extends BaseComponent implements OnInit {
   @ViewChild('contactForm') contactForm?: ElementRef<HTMLFormElement>;
 
-  introduceName1: string = 'introduce1.jpg';
-  introduceName2: string = 'introduce2.jpg';
-  introduceName3: string = 'introduce3.jpg';
+  introduceName1: string = 'snowy_orchid.jpg';
+  introduceName2: string = 'phunu.jpg';
+  introduceName3: string = 'thuongbinh.jpg';
   introduceUrl1?: string;
   introduceUrl2?: string;
   introduceUrl3?: string;
 
   ngOnInit(): void {
-    this.introduceUrl1 = `${environment.apiBaseUrl}/sanphams/images/${this.introduceName1}`;
-    this.introduceUrl2 = `${environment.apiBaseUrl}/sanphams/images/${this.introduceName2}`;
-    this.introduceUrl3 = `${environment.apiBaseUrl}/sanphams/images/${this.introduceName3}`;
+    this.introduceUrl1 = `${environment.apiBaseUrl}/products/images/${this.introduceName1}`;
+    this.introduceUrl2 = `${environment.apiBaseUrl}/products/images/${this.introduceName2}`;
+    this.introduceUrl3 = `${environment.apiBaseUrl}/products/images/${this.introduceName3}`;
   }
 
   sendMessage(): void {

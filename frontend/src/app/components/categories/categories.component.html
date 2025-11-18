@@ -85,7 +85,7 @@
               <p class="product-subtitle text-muted small mb-2" style="font-size: 12px;font-style: italic;">
                 {{ product.description || 'The design darling' }}
               </p>
-              <p class="product-price mb-1">${{ product.price }}</p>
+              <p class="product-price mb-1">{{ product.price | currency: 'VND':'symbol':'1.0-0'}}</p>
               <div class="product-actions d-flex gap-1 mt-2">
                 <button class=" btn-sm btn-outline-light-product flex-fill"
                   (click)="$event.stopPropagation(); addToCart($event, product.id)">

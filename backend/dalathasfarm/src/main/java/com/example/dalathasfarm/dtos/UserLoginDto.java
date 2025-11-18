@@ -19,7 +19,5 @@ public class UserLoginDto {
     @Size(min = 6, max = 50, message = "Password phải từ 6 đến 50 ký tự")
     private String password;
 
-    @NotBlank(message = "Mật khẩu không được bỏ trống")
-    @Size(min = 1, max = 1, message = "Vai trò phải đủ 1 số")
     private Integer roleId;
 }

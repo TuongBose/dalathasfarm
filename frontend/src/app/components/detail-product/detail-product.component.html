@@ -1,10 +1,10 @@
 <app-header></app-header>
 @if(!isLoading){
 <div class="container py-5">
-  <div class="intro-section text-center mb-5">
+  <!-- <div class="intro-section text-center mb-5">
     <h1 class="display-5 fw-bold">Chi tiết sản phẩm</h1>
     <p class="text-muted">Khám phá thông tin chi tiết về sản phẩm!</p>
-  </div>
+  </div> -->
   <!-- Product detail Section -->
   <div class="row g-4">
     <div class="col-md-6">
@@ -12,7 +12,7 @@
         <div class="carousel-inner">
           @for (image of product?.productImages; track image.imageUrl; let i = $index) {
           <div [ngClass]="{'active': i === currentImageIndex}" class="carousel-item">
-            <img [src]="image.imageUrl" class="d-block w-100 product-image" alt="Hình ảnh">
+            <img [src]="image.imageUrl" class="d-block product-image" alt="Hình ảnh">
           </div>
           }
         </div>
@@ -36,22 +36,32 @@
       </div>
     </div>
     <div class="col-md-6">
-      <div class="product-details p-4 bg-white rounded shadow-sm">
+      <div class="product-details p-4 bg-white">
         <h2 class="product-name">{{ product?.name }}</h2>
+        <div style="padding-bottom: 10px;display: inline-flex;">
+          @if(feedbackResponse.length > 0){
+          @for(i of getStarArray(feedbackResponse[0].average); track i){
+          <span class="text-warning" style="font-size: 25px;">★</span>
+          }
+          }
+          <p style="font-size: 15px; margin-top: 10px; margin-left: 10px;">{{ feedbackResponse.length }} reviews</p>
+        </div>
         <p class="product-description text-muted">{{ product?.description }}</p>
-        <p class="product-price fw-bold">Kho: <span class="text-danger">{{ product?.stock_quantity }}</span></p>
+        <p class="product-price fw-bold">Kho: <span class="text-danger">{{ product?.stockQuantity }}</span></p>
         <p class="product-price fw-bold">
           Giá:
           <span class="text-primary">
             {{ product?.price | currency: 'VND':'symbol':'1.0-0' }}
           </span>
         </p>
-        @if(product!.stock_quantity>0){
+        @if(product!.stockQuantity>0){
         <span class="badge bg-success">Còn hàng</span>
-        <p class="product-total fw-bold">Tổng tiền: <span class="text-success">${{ getTotalPrice() | number: '1.2-2'
+        <div class="divider my-3 py-2"></div>
+        <p class="product-total fw-bold">Tổng tiền: <span class="text-success">{{ getTotalPrice() | currency:
+            'VND':'symbol':'1.0-0'
             }}</span></p>
         <div class="product-actions mt-4">
-          <button class="btn btn-primary me-2" (click)="addToCart()">Thêm vào giỏ hàng</button>
+          <button class="btn btn-primary" (click)="addToCart()">Thêm vào giỏ hàng</button>
           <button class="btn btn-success" (click)="buyNow()">Mua ngay</button>
         </div>
         <div class="product-quantity mt-3">
@@ -61,6 +71,10 @@
             <button class="btn btn-outline-secondary" (click)="increaseQuantity()">+</button>
           </div>
         </div>
+
+        <div class="mt-5" style="font-family:'Sainte Colombe', serif ;font-size: 25px;" [innerHTML]="componentsHtml">
+        </div>
+
         }@else {
         <span class="badge bg-danger">Hết hàng</span>
         }
@@ -69,46 +83,140 @@
   </div>
 
   <!-- Feedback Section -->
-  <div class="feedback-section mt-5">
-    <!-- Feedback Form -->
-    <div class="feedback-form mt-4">
-      <h4 class="mb-3">Thêm nhận xét của bạn</h4>
-      <div id="starRating" class="mb-3">
-        <i class="star far fa-star" *ngFor="let i of [1, 2, 3, 4, 5]; let index = index"
-          [class.selected]="hoveredStar >= index + 1 || newFeedback.star >= index + 1"
-          (mouseover)="onStarHover(index + 1)" (mouseout)="onStarLeave()" (click)="onStarClick(index + 1)"></i>
-      </div>
-      @if(feedbackError){
-      <div class="alert alert-danger" role="alert">{{ feedbackError }}</div>
-      }
-      <input type="hidden" id="SoSao" [value]="newFeedback.star" />
-      <div class="mb-3">
-        <input type="text" class="form-control" id="DanhGia" [(ngModel)]="newFeedback.content"
-          placeholder="Chia sẻ đánh giá của bạn về sản phẩm nhé" required>
-      </div>
-      <button class="btn btn-primary" (click)="submitFeedback()" [disabled]="isAddingFeedback">
-        {{ isAddingFeedback ? 'Đang gửi...' : 'Gửi đánh giá' }}
-      </button>
-    </div>
-    <br>
-    <h3 class="mb-3">Đánh giá và Nhận xét</h3>
-    @if(feedbackResponse.length > 0){
-    <div class="feedback-list">
-      @for (feedback of feedbackResponse; track feedback.id) {
-      <div class="feedback-item p-3 mb-3 bg-light rounded">
-        <p class="mb-1"><strong>{{ feedback.userResponse.fullName }}</strong> - {{ feedback.createdAt |
-          date:'dd/MM/yyyy' }}</p>
-        @for(i of getStarArray(feedback.star); track i){
-        <span class="text-warning">★</span>
+  <div class="feedback-summary row align-items-center mb-4 p-4 bg-light rounded">
+    <div class="col-md-3 text-center">
+      <h1 class="display-4 fw-bold text-primary">{{ averageRating }}</h1>
+      <div class="d-flex justify-content-center mb-2">
+        @for(i of getStarArray(averageRating); track i){
+        <i class="fas fa-star text-warning fs-4"></i>
         }
-        <p class="mb-0">{{ feedback.content }}</p>
+        @for(i of getStarArray(5 - averageRating); track i){
+        <i class="far fa-star text-warning fs-4"></i>
+        }
+      </div>
+      <p class="text-muted small">Based on {{ totalReviews }} Reviews</p>
+    </div>
+
+    <div class="col-md-5">
+      <div class="star-bars">
+        @for(star of [5,4,3,2,1]; track star){
+        <div class="d-flex align-items-center mb-1">
+          <span class="me-2 small text-muted">{{ star }} ★</span>
+          <div class="progress flex-grow-1" style="height: 8px;">
+            <div class="progress-bar bg-success" [style.width]="getStarWidth(star)"></div>
+          </div>
+          <span class="ms-2 small text-muted">({{ starDistribution[star] }})</span>
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="col-md-4 text-center">
+      <div class="review-thumbs mb-3">
+        @for(img of reviewImages; track img; let i = $index){
+        <img [src]="img" class="review-thumb me-1" alt="Review photo">
+        }
+      </div>
+      <div class="recommend-badge bg-success text-white px-3 py-2 rounded">
+        <strong>{{ recommendPercent }}%</strong> reviewers would recommend this product
+      </div>
+      <button class="btn btn-outline-primary mt-3" (click)="openReviewModal()">
+        <i class="fas fa-pen"></i> Write a Review
+      </button>
+
+      <!-- MODAL ĐÁNH GIÁ -->
+      @if(isReviewModalOpen){
+      <div class="modal fade" id="reviewModal" tabindex="-1" [ngClass]="{'show d-block': isReviewModalOpen}"
+        (click)="closeReviewModal()">
+        <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
+          <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+              <h5 class="modal-title">Đánh giá sản phẩm</h5>
+              <button type="button" class="btn-close" (click)="closeReviewModal()"></button>
+            </div>
+            <div class="modal-body pt-2">
+              <form (ngSubmit)="submitFeedback()">
+                <!-- STAR RATING -->
+                <div class="mb-4 text-center">
+                  <label class="form-label fw-bold">Chọn số sao</label>
+                  <div class="star-rating d-inline-block">
+                    @for(i of [1,2,3,4,5]; track i; let idx = $index){
+                    <i class="star fas fa-star fs-3 me-2 cursor-pointer"
+                      [class.text-warning]="i <= (hoveredStar || newFeedback.star)" (click)="onStarClick(i)"
+                      (mouseenter)="onStarHover(i)" (mouseleave)="onStarLeave()"></i>
+                    }
+                  </div>
+                  <small class="text-muted d-block mt-1">{{ newFeedback.star || 0 }} / 5 sao</small>
+                </div>
+
+                <!-- NỘI DUNG -->
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Nhận xét của bạn</label>
+                  <textarea class="form-control" rows="4" [(ngModel)]="newFeedback.content"
+                    placeholder="Chia sẻ trải nghiệm của bạn..." name="content" required></textarea>
+                </div>
+
+                <!-- LỖI -->
+                @if(feedbackError){
+                <div class="alert alert-danger small">{{ feedbackError }}</div>
+                }
+
+                <!-- NÚT GỬI -->
+                <div class="d-flex gap-2 justify-content-end">
+                  <button type="button" class="btn btn-secondary" (click)="closeReviewModal()">Hủy</button>
+                  <button type="submit" class="btn btn-success"
+                    [disabled]="isAddingFeedback || !newFeedback.star || !newFeedback.content">
+                    {{ isAddingFeedback ? 'Đang gửi...' : 'Gửi đánh giá' }}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
       }
+
+      <!-- BACKDROP -->
+      <div class="modal-backdrop fade show" *ngIf="isReviewModalOpen"></div>
     </div>
-    }@else {
-    <ng-template #noFeedback>
-      <p class="text-muted">Chưa có đánh giá nào cho sản phẩm này.</p>
-    </ng-template>
+  </div>
+
+  <!-- SORT + REVIEWS -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="text-success">Reviews {{ totalReviews }}</h5>
+  </div>
+  <hr>
+
+  <!-- DANH SÁCH ĐÁNH GIÁ -->
+  <div class="review-list">
+    @for(feedback of feedbackResponse; track feedback.id){
+    <div class="review-item border-bottom pb-3 mb-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <strong>{{ feedback.userResponse.fullName || 'Anonymous' }}</strong>
+          <span class="text-muted small ms-2">Verified Buyer</span>
+        </div>
+        <small class="text-muted">{{ feedback.createdAt | date:'MM/dd/yyyy' }}</small>
+      </div>
+
+      @if(feedback.star >= 4){
+      <div class="text-success small mb-1">
+        <i class="fas fa-thumbs-up"></i> I recommend this product
+      </div>
+      }
+
+      <div class="d-flex align-items-center mb-2">
+        @for(i of getStarArray(feedback.star); track i){
+        <i class="fas fa-star text-warning"></i>
+        }
+        @for(i of getStarArray(5 - feedback.star); track i){
+        <i class="far fa-star text-warning"></i>
+        }
+        <span class="ms-2 fw-bold">{{ feedback.content }}</span>
+      </div>
+
+      <p class="text-muted mb-2">{{ feedback.content }}</p>
+    </div>
     }
   </div>
 </div>

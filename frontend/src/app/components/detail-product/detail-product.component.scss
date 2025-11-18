@@ -1,5 +1,105 @@
 @import '../../styles/shared-styles.scss';
 
+.star-rating {
+  .star {
+    color: #ddd;
+    transition: color 0.2s ease;
+    cursor: pointer;
+
+    &.text-warning {
+      color: #ffc107 !important;
+    }
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+}
+
+.modal-content {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.modal-header .btn-close {
+  background: none;
+  opacity: 0.5;
+  &:hover { opacity: 1; }
+}
+
+.form-control, .form-select {
+  border-radius: 8px;
+}
+
+.btn-success {
+  background: #10b981;
+  border: none;
+  &:hover { background: #059669; }
+}
+
+.feedback-summary {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+
+  .display-4 {
+    font-weight: 700;
+    color: #2c3e50;
+  }
+
+  .star-bars {
+    .progress {
+      background-color: #e9ecef;
+      border-radius: 4px;
+    }
+    .progress-bar {
+      background: linear-gradient(90deg, #28a745, #20c997);
+    }
+  }
+
+  .recommend-badge {
+    font-size: 0.9rem;
+    display: inline-block;
+  }
+
+  .review-thumb {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+  }
+}
+
+.review-item {
+  .review-photo {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 8px;
+  }
+}
+
+.form-select {
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+
+.divider {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #eee;
+  }
+}
+
 .container {
   color: $shopapp-text-color;
 }
@@ -11,7 +111,7 @@
 }
 
 .product-image {
-  height: 400px;
+  width: 100%;
   object-fit: cover;
   border-radius: 10px;
 }
@@ -37,23 +137,24 @@
 }
 
 .thumbnail-item.active {
-  border-color: $shopapp-color;
+  border-color: red;
 }
 
 .product-details {
   background-color: $shopapp-card-bg;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  // border-radius: 10px;
   color: $shopapp-text-color;
   min-height: 400px;
 }
 
 .product-name {
-  font-size: 1.8rem;
+  font-family:'Sainte Colombe', serif ;
+  font-size: 2rem;
   margin-bottom: 15px;
 }
 
 .product-description {
+  font-style: italic;
   font-size: 1rem;
   margin-bottom: 15px;
 }
@@ -65,27 +166,33 @@
 
 .product-actions {
   display: flex;
+  flex-direction: column;
   gap: 10px;
   margin-bottom: 20px;
 }
 
 .btn-primary {
-  background-color: $shopapp-color;
-  border-color: $shopapp-color;
+  font-size: 18px;
+  color:gray;
+  background-color: white;
+  border-color: gray;
+
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: 0px;
   transition: background-color 0.3s ease;
 }
 
 .btn-primary:hover {
-  background-color: darken($shopapp-color, 10%);
+  color:white;
+  background-color: darken(gray, 10%);
 }
 
 .btn-success {
   background-color: #10b981;
   border-color: #10b981;
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: 0px;
+  font-size: 18px;
   transition: background-color 0.3s ease;
 }
 

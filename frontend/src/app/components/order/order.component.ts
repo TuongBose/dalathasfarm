@@ -55,11 +55,15 @@ export class OrderComponent extends BaseComponent implements OnInit {
     super();
 
     this.orderForm = this.formBuilder.group({
-      fullname: ['tuong', [Validators.required]],
+      firstName: ['tuong', [Validators.required]],
+      lastName: ['tuong', [Validators.required]],
       email: ['tuong@gmail.com', [Validators.email]],
-      sodienthoai: ['090009848', [Validators.required, Validators.minLength(6)]],
-      diachi: ['123 le trong tan, phuong 5', [Validators.required, Validators.minLength(5)]],
-      ghichu: [''],
+      phoneNumber: ['090009848', [Validators.required, Validators.minLength(6)]],
+      address: ['123 le trong tan, phuong 5', [Validators.required, Validators.minLength(5)]],
+      city: ['123 le trong tan, phuong 5', [Validators.required, Validators.minLength(5)]],
+      district:['ads',[Validators.required, Validators.minLength(5)]],
+      ward:['áđá',[Validators.required, Validators.minLength(5)]],
+      note: ['ádf'],
       couponCode: [''],
       phuongthucthanhtoan: ['cod']
     });
@@ -104,11 +108,11 @@ export class OrderComponent extends BaseComponent implements OnInit {
         });
 
         this.cartItems.forEach((cartItem, index) => {
-          if (cartItem.product.stock_quantity < cartItem.quantity) {
+          if (cartItem.product.stockQuantity < cartItem.quantity) {
             this.hasStockIssue = true;
             this.indexError.push(index);
             this.toastService.showToast({
-              defaultMsg: `Sản phẩm "${cartItem.product.name}" không đủ hàng trong kho (Còn ${cartItem.product.stock_quantity} sản phẩm).`,
+              defaultMsg: `Sản phẩm "${cartItem.product.name}" không đủ hàng trong kho (Còn ${cartItem.product.stockQuantity} sản phẩm).`,
               title: 'Thông báo',
               delay: 3000,
               type: 'danger'
@@ -167,7 +171,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
         this.indexError.forEach(index => {
           const cartItem = this.cartItems[index];
           this.toastService.showToast({
-            defaultMsg: `Sản phẩm "${cartItem.product.name}" không đủ hàng trong kho (Còn ${cartItem.product.stock_quantity} sản phẩm).`,
+            defaultMsg: `Sản phẩm "${cartItem.product.name}" không đủ hàng trong kho (Còn ${cartItem.product.stockQuantity} sản phẩm).`,
             title: 'Thông báo',
             delay: 3000,
             type: 'danger'
@@ -259,11 +263,11 @@ export class OrderComponent extends BaseComponent implements OnInit {
   }
 
   increaseQuantity(index: number): void {
-    if (this.cartItems[index].product.stock_quantity > this.cartItems[index].quantity) {
+    if (this.cartItems[index].product.stockQuantity > this.cartItems[index].quantity) {
       this.cartItems[index].quantity++;
     } else {
       this.toastService.showToast({
-        defaultMsg: `Sản phẩm "${this.cartItems[index].product.name}" không đủ hàng trong kho (Còn ${this.cartItems[index].product.stock_quantity} sản phẩm).`,
+        defaultMsg: `Sản phẩm "${this.cartItems[index].product.name}" không đủ hàng trong kho (Còn ${this.cartItems[index].product.stockQuantity} sản phẩm).`,
         title: 'Thông báo',
         delay: 3000,
         type: 'danger'

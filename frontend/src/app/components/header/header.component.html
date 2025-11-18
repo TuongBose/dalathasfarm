@@ -41,7 +41,7 @@
                 <!-- <a routerLink="/wishlist" class="icon-btn me-2">
                     <i class="far fa-heart"></i>
                 </a> -->
-                <a routerLink="/cart" class="icon-btn position-relative">
+                <a routerLink="/orders" class="icon-btn position-relative">
                     <i class="fas fa-shopping-bag"></i>
                     <span class="badge" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
                 </a>
@@ -64,7 +64,7 @@
             <ul class="category-list">
                 @for(category of categories;track category.id){
                 <li class="category-item">
-                    <a routerLink="/category/{{ category.id }}" class="category-link">
+                    <a href="/category/{{ category.id }}" class="category-link">
                         {{ category.name }}
                     </a>
                 </li>

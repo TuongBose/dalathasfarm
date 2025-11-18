@@ -15,6 +15,8 @@ import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-poli
 import { TermsOfServiceComponent } from './components/terms-of-service/terms-of-service.component';
 import { CategoriesComponent } from './components/categories/categories.component';
 import { CategoryComponent } from './components/category/category.component';
+import { OccasionsComponent } from './components/occasions/occasions.component';
+import { OccasionComponent } from './components/occasion/occasion.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -22,7 +24,7 @@ export const routes: Routes = [
     { path: 'payments/payment-callback', component: PaymentCallbackComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'products/:id', component: DetailProductComponent },
-    { path: 'orders', component: OrderComponent, canActivate: [AuthGuardFn] },
+    { path: 'orders', component: OrderComponent },
     { path: 'user-profile', component: UserProfileComponent, canActivate: [AuthGuardFn] },
     { path: 'introduce', component: IntroduceComponent },
     { path: 'contact', component: ContactComponent },
@@ -32,4 +34,6 @@ export const routes: Routes = [
     { path: 'terms-of-service', component: TermsOfServiceComponent },
     { path: 'categories', component: CategoriesComponent },
     { path: 'category/:id', component: CategoryComponent },
+    { path: 'occasions', component: OccasionsComponent },
+    { path: 'occasion/:id', component: OccasionComponent },
 ];

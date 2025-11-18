@@ -41,7 +41,7 @@ public class FeedbackService implements IFeedbackService{
                 .build();
         feedbackRepository.save(newfeedback);
 
-        return FeedbackResponse.fromFeedback(newfeedback);
+        return FeedbackResponse.fromFeedback(newfeedback,0.0);
     }
 
     @Override
@@ -76,8 +76,18 @@ public class FeedbackService implements IFeedbackService{
                 .orElseThrow(() -> new DataNotFoundException("User not found"));
 
         List<Feedback> feedbacks = feedbackRepository.findByUser(existingUser);
+
+        double average = feedbacks.stream()
+                .mapToInt(Feedback::getStar)
+                .average()
+                .orElse(0.0);
+
+//        return feedbacks.stream()
+//                .map(FeedbackResponse::fromFeedback)
+//                .collect(Collectors.toList());
+
         return feedbacks.stream()
-                .map(FeedbackResponse::fromFeedback)
+                .map(fb -> FeedbackResponse.fromFeedback(fb, average))
                 .collect(Collectors.toList());
     }
 
@@ -87,8 +97,18 @@ public class FeedbackService implements IFeedbackService{
                 .orElseThrow(() -> new DataNotFoundException("Product not found"));
 
         List<Feedback> feedbacks = feedbackRepository.findByProduct(existingProduct);
+
+        double average = feedbacks.stream()
+                .mapToInt(Feedback::getStar)
+                .average()
+                .orElse(0.0);
+
+//        return feedbacks.stream()
+//                .map(FeedbackResponse::fromFeedback)
+//                .collect(Collectors.toList());
+
         return feedbacks.stream()
-                .map(FeedbackResponse::fromFeedback)
+                .map(fb -> FeedbackResponse.fromFeedback(fb, average))
                 .collect(Collectors.toList());
     }
 
@@ -101,8 +121,19 @@ public class FeedbackService implements IFeedbackService{
                 .orElseThrow(() -> new DataNotFoundException("Product not found"));
 
         List<Feedback> feedbacks = feedbackRepository.findByUserAndProduct(existingUser, existingProduct);
+
+        double average = feedbackRepository.findByProduct(existingProduct)
+                .stream()
+                .mapToInt(Feedback::getStar)
+                .average()
+                .orElse(0.0);
+
+//        return feedbacks.stream()
+//                .map(FeedbackResponse::fromFeedback)
+//                .collect(Collectors.toList());
+
         return feedbacks.stream()
-                .map(FeedbackResponse::fromFeedback)
+                .map(fb -> FeedbackResponse.fromFeedback(fb, average))
                 .collect(Collectors.toList());
     }
 }

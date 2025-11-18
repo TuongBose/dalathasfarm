@@ -138,7 +138,6 @@ export class HeaderComponent extends BaseComponent implements OnInit {
     this.userService.removeUserFromLocalStorage();
     this.tokenService.removeToken();
     this.user = null;
-    this.router.navigate(['/login']);
   }
 
   getAllCategory(page: number, limit: number) {

@@ -1,232 +1,480 @@
 <app-header></app-header>
-<div class="container-fluid py-3 px-3">
-  <div class="intro-section text-center mb-4">
-    <h1 class="display-6 fw-bold text-primary">Trang đặt hàng</h1>
-    <p class="text-muted">Hoàn tất đơn hàng của bạn một cách dễ dàng!</p>
-  </div>
+<div class="checkout-page py-5">
+  <div class="container">
+    <form [formGroup]="orderForm">
+      <div class="row g-5">
+        <!-- CỘT TRÁI: THÔNG TIN GIAO HÀNG + THANH TOÁN -->
+        <div class="col-lg-7">
 
-  <form [formGroup]="orderForm">
-    <div class="row g-3">
-      <!-- Thông tin người nhận - Responsive order -->
-      <div class="col-12 col-lg-4 order-2 order-lg-1">
-        <div class="card shadow-sm mb-3">
-          <div class="card-body">
-            <h3 class="product-header mb-3">
-              <i class="fas fa-user me-2"></i>Thông tin người nhận
-            </h3>
-
-            <div class="mb-3">
-              <label for="name" class="form-label">Họ và tên *</label>
-              <input type="text" formControlName="fullname" class="form-control" id="name"
-                [class.is-invalid]="orderForm.get('fullname')!.invalid && orderForm.get('fullname')!.touched">
-              @if (orderForm.get('fullname')!.invalid && orderForm.get('fullname')!.touched) {
-              <div class="invalid-feedback">Họ và tên bắt buộc</div>
-              }
-            </div>
-
-            <div class="mb-3">
-              <label for="email" class="form-label">Email *</label>
-              <input type="email" formControlName="email" class="form-control" id="email"
-                [class.is-invalid]="orderForm.get('email')!.invalid && orderForm.get('email')!.touched">
-              @if (orderForm.get('email')!.invalid && orderForm.get('email')!.touched) {
-              <div class="invalid-feedback">Email không hợp lệ</div>
-              }
-            </div>
-
-            <div class="mb-3">
-              <label for="phone" class="form-label">Số điện thoại *</label>
-              <input type="tel" formControlName="sodienthoai" class="form-control" id="phone"
-                [class.is-invalid]="orderForm.get('sodienthoai')!.invalid && orderForm.get('sodienthoai')!.touched">
-              @if (orderForm.get('sodienthoai')!.invalid && orderForm.get('sodienthoai')!.touched) {
-              <div class="invalid-feedback">Số điện thoại không hợp lệ</div>
-              }
-            </div>
-
-            <div class="mb-3">
-              <label for="address" class="form-label">Địa chỉ *</label>
-              <textarea formControlName="diachi" class="form-control" id="address" rows="2"
-                [class.is-invalid]="orderForm.get('diachi')!.invalid && orderForm.get('diachi')!.touched"></textarea>
-              @if (orderForm.get('diachi')!.invalid && orderForm.get('diachi')!.touched) {
-              <div class="invalid-feedback">Địa chỉ không hợp lệ</div>
-              }
-            </div>
-
-            <div class="mb-3">
-              <label for="note" class="form-label">Ghi chú</label>
-              <textarea formControlName="ghichu" class="form-control" id="note" rows="2"
-                placeholder="Nhập ghi chú (tùy chọn)"></textarea>
-            </div>
-
-            <div class="mb-3">
-              <label for="phuongthucthanhtoan" class="form-label">Phương thức thanh toán *</label>
-              <select class="form-select" id="phuongthucthanhtoan" formControlName="phuongthucthanhtoan">
-                <option value="cod">Thanh toán khi nhận hàng (COD)</option>
-                <option value="vnpay">Thanh toán VNPAY</option>
-                <option value="other">Thanh toán khác</option>
-              </select>
+          <!-- ĐĂNG NHẬP NHANH -->
+          <div class="mb-4 p-4 bg-light rounded border">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h5 class="mb-1">Already Have an Account?</h5>
+                <p class="text-muted small mb-0">Sign in to check out faster.</p>
+              </div>
+              <button class="btn btn-outline-dark px-4">SIGN IN</button>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Sản phẩm đã đặt - Mobile First -->
-      <div class="col-12 col-lg-8 order-1 order-lg-2">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h3 class="product-order mb-3">
-              <i class="fas fa-shopping-cart me-2"></i>Sản phẩm đã đặt hàng
-            </h3>
+          <!-- CHECKOUT AS GUEST -->
+          <!-- <h4 class="mb-4">Check out as a guest</h4> -->
 
-            <!-- Mobile Product List -->
-            <div class="d-block d-md-none">
-              @for (item of cartItems; track item.product.id; let i = $index) {
-              <div class="mobile-product-item border rounded p-3 mb-3">
-                <div class="row g-2">
-                  <div class="col-4">
-                    <img [src]="item.product.thumbnail" alt="Hình ảnh" class="mobile-product-image">
-                  </div>
-                  <div class="col-8">
-                    <h6 class="product-name mb-2">{{ item.product.name }}</h6>
-                    <div class="price-info mb-2">
-                      <small class="text-muted">Đơn giá:</small>
-                      <span class="fw-bold">{{ item.product.price | number: '1.0-0' }}đ</span>
-                    </div>
-                    <div class="quantity-control mb-2">
-                      <label class="form-label small">Số lượng:</label>
-                      <div class="input-group input-group-sm">
-                        <button class="btn btn-outline-secondary" (click)="decreaseQuantity(i)">
-                          <i class="fas fa-minus"></i>
-                        </button>
-                        <input type="text" class="form-control text-center" [value]="item.quantity" readonly>
-                        <button class="btn btn-outline-secondary" (click)="increaseQuantity(i)">
-                          <i class="fas fa-plus"></i>
-                        </button>
-                      </div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                      <div class="total-price">
-                        <strong class="text-primary">{{ item.product.price * item.quantity | number: '1.0-0' }}đ</strong>
-                      </div>
-                      <button class="btn btn-outline-danger btn-sm" (click)="confirmDelete(i)">
-                        <i class="fas fa-trash"></i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <!-- Phone number -->
+          <!-- <div class="mb-4">
+            <label class="form-label fw-semibold">Số điện thoại *</label>
+            <input type="email" formControlName="email" class="form-control" id="email"
+              [class.is-invalid]="orderForm.get('email')!.invalid && orderForm.get('email')!.touched">
+            @if (orderForm.get('email')!.invalid && orderForm.get('email')!.touched) {
+            <div class="invalid-feedback">Email không hợp lệ</div>
+            }
+          </div> -->
+
+          <!-- Ho va ten -->
+          <!-- <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Tên *</label>
+              <input type="text" formControlName="firstName" class="form-control" id="name"
+                [class.is-invalid]="orderForm.get('firstName')!.invalid && orderForm.get('firstName')!.touched">
+              @if (orderForm.get('firstName')!.invalid && orderForm.get('firstName')!.touched) {
+              <div class="invalid-feedback">Tên bắt buộc</div>
               }
             </div>
 
-            <!-- Desktop Table -->
-            <div class="table-responsive d-none d-md-block">
-              <table class="table table-hover">
-                <thead class="table-light">
-                  <tr>
-                    <th scope="col" class="text-start">Sản phẩm</th>
-                    <th class="text-center">Số lượng</th>
-                    <th class="text-center">Đơn giá</th>
-                    <th class="text-center">Tổng giá</th>
-                    <th class="text-center">Hành động</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (item of cartItems; track item.product.id; let i = $index) {
-                  <tr>
-                    <td>
-                      <div class="product-info d-flex align-items-center">
-                        <img [src]="item.product.thumbnail" alt="Hình ảnh" class="product-image me-3">
-                        <span class="product-name">{{ item.product.name }}</span>
+            <div class="col-md-6">
+              <label class="form-label">Họ *</label>
+              <input type="text" formControlName="lastName" class="form-control" id="name"
+                [class.is-invalid]="orderForm.get('lastName')!.invalid && orderForm.get('lastName')!.touched">
+              @if (orderForm.get('lastName')!.invalid && orderForm.get('lastName')!.touched) {
+              <div class="invalid-feedback">Họ bắt buộc</div>
+              }
+            </div>
+          </div> -->
+
+          <!-- Desktop Table -->
+          <h4 class="py-4">Sản phẩm đã thêm vào giỏ</h4>
+          <div class="table-responsive d-none d-md-block">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col" class="text-start">Sản phẩm</th>
+                  <th class="text-center">Số lượng</th>
+                  <th class="text-center">Đơn giá</th>
+                  <th class="text-center">Tổng giá</th>
+                  <th class="text-center">Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of cartItems; track item.product.id; let i = $index) {
+                <tr>
+                  <td>
+                    <div class="product-info d-flex align-items-center">
+                      <img [src]="item.product.thumbnail" alt="Hình ảnh" class="product-image me-3">
+                      <span class="product-name">{{ item.product.name }}</span>
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <div class="product-quantity d-flex justify-content-center">
+                      <div class="input-group" style="max-width: 120px;">
+                        <button class="btn btn-outline-secondary btn-sm" (click)="decreaseQuantity(i)">-</button>
+                        <input type="text" class="form-control form-control-sm text-center" [value]="item.quantity"
+                          readonly>
+                        <button class="btn btn-outline-secondary btn-sm" (click)="increaseQuantity(i)">+</button>
                       </div>
-                    </td>
-                    <td class="text-center">
-                      <div class="product-quantity d-flex justify-content-center">
-                        <div class="input-group" style="max-width: 120px;">
-                          <button class="btn btn-outline-secondary btn-sm" (click)="decreaseQuantity(i)">-</button>
-                          <input type="text" class="form-control form-control-sm text-center" [value]="item.quantity"
-                            readonly>
-                          <button class="btn btn-outline-secondary btn-sm" (click)="increaseQuantity(i)">+</button>
+                    </div>
+                  </td>
+                  <td class="text-center">{{ item.product.price | number: '1.0-0' }}đ</td>
+                  <td class="text-center fw-bold text-primary">{{ item.product.price * item.quantity | number:
+                    '1.0-0'
+                    }}đ</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-danger btn-sm" (click)="confirmDelete(i)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- SHIPPING METHOD TABS -->
+          <ul class="nav nav-tabs mb-4" id="shippingTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active px-5 py-3" data-bs-toggle="tab" data-bs-target="#ship">
+                <i class="fas fa-truck me-2"></i> SHIP
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link px-5 py-3" data-bs-toggle="tab" data-bs-target="#pickup">
+                <i class="fas fa-store me-2"></i> PICK UP
+              </button>
+            </li>
+          </ul>
+
+
+
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="ship">
+
+              <h4 class="mb-4">Shipping Address</h4>
+
+              <!-- FORM THÔNG TIN -->
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Tên *</label>
+                  <input type="text" formControlName="firstName" class="form-control" id="name"
+                    [class.is-invalid]="orderForm.get('firstName')!.invalid && orderForm.get('firstName')!.touched">
+                  @if (orderForm.get('firstName')!.invalid && orderForm.get('firstName')!.touched) {
+                  <div class="invalid-feedback">Tên bắt buộc</div>
+                  }
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Họ *</label>
+                  <input type="text" formControlName="lastName" class="form-control" id="name"
+                    [class.is-invalid]="orderForm.get('lastName')!.invalid && orderForm.get('lastName')!.touched">
+                  @if (orderForm.get('lastName')!.invalid && orderForm.get('lastName')!.touched) {
+                  <div class="invalid-feedback">Họ bắt buộc</div>
+                  }
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label">Country/Region *</label>
+                  <select class="form-select form-select-lg">
+                    <option>Việt Nam</option>
+                  </select>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label">Thành phố *</label>
+                  <input type="text" formControlName="city" class="form-control" id="city"
+                    [class.is-invalid]="orderForm.get('city')!.invalid && orderForm.get('city')!.touched">
+                  @if (orderForm.get('city')!.invalid && orderForm.get('city')!.touched) {
+                  <div class="invalid-feedback">Tên bắt buộc</div>
+                  }
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Phường *</label>
+                  <input type="text" formControlName="ward" class="form-control" id="ward"
+                    [class.is-invalid]="orderForm.get('ward')!.invalid && orderForm.get('ward')!.touched">
+                  @if (orderForm.get('ward')!.invalid && orderForm.get('ward')!.touched) {
+                  <div class="invalid-feedback">Tên bắt buộc</div>
+                  }
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Quận *</label>
+                  <input type="text" formControlName="district" class="form-control" id="district"
+                    [class.is-invalid]="orderForm.get('district')!.invalid && orderForm.get('district')!.touched">
+                  @if (orderForm.get('district')!.invalid && orderForm.get('district')!.touched) {
+                  <div class="invalid-feedback">Họ bắt buộc</div>
+                  }
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label">Địa chỉ *</label>
+                  <textarea formControlName="address" class="form-control" id="address" rows="2"
+                    [class.is-invalid]="orderForm.get('address')!.invalid && orderForm.get('address')!.touched"></textarea>
+                  @if (orderForm.get('address')!.invalid && orderForm.get('address')!.touched) {
+                  <div class="invalid-feedback">Địa chỉ không hợp lệ</div>
+                  }
+                </div>
+
+                <div class="col-md-6">
+                  <label for="phuongthucthanhtoan" class="form-label">Phương thức thanh toán *</label>
+                  <select class="form-select" id="phuongthucthanhtoan" formControlName="phuongthucthanhtoan">
+                    <option value="cod">Thanh toán khi nhận hàng (COD)</option>
+                    <option value="vnpay">Thanh toán VNPAY</option>
+                  </select>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Số điện thoại *</label>
+                  <div class="input-group">
+                    <span class="input-group-text">+84</span>
+                    <input type="tel" formControlName="phoneNumber" class="form-control" id="phone"
+                      [class.is-invalid]="orderForm.get('phoneNumber')!.invalid && orderForm.get('phoneNumber')!.touched">
+                    @if (orderForm.get('phoneNumber')!.invalid && orderForm.get('phoneNumber')!.touched) {
+                    <div class="invalid-feedback">Số điện thoại không hợp lệ</div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="pickup">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Tên *</label>
+                  <input type="text" formControlName="firstName" class="form-control" id="name"
+                    [class.is-invalid]="orderForm.get('firstName')!.invalid && orderForm.get('firstName')!.touched">
+                  @if (orderForm.get('firstName')!.invalid && orderForm.get('firstName')!.touched) {
+                  <div class="invalid-feedback">Tên bắt buộc</div>
+                  }
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Họ *</label>
+                  <input type="text" formControlName="lastName" class="form-control" id="name"
+                    [class.is-invalid]="orderForm.get('lastName')!.invalid && orderForm.get('lastName')!.touched">
+                  @if (orderForm.get('lastName')!.invalid && orderForm.get('lastName')!.touched) {
+                  <div class="invalid-feedback">Họ bắt buộc</div>
+                  }
+                </div>
+
+                <div class="col-md-6">
+                  <label for="phuongthucthanhtoan" class="form-label">Phương thức thanh toán *</label>
+                  <select class="form-select" id="phuongthucthanhtoan" formControlName="phuongthucthanhtoan">
+                    <option value="cod">Thanh toán khi nhận hàng (COD)</option>
+                    <option value="vnpay">Thanh toán VNPAY</option>
+                  </select>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Số điện thoại *</label>
+                  <div class="input-group">
+                    <span class="input-group-text">+84</span>
+                    <input type="tel" formControlName="phoneNumber" class="form-control" id="phone"
+                      [class.is-invalid]="orderForm.get('phoneNumber')!.invalid && orderForm.get('phoneNumber')!.touched">
+                    @if (orderForm.get('phoneNumber')!.invalid && orderForm.get('phoneNumber')!.touched) {
+                    <div class="invalid-feedback">Số điện thoại không hợp lệ</div>
+                    }
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+
+            <!-- Thông tin người nhận - Responsive order
+          <div class="col-12 col-lg-8 order-1 order-lg-1">
+            <div class="card shadow-sm mb-3">
+              <div class="card shadow-sm">
+                <div class="card-body">
+                  <h3 class="product-order mb-3">
+                    <i class="fas fa-shopping-cart me-2"></i>Sản phẩm đã đặt hàng
+                  </h3>
+
+                  Mobile Product List
+                  <div class="d-block d-md-none">
+                    @for (item of cartItems; track item.product.id; let i = $index) {
+                    <div class="mobile-product-item border rounded p-3 mb-3">
+                      <div class="row g-2">
+                        <div class="col-4">
+                          <img [src]="item.product.thumbnail" alt="Hình ảnh" class="mobile-product-image">
+                        </div>
+                        <div class="col-8">
+                          <h6 class="product-name mb-2">{{ item.product.name }}</h6>
+                          <div class="price-info mb-2">
+                            <small class="text-muted">Đơn giá:</small>
+                            <span class="fw-bold">{{ item.product.price | number: '1.0-0' }}đ</span>
+                          </div>
+                          <div class="quantity-control mb-2">
+                            <label class="form-label small">Số lượng:</label>
+                            <div class="input-group input-group-sm">
+                              <button class="btn btn-outline-secondary" (click)="decreaseQuantity(i)">
+                                <i class="fas fa-minus"></i>
+                              </button>
+                              <input type="text" class="form-control text-center" [value]="item.quantity" readonly>
+                              <button class="btn btn-outline-secondary" (click)="increaseQuantity(i)">
+                                <i class="fas fa-plus"></i>
+                              </button>
+                            </div>
+                          </div>
+                          <div class="d-flex justify-content-between align-items-center">
+                            <div class="total-price">
+                              <strong class="text-primary">{{ item.product.price * item.quantity | number: '1.0-0'
+                                }}đ</strong>
+                            </div>
+                            <button class="btn btn-outline-danger btn-sm" (click)="confirmDelete(i)">
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </td>
-                    <td class="text-center">{{ item.product.price | number: '1.0-0' }}đ</td>
-                    <td class="text-center fw-bold text-primary">{{ item.product.price * item.quantity | number: '1.0-0'
-                      }}đ</td>
-                    <td class="text-center">
-                      <button class="btn btn-outline-danger btn-sm" (click)="confirmDelete(i)">
-                        <i class="fas fa-trash"></i>
+                    </div>
+                    }
+                  </div>
+
+
+
+                  Coupon Section
+                  <div class="coupon-section mt-4 p-3 bg-light rounded">
+                    <h5 class="product-header mb-3">
+                      <i class="fas fa-ticket-alt me-2"></i>Mã giảm giá
+                    </h5>
+                    <div class="input-group">
+                      <input formControlName="couponCode" type="text" class="form-control"
+                        placeholder="Nhập mã giảm giá">
+                      <button class="btn btn-primary" type="button" (click)="applyCoupon()">
+                        Áp dụng
                       </button>
-                    </td>
-                  </tr>
+                    </div>
+                    @if (couponDiscount > 0) {
+                    <div class="alert alert-success mt-2 mb-0">
+                      <i class="fas fa-check-circle me-2"></i>
+                      Bạn được giảm: <strong>{{ couponDiscount | number: '1.0-0' }}đ</strong>
+                    </div>
+                    }
+                    @if (!loading && couponApplied && couponDiscount === 0) {
+                    <div class="alert alert-danger mt-2 mb-0">
+                      Mã giảm giá không hợp lệ
+                    </div>
+                    }
+                  </div>
+
+                  Total Section
+                  <div class="total-section mt-4 p-3 bg-primary bg-opacity-10 rounded">
+                    <div class="row">
+                      <div class="col-6">
+                        <h5 class="mb-1">Tổng cộng:</h5>
+                      </div>
+                      <div class="col-6 text-end">
+                        <h4 class="text-primary fw-bold mb-1">{{ totalAmount | number: '1.0-0' }}đ</h4>
+                      </div>
+                    </div>
+                    @if (couponDiscount > 0) {
+                    <hr class="my-2">
+                    <div class="row">
+                      <div class="col-6">
+                        <small class="text-success">Giảm giá:</small>
+                      </div>
+                      <div class="col-6 text-end">
+                        <small class="text-success">-{{ couponDiscount | number: '1.0-0' }}đ</small>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6">
+                        <strong>Thành tiền:</strong>
+                      </div>
+                      <div class="col-6 text-end">
+                        <h4 class="text-success fw-bold">{{ (totalAmount - couponDiscount) | number: '1.0-0' }}đ</h4>
+                      </div>
+                    </div>
+                    }
+                  </div>
+
+                  <Order Button
+                  <div class="d-grid mt-4">
+                    <button (click)="placeOrder()" class="btn btn-primary btn-lg" type="button">
+                      <i class="fas fa-shopping-bag me-2"></i>Đặt hàng ngay
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <h3 class="product-header mb-3">
+                  <i class="fas fa-user me-2"></i>Thông tin người nhận
+                </h3>
+
+                <div class="mb-3">
+                  <label for="name" class="form-label">Họ và tên *</label>
+                  <input type="text" formControlName="fullname" class="form-control" id="name"
+                    [class.is-invalid]="orderForm.get('fullname')!.invalid && orderForm.get('fullname')!.touched">
+                  @if (orderForm.get('fullname')!.invalid && orderForm.get('fullname')!.touched) {
+                  <div class="invalid-feedback">Họ và tên bắt buộc</div>
                   }
-                </tbody>
-              </table>
-            </div>
+                </div>
 
-            <!-- Coupon Section -->
-            <div class="coupon-section mt-4 p-3 bg-light rounded">
-              <h5 class="product-header mb-3">
-                <i class="fas fa-ticket-alt me-2"></i>Mã giảm giá
-              </h5>
-              <div class="input-group">
-                <input formControlName="couponCode" type="text" class="form-control" placeholder="Nhập mã giảm giá">
-                <button class="btn btn-primary" type="button" (click)="applyCoupon()">
-                  Áp dụng
-                </button>
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email *</label>
+                  <input type="email" formControlName="email" class="form-control" id="email"
+                    [class.is-invalid]="orderForm.get('email')!.invalid && orderForm.get('email')!.touched">
+                  @if (orderForm.get('email')!.invalid && orderForm.get('email')!.touched) {
+                  <div class="invalid-feedback">Email không hợp lệ</div>
+                  }
+                </div>
+
+                <div class="mb-3">
+                  <label for="phone" class="form-label">Số điện thoại *</label>
+                  <input type="tel" formControlName="phoneNumber" class="form-control" id="phone"
+                    [class.is-invalid]="orderForm.get('phoneNumber')!.invalid && orderForm.get('phoneNumber')!.touched">
+                  @if (orderForm.get('phoneNumber')!.invalid && orderForm.get('phoneNumber')!.touched) {
+                  <div class="invalid-feedback">Số điện thoại không hợp lệ</div>
+                  }
+                </div>
+
+                <div class="mb-3">
+                  <label for="address" class="form-label">Địa chỉ *</label>
+                  <textarea formControlName="diachi" class="form-control" id="address" rows="2"
+                    [class.is-invalid]="orderForm.get('diachi')!.invalid && orderForm.get('diachi')!.touched"></textarea>
+                  @if (orderForm.get('diachi')!.invalid && orderForm.get('diachi')!.touched) {
+                  <div class="invalid-feedback">Địa chỉ không hợp lệ</div>
+                  }
+                </div>
+
+                <div class="mb-3">
+                  <label for="note" class="form-label">Ghi chú</label>
+                  <textarea formControlName="ghichu" class="form-control" id="note" rows="2"
+                    placeholder="Nhập ghi chú (tùy chọn)"></textarea>
+                </div>
               </div>
-              @if (couponDiscount > 0) {
-              <div class="alert alert-success mt-2 mb-0">
-                <i class="fas fa-check-circle me-2"></i>
-                Bạn được giảm: <strong>{{ couponDiscount | number: '1.0-0' }}đ</strong>
+            </div>
+          </div>-->
+          </div>
+          <!-- CỘT PHẢI: ORDER SUMMARY -->
+          <div class="col-lg-5">
+            <div class="order-summary-card bg-white shadow-sm rounded p-4 sticky-top" style="top: 20px;">
+
+              <h4 class="mb-4">Order Summary <span class="text-muted small">877.583.7724</span></h4>
+
+              <!-- DANH SÁCH SẢN PHẨM -->
+              @for (item of cartItems; track item.product.id) {
+              <div class="d-flex mb-3 pb-3 border-bottom">
+                <img [src]="item.product.thumbnail" class="me-3 rounded"
+                  style="width: 70px; height: 70px; object-fit: cover;">
+                <div class="flex-grow-1">
+                  <h6 class="mb-1">{{ item.product.name }}</h6>
+                  <small class="text-muted">Qty: {{ item.quantity }}</small>
+                </div>
+                <strong>{{ item.product.price * item.quantity | number:'1.0-0' }}đ</strong>
               </div>
               }
-              @if (!loading && couponApplied && couponDiscount === 0) {
-              <div class="alert alert-danger mt-2 mb-0">
-                Mã giảm giá không hợp lệ
-              </div>
-              }
-            </div>
 
-            <!-- Total Section -->
-            <div class="total-section mt-4 p-3 bg-primary bg-opacity-10 rounded">
-              <div class="row">
-                <div class="col-6">
-                  <h5 class="mb-1">Tổng cộng:</h5>
-                </div>
-                <div class="col-6 text-end">
-                  <h4 class="text-primary fw-bold mb-1">{{ totalAmount | number: '1.0-0' }}đ</h4>
-                </div>
-              </div>
-              @if (couponDiscount > 0) {
-              <hr class="my-2">
-              <div class="row">
-                <div class="col-6">
-                  <small class="text-success">Giảm giá:</small>
-                </div>
-                <div class="col-6 text-end">
-                  <small class="text-success">-{{ couponDiscount | number: '1.0-0' }}đ</small>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-6">
-                  <strong>Thành tiền:</strong>
-                </div>
-                <div class="col-6 text-end">
-                  <h4 class="text-success fw-bold">{{ (totalAmount - couponDiscount) | number: '1.0-0' }}đ</h4>
-                </div>
-              </div>
-              }
-            </div>
+              <hr class="my-4">
 
-            <!-- Order Button -->
-            <div class="d-grid mt-4">
-              <button (click)="placeOrder()" class="btn btn-primary btn-lg" type="button">
-                <i class="fas fa-shopping-bag me-2"></i>Đặt hàng ngay
+              <!-- TỔNG TIỀN -->
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Subtotal</span>
+                  <strong>{{ totalAmount | number:'1.0-0' }}đ</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Shipping</span>
+                  <span class="text-success">TBD</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                  <span>Estimated Tax</span>
+                  <strong>0đ</strong>
+                </div>
+                <div class="d-flex justify-content-between fs-5 fw-bold text-dark">
+                  <span>Total</span>
+                  <span>{{ totalAmount | number:'1.0-0' }}đ</span>
+                </div>
+              </div>
+
+              <!-- PROMO CODE -->
+              <div class="mb-4">
+                <div class="d-flex">
+                  <input type="text" class="form-control" placeholder="Promo Code" formControlName="couponCode">
+                  <button class="btn btn-outline-dark ms-2 px-4" (click)="applyCoupon()">APPLY</button>
+                </div>
+                @if (couponDiscount > 0) {
+                <small class="text-success mt-2 d-block">
+                  Đã áp dụng mã giảm giá: -{{ couponDiscount | number:'1.0-0' }}đ
+                </small>
+                }
+              </div>
+
+              <!-- NÚT ĐẶT HÀNG -->
+              <button class="btn btn-dark btn-lg w-100 py-3 fw-bold" (click)="placeOrder()">
+                ĐẶT HÀNG
               </button>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>
 <app-footer></app-footer>

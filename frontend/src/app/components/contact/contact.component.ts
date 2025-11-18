@@ -26,7 +26,7 @@ export class ContactComponent extends BaseComponent implements OnInit{
   viewUrl?: string;
 
   ngOnInit(): void {
-    this.viewUrl = `${environment.apiBaseUrl}/sanphams/images/${this.view}`;
+    this.viewUrl = `${environment.apiBaseUrl}/products/images/${this.view}`;
   }
 
   sendMessage(): void {

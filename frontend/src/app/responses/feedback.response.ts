@@ -7,4 +7,5 @@ export interface FeedbackResponse {
   star: number;
   productId: number;
   createdAt: Date;
+  average:number;
 }

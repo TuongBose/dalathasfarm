@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { CommonModule } from '@angular/common';
@@ -10,7 +9,6 @@ import { ApiResponse } from '../../responses/api.response';
 import { Product } from '../../models/product';
 import { Category } from '../../models/category';
 import { environment } from '../../environments/environment';
-import { Occasion } from '../../models/occasion';
 
 @Component({
   selector: 'app-category',
@@ -22,7 +20,6 @@ import { Occasion } from '../../models/occasion';
     FooterComponent,
     CommonModule,
     FormsModule,
-    RouterLink
   ]
 
 })

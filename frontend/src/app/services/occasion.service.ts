@@ -23,4 +23,8 @@ export class OccasionService {
     getTodayOccasions ():Observable<ApiResponse>{
         return this.http.get<ApiResponse>(`${this.apiGetAllCategory}/active/today`)
     }
+
+    getOccasionById(occasionId:number):Observable<ApiResponse>{
+return this.http.get<ApiResponse>(`${this.apiGetAllCategory}/${occasionId}`)
+     }
 }

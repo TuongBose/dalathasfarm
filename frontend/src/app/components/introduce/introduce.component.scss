@@ -5,6 +5,7 @@
 
   section {
     padding: 60px 10%;
+
     @media (max-width: 768px) {
       padding: 40px 5%;
     }
@@ -14,6 +15,7 @@
     text-align: center;
     background: #f9f9f9;
     padding: 80px 10%;
+
     @media (max-width: 768px) {
       padding: 50px 5%;
     }
@@ -22,6 +24,7 @@
       font-size: 36px;
       margin-bottom: 20px;
     }
+
     p {
       font-size: 18px;
       color: #555;
@@ -32,13 +35,15 @@
     display: flex;
     align-items: center;
     gap: 40px;
-@media (max-width: 768px) {
+
+    @media (max-width: 768px) {
       flex-direction: column;
       gap: 20px;
     }
 
     &.reverse {
       flex-direction: row-reverse;
+
       @media (max-width: 768px) {
         flex-direction: column-reverse;
       }
@@ -52,6 +57,7 @@
         margin-bottom: 15px;
         color: #222;
       }
+
       p {
         font-size: 16px;
         line-height: 1.6;
@@ -61,6 +67,7 @@
 
     .image {
       flex: 1;
+
       img {
         width: 100%;
         border-radius: 12px;
@@ -71,7 +78,8 @@
   .contact-form {
     background: #f1f1f1;
     text-align: center;
-@media (max-width: 768px) {
+
+    @media (max-width: 768px) {
       padding: 40px 5%;
     }
 
@@ -87,7 +95,8 @@
       flex-direction: column;
       gap: 15px;
 
-      input, textarea {
+      input,
+      textarea {
         padding: 12px;
         border: 1px solid #ccc;
         border-radius: 6px;
@@ -115,7 +124,8 @@
   height: 1px;
   background-color: #000000;
   margin: 20px 0;
+
   @media (max-width: 768px) {
-      margin: 30px 0;
-    }
+    margin: 30px 0;
+  }
 }

@@ -21,5 +21,5 @@ public class LoginResponse {
     private String refreshToken;
     private String userName;
     private List<String> role;
-    private int id;
+    private Integer id;
 }

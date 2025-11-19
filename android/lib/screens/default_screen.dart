@@ -1,0 +1,86 @@
+import 'package:android/screens/cart_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:android/app_config.dart';
+import 'package:android/screens/home_screen.dart';
+import 'package:android/screens/user_screen.dart';
+import 'package:android/screens/account_screen.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
+class DefaultScreen extends StatelessWidget {
+  final int initialIndex;
+
+  const DefaultScreen({super.key, this.initialIndex = 0});
+
+  @override
+  Widget build(BuildContext context) {
+    return MyDefaultScreen(initialIndex: initialIndex);
+  }
+}
+
+class MyDefaultScreen extends StatefulWidget {
+  final int initialIndex;
+
+  const MyDefaultScreen({super.key, this.initialIndex = 0});
+
+  @override
+  State<MyDefaultScreen> createState() => MyDefaultScreenState();
+}
+
+class MyDefaultScreenState extends State<MyDefaultScreen> {
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    initializeDateFormatting('vi_VN', null).then((_) {
+      setState(() {});
+    });
+
+    // Đặt _selectedIndex ban đầu từ initialIndex
+    _selectedIndex = widget.initialIndex;
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> widgetOptions = <Widget>[
+      const HomeScreen(),
+      CartScreen(),
+      AppConfig.isLogin ? const UserScreen() : const AccountScreen(),
+    ];
+
+    return Scaffold(
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: widgetOptions,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Trang chủ',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart_outlined),
+            label: 'Cart',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle_outlined),
+            label: 'Tài khoản',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blueAccent,
+        unselectedItemColor: Colors.grey,
+        onTap: _onItemTapped,
+        showUnselectedLabels: true,
+      ),
+    );
+  }
+}

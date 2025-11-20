@@ -51,6 +51,10 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
+    @Column(name = "shipping_method")
+    @Enumerated(EnumType.STRING)
+    private ShippingMethod shippingMethod;
+
     @Column(name = "shipping_date")
     private LocalDate shippingDate;
 
@@ -70,5 +74,9 @@ public class Order {
 
     public enum PaymentMethod {
         BankTransfer, Cash
+    }
+
+    public enum ShippingMethod {
+        Ship, Pickup
     }
 }

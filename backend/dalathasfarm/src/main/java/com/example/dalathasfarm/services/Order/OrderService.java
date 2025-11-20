@@ -55,7 +55,7 @@ public class OrderService implements IOrderService {
         order.setIsActive(true);
         order.setTotalMoney(orderDto.getTotalPrice());
 
-        if ("vnpay".equalsIgnoreCase(orderDto.getPaymentMethod()) && orderDto.getVnpTxnRef() != null) {
+        if ("BankTransfer".equalsIgnoreCase(orderDto.getPaymentMethod()) && orderDto.getVnpTxnRef() != null) {
             order.setVnpTxnRef(orderDto.getVnpTxnRef());
         }
 

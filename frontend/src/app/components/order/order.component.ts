@@ -24,19 +24,24 @@ import { Ward } from '../../responses/ward.response';
     FooterComponent,
     CommonModule,
     FormsModule,
-    ReactiveFormsModule,
     RouterModule
   ]
 })
 export class OrderComponent extends BaseComponent implements OnInit {
-  private formBuilder = inject(FormBuilder);
-  private cdr = inject(ChangeDetectorRef);
+  firstName: string = '';
+  lastName: string = '';
+  phoneNumber: string = '';
+  addressDetail: string = '';
+  note: string = '';
+  couponCode: string = '';
+  paymentMethod: string = 'Cash';
+  shippingMethod: string = 'Ship';
+  shippingDate: string = '';
 
   indexError: number[] = [];
   hasStockIssue: boolean = false;
   loading: boolean = false;
   cart: Map<number, number> = new Map();
-  orderForm: FormGroup;
   cartItems: { product: Product, quantity: number }[] = [];
   couponDiscount: number = 0; //số tiền được discount từ coupon
   couponApplied: boolean = false;
@@ -49,7 +54,9 @@ export class OrderComponent extends BaseComponent implements OnInit {
     address: '',
     note: '',
     totalPrice: 0,
-    paymentMethod: 'cod',
+    paymentMethod: 'Cash',
+    shippingMethod: 'Ship',
+    shippingDate: new Date(),
     status: '',
     cartItems: []
   }
@@ -57,27 +64,25 @@ export class OrderComponent extends BaseComponent implements OnInit {
   provinces: Province[] = [];
   districts: District[] = [];
   wards: Ward[] = [];
+  selectedProvinceCode: number | null = null;
+  selectedDistrictCode: number | null = null;
+  selectedWardCode: number | null = null;
 
-  selectedProvince: Province | null = null;
-  selectedDistrict: District | null = null;
-  selectedWard: Ward | null = null;
+  todayDate: string = new Date().toISOString().split('T')[0];
+  maxDate: string = '';
 
-  constructor() {
+  // ==== LỖI VALIDATE ====
+  firstNameError: string = '';
+  lastNameError: string = '';
+  phoneError: string = '';
+  addressError: string = '';
+  provinceError: string = '';
+  districtError: string = '';
+  wardError: string = '';
+  shippingDateError: string = '';
+
+  constructor(private cdr: ChangeDetectorRef) {
     super();
-
-    this.orderForm = this.formBuilder.group({
-      firstName: ['tuong', [Validators.required]],
-      lastName: ['tuong', [Validators.required]],
-      email: ['tuong@gmail.com', [Validators.email]],
-      phoneNumber: ['090009848', [Validators.required, Validators.minLength(6)]],
-      address: ['123 le trong tan, phuong 5', [Validators.required, Validators.minLength(5)]],
-      city: ['123 le trong tan, phuong 5', [Validators.required, Validators.minLength(5)]],
-      district: ['ads', [Validators.required, Validators.minLength(5)]],
-      ward: ['áđá', [Validators.required, Validators.minLength(5)]],
-      note: ['ádf'],
-      couponCode: [''],
-      phuongthucthanhtoan: ['cod']
-    });
 
     this.cartService.cartChanged.subscribe(() => {
       this.cart = this.cartService.getCart();
@@ -92,8 +97,12 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.cartService.forceRefreshCart();
     this.cart = this.cartService.getCart();
     this.updateCartItems();
-    this.loadProvinces();
 
+    const max = new Date();
+    max.setMonth(max.getMonth() + 6);
+    this.maxDate = max.toISOString().split('T')[0];
+
+    this.loadProvinces();
 
     const productIds = Array.from(this.cart.keys()); // Truyền danh sách MASANPHAM từ Map giỏ hàng
 
@@ -156,97 +165,253 @@ export class OrderComponent extends BaseComponent implements OnInit {
     });
   }
 
-  onProvinceChange(event: Event) {
-    const select = event.target as HTMLSelectElement;
-    const code = Number(select.value);
-    this.selectedProvince = this.provinces.find(p => p.code === code) || null;
-    this.districts = this.selectedProvince?.districts || [];
+  onProvinceChange() {
+    this.districts = [];
     this.wards = [];
-    this.selectedDistrict = null;
-    this.selectedWard = null;
-    this.orderForm.patchValue({ district: '', ward: '' });
+    this.selectedDistrictCode = null;
+    this.selectedWardCode = null;
+
+    const province = this.provinces.find(p => p.code === this.selectedProvinceCode);
+    if (province) this.districts = province.districts;
+
+    this.validateProvince();
+    this.validateDistrict();
+    this.validateWard();
   }
 
-  onDistrictChange(event: Event) {
-    const select = event.target as HTMLSelectElement;
-    const code = Number(select.value);
-    this.selectedDistrict = this.districts.find(d => d.code === code) || null;
-    this.wards = this.selectedDistrict?.wards || [];
-    this.selectedWard = null;
-    this.orderForm.patchValue({ ward: '' });
+  onDistrictChange() {
+    this.wards = [];
+    this.selectedWardCode = null;
+
+    const district = this.districts.find(d => d.code === this.selectedDistrictCode);
+    if (district) this.wards = district.wards;
+
+    this.validateDistrict();
+    this.validateWard();
   }
 
-  onWardChange(event: Event) {
-    const select = event.target as HTMLSelectElement;
-    const code = Number(select.value);
-    this.selectedWard = this.wards.find(w => w.code === code) || null;
+  onWardChange() {
+    this.validateWard();
+  }
+
+  validateFirstName() {
+    if (!this.firstName.trim()) this.firstNameError = 'Vui lòng nhập tên';
+    else this.firstNameError = '';
+  }
+
+  validateLastName() {
+    if (!this.lastName.trim()) this.lastNameError = 'Vui lòng nhập họ';
+    else this.lastNameError = '';
+  }
+
+  validatePhone() {
+    if (!this.phoneNumber) {
+      this.phoneError = 'Vui lòng nhập số điện thoại';
+    } else if (!/^\d{9,11}$/.test(this.phoneNumber)) {
+      this.phoneError = 'Số điện thoại phải từ 9-11 chữ số';
+    } else {
+      this.phoneError = '';
+    }
+  }
+
+  validateAddress() {
+    if (!this.addressDetail.trim()) this.addressError = 'Vui lòng nhập địa chỉ chi tiết';
+    else if (this.addressDetail.trim().length < 5) this.addressError = 'Địa chỉ quá ngắn';
+    else this.addressError = '';
+  }
+
+  validateProvince() {
+    if (this.shippingMethod === 'Ship' && !this.selectedProvinceCode) {
+      this.provinceError = 'Vui lòng chọn tỉnh/thành';
+    } else {
+      this.provinceError = '';
+    }
+  }
+
+  validateDistrict() {
+    if (this.shippingMethod === 'Ship' && !this.selectedDistrictCode) {
+      this.districtError = 'Vui lòng chọn quận/huyện';
+    } else {
+      this.districtError = '';
+    }
+  }
+
+  validateWard() {
+    if (this.shippingMethod === 'Ship' && !this.selectedWardCode) {
+      this.wardError = 'Vui lòng chọn phường/xã';
+    } else {
+      this.wardError = '';
+    }
+  }
+
+  validateShippingDate() {
+    if (!this.shippingDate) {
+      this.shippingDateError = 'Vui lòng chọn ngày giao hàng';
+    } else {
+      this.shippingDateError = '';
+    }
+  }
+
+  private validateRequiredFields(): boolean {
+    // Luôn validate
+    this.validateFirstName();
+    this.validateLastName();
+    this.validatePhone();
+    this.validateShippingDate();
+
+    // Chỉ validate khi là GIAO HÀNG TẬN NƠI
+    if (this.shippingMethod === 'Ship') {
+      this.validateAddress();
+      this.validateProvince();
+      this.validateDistrict();
+      this.validateWard();
+    } else {
+      // Nếu là Pickup → bỏ qua các field này
+      this.addressError = '';
+      this.provinceError = '';
+      this.districtError = '';
+      this.wardError = '';
+    }
+
+    // Trả về true nếu KHÔNG CÓ LỖI nào
+    return !this.firstNameError &&
+      !this.lastNameError &&
+      !this.phoneError &&
+      !this.addressError &&
+      !this.provinceError &&
+      !this.districtError &&
+      !this.wardError &&
+      !this.shippingDateError;
   }
 
   placeOrder() {
     debugger
+    const isFormValid = this.validateRequiredFields();
+    const hasStockError = this.hasStockIssue;
+    if (this.cartItems.length === 0) {
+      this.toastService.showToast({
+        defaultMsg: 'Giỏ hàng của bạn đang trống!',
+        type: 'warning',
+        delay: 4000
+      });
+      return;
+    }
 
-    if (this.orderForm.errors == null) {
+    if (isFormValid && !hasStockError) {
+      this.createOrderAndProceed();
+      return;
+    }
+
+    if (hasStockError) {
       debugger
-      if (!this.hasStockIssue) {
-        // Gán giá trị từ form vào đối tuọng orderData
-        /*
-        this.orderData.fullname = this.orderForm.get('fullname')!.value;
-        this.orderData.email=this.orderForm.get('email')!.value;
-        this.orderData.sodienthoai=this.orderForm.get('sodienthoai')!.value;
-        this.orderData.diachi=this.orderForm.get('diachi')!.value;
-        this.orderData.ghichu=this.orderForm.get('ghichu')!.value;
-        this.orderData.phuongthucthanhtoan=this.orderForm.get('phuongthucthanhtoan')!.value;
-        */
-        // Sử dụng toán tử spread (...) để sao chép giá trị từ form vào orderData
-
-        // GỘP HỌ TÊN
-        const firstName = this.orderForm.get('firstName')?.value?.trim() || '';
-        const lastName = this.orderForm.get('lastName')?.value?.trim() || '';
-        const fullName = `${lastName} ${firstName}`.trim();
-
-        // GỘP ĐỊA CHỈ CHI TIẾT
-        const houseAddress = this.orderForm.get('address')?.value?.trim() || '';
-        const ward = this.selectedWard?.name || this.orderForm.get('ward')?.value || '';
-        const district = this.selectedDistrict?.name || this.orderForm.get('district')?.value || '';
-        const province = this.selectedProvince?.name || this.orderForm.get('city')?.value || '';
-
-        const fullAddress = [houseAddress, ward, district, province]
-          .filter(Boolean)
-          .join(', ');
-
-        this.orderData = {
-          ...this.orderData,
-          fullName: fullName,
-          address: fullAddress,
-          phoneNumber: this.orderForm.get('phoneNumber')?.value,
-          note: this.orderForm.get('note')?.value || '',
-          paymentMethod: this.orderForm.get('phuongthucthanhtoan')?.value || 'cod',
-          cartItems: this.cartItems.map(item => ({
-            productId: item.product.id,
-            quantity: item.quantity
-          })),
-          totalPrice: this.totalAmount
-        };
-
-        debugger
-        if (this.orderData.paymentMethod === 'vnpay') {
-          this.handleVnpayPayment();
-        } else {
-          this.handleCodPayment();
-        }
-      } else {
-        debugger
-        this.loading = false;
-        this.indexError.forEach(index => {
-          const cartItem = this.cartItems[index];
-          this.toastService.showToast({
-            defaultMsg: `Sản phẩm "${cartItem.product.name}" không đủ hàng trong kho (Còn ${cartItem.product.stockQuantity} sản phẩm).`,
-            title: 'Thông báo',
-            delay: 3000,
-            type: 'danger'
-          });
+      this.loading = false;
+      this.indexError.forEach(index => {
+        const cartItem = this.cartItems[index];
+        this.toastService.showToast({
+          defaultMsg: `Sản phẩm "${cartItem.product.name}" không đủ hàng trong kho (Còn ${cartItem.product.stockQuantity} sản phẩm).`,
+          title: 'Thông báo',
+          delay: 3000,
+          type: 'danger'
         });
-      }
+      });
+      return;
+    }
+
+    if (!isFormValid) {
+      this.toastService.showToast({
+        defaultMsg: 'Vui lòng kiểm tra lại thông tin bắt buộc',
+        type: 'danger',
+        delay: 4000
+      });
+    }
+
+    // Gán giá trị từ form vào đối tuọng orderData
+    /*
+    this.orderData.fullname = this.orderForm.get('fullname')!.value;
+    this.orderData.email=this.orderForm.get('email')!.value;
+    this.orderData.sodienthoai=this.orderForm.get('sodienthoai')!.value;
+    this.orderData.diachi=this.orderForm.get('diachi')!.value;
+    this.orderData.ghichu=this.orderForm.get('ghichu')!.value;
+    this.orderData.phuongthucthanhtoan=this.orderForm.get('phuongthucthanhtoan')!.value;
+    */
+    // Sử dụng toán tử spread (...) để sao chép giá trị từ form vào orderData
+
+    // // Gộp họ tên
+    // const fullName = `${this.lastName.trim()} ${this.firstName.trim()}`.trim();
+
+    // // Gộp địa chỉ
+    // const provinceName = this.provinces.find(p => p.code === this.selectedProvinceCode)?.name || '';
+    // const districtName = this.districts.find(d => d.code === this.selectedDistrictCode)?.name || '';
+    // const wardName = this.wards.find(w => w.code === this.selectedWardCode)?.name || '';
+
+    // const fullAddress = [this.addressDetail, wardName, districtName, provinceName]
+    //   .filter(Boolean)
+    //   .join(', ');
+
+    // const orderData: OrderDto = {
+    //   userId: this.tokenService.getUserId(),
+    //   fullName,
+    //   phoneNumber: this.phoneNumber,
+    //   address: fullAddress,
+    //   note: this.note,
+    //   totalPrice: this.totalAmount - this.couponDiscount,
+    //   paymentMethod: this.paymentMethod,
+    //   shippingMethod: this.shippingMethod,
+    //   shippingDate: this.shippingMethod === 'Ship' ? new Date(this.shippingDate) : new Date(),
+    //   cartItems: this.cartItems.map(item => ({
+    //     productId: item.product.id,
+    //     quantity: item.quantity
+    //   })),
+    //   status: '',
+    //   email: '',
+    // };
+
+    // debugger
+    // if (this.orderData.paymentMethod === 'BankTransfer') {
+    //   this.handleVnpayPayment();
+    // } else {
+    //   this.handleCodPayment();
+    // }
+  }
+
+  createOrderAndProceed() {
+    const fullName = `${this.lastName.trim()} ${this.firstName.trim()}`.trim();
+
+    let fullAddress = '';
+    if (this.shippingMethod === 'Ship') {
+      const provinceName = this.provinces.find(p => p.code === this.selectedProvinceCode)?.name || '';
+      const districtName = this.districts.find(d => d.code === this.selectedDistrictCode)?.name || '';
+      const wardName = this.wards.find(w => w.code === this.selectedWardCode)?.name || '';
+      fullAddress = [this.addressDetail.trim(), wardName, districtName, provinceName]
+        .filter(Boolean)
+        .join(', ');
+    } else {
+      fullAddress = 'Lấy hàng tại cửa hàng';
+    }
+
+    this.orderData = {
+      ...this.orderData,
+      userId: this.tokenService.getUserId(),
+      fullName,
+      phoneNumber: this.phoneNumber,
+      address: fullAddress,
+      note: this.note || '',
+      totalPrice: this.totalAmount - this.couponDiscount,
+      paymentMethod: this.paymentMethod,
+      shippingMethod: this.shippingMethod,
+      shippingDate: new Date(this.shippingDate),
+      cartItems: this.cartItems.map(item => ({
+        productId: item.product.id,
+        quantity: item.quantity
+      })),
+      status: '',
+      email: ''
+    };
+
+    if (this.paymentMethod === 'BankTransfer') {
+      this.handleVnpayPayment();
+    } else {
+      this.handleCodPayment();
     }
   }
 
@@ -304,6 +469,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
         this.router.navigate(['/']);
       },
       error: (error: HttpErrorResponse) => {
+        debugger;
         this.loading = false;
         this.toastService.showToast({
           defaultMsg: 'Lỗi khi đặt hàng',
@@ -351,8 +517,15 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  confirmDelete(index: number): void {
-    if (confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
+  async confirmDelete(index: number) {
+    const result = await this.toastService.showConfirmToast({
+      message: 'Bạn có chắc muốn xoá sản phẩm này?',
+      title: 'Xác nhận xoá',
+      type: 'warning',
+      okText: 'Xoá',
+      cancelText: 'Hủy'
+    });
+    if (result) {
       // Xoa san pham khoi danh sach cartItems
       this.cartItems.splice(index, 1);
       // Cập nhật lại this.cart từ this.cartItems
@@ -360,8 +533,8 @@ export class OrderComponent extends BaseComponent implements OnInit {
       // Tinh toan lai tong tien
       this.calculateTotal();
       this.cdr.detectChanges();
+      window.location.reload();
     }
-
   }
 
   private updateCartFromCartItems(): void {
@@ -376,11 +549,10 @@ export class OrderComponent extends BaseComponent implements OnInit {
     // Xử lý áp dụng mã giảm giá
     // cập nhật giá trị totalAmount dựa trên mã giảm giá
     debugger
-    const couponCode = this.orderForm.get('couponCode')!.value;
-    if (!this.couponApplied && couponCode) {
+    if (!this.couponApplied && this.couponCode) {
       this.loading = true;
       this.calculateTotal();
-      this.couponService.calculateCouponValue(couponCode, this.totalAmount).subscribe({
+      this.couponService.calculateCouponValue(this.couponCode, this.totalAmount).subscribe({
         next: (apiResponse: ApiResponse) => {
           this.couponDiscount = apiResponse.data as number;
           this.totalAmount -= this.couponDiscount;

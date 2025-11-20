@@ -1,7 +1,7 @@
 <app-header></app-header>
 <div class="checkout-page py-5">
   <div class="container">
-    <form [formGroup]="orderForm">
+    <form (ngSubmit)="placeOrder()">
       <div class="row g-5">
         <!-- CỘT TRÁI: THÔNG TIN GIAO HÀNG + THANH TOÁN -->
         <div class="col-lg-7">
@@ -22,7 +22,7 @@
 
           <!-- Phone number -->
           <!-- <div class="mb-4">
-            <label class="form-label fw-semibold">Số điện thoại *</label>
+            <label class="form-label fw-semibold">Số điện thoại <span class="text-danger">*</span></label>
             <input type="email" formControlName="email" class="form-control" id="email"
               [class.is-invalid]="orderForm.get('email')!.invalid && orderForm.get('email')!.touched">
             @if (orderForm.get('email')!.invalid && orderForm.get('email')!.touched) {
@@ -33,7 +33,7 @@
           <!-- Ho va ten -->
           <!-- <div class="row g-3">
             <div class="col-md-6">
-              <label class="form-label">Tên *</label>
+              <label class="form-label">Tên <span class="text-danger">*</span></label>
               <input type="text" formControlName="firstName" class="form-control" id="name"
                 [class.is-invalid]="orderForm.get('firstName')!.invalid && orderForm.get('firstName')!.touched">
               @if (orderForm.get('firstName')!.invalid && orderForm.get('firstName')!.touched) {
@@ -42,7 +42,7 @@
             </div>
 
             <div class="col-md-6">
-              <label class="form-label">Họ *</label>
+              <label class="form-label">Họ <span class="text-danger">*</span></label>
               <input type="text" formControlName="lastName" class="form-control" id="name"
                 [class.is-invalid]="orderForm.get('lastName')!.invalid && orderForm.get('lastName')!.touched">
               @if (orderForm.get('lastName')!.invalid && orderForm.get('lastName')!.touched) {
@@ -57,7 +57,7 @@
             <table class="table table-hover">
               <thead class="table-light">
                 <tr>
-                  <th scope="col" class="text-start">Sản phẩm</th>
+                  <th scope="col" class="text-start" style="width: 300px;">Sản phẩm</th>
                   <th class="text-center">Số lượng</th>
                   <th class="text-center">Đơn giá</th>
                   <th class="text-center">Tổng giá</th>
@@ -76,10 +76,10 @@
                   <td class="text-center">
                     <div class="product-quantity d-flex justify-content-center">
                       <div class="input-group" style="max-width: 120px;">
-                        <button class="btn btn-outline-secondary btn-sm" (click)="decreaseQuantity(i)">-</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="decreaseQuantity(i)">-</button>
                         <input type="text" class="form-control form-control-sm text-center" [value]="item.quantity"
                           readonly>
-                        <button class="btn btn-outline-secondary btn-sm" (click)="increaseQuantity(i)">+</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="increaseQuantity(i)">+</button>
                       </div>
                     </div>
                   </td>
@@ -88,7 +88,7 @@
                     '1.0-0'
                     }}đ</td>
                   <td class="text-center">
-                    <button class="btn btn-outline-danger btn-sm" (click)="confirmDelete(i)">
+                    <button type="button" class="btn btn-outline-danger btn-sm" (click)="confirmDelete(i)">
                       <i class="fas fa-trash"></i>
                     </button>
                   </td>
@@ -99,155 +99,182 @@
           </div>
 
           <!-- SHIPPING METHOD TABS -->
-          <ul class="nav nav-tabs mb-4" id="shippingTab" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button class="nav-link active px-5 py-3" data-bs-toggle="tab" data-bs-target="#ship">
-                <i class="fas fa-truck me-2"></i> SHIP
-              </button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link px-5 py-3" data-bs-toggle="tab" data-bs-target="#pickup">
-                <i class="fas fa-store me-2"></i> PICK UP
-              </button>
-            </li>
-          </ul>
+          <div class="shipping-methods mb-4">
+            <h5 class="mb-3">Phương thức nhận hàng <span class="text-danger">*</span></h5>
+            <div class="row g-3">
+              <!-- GIAO HANG TAN NOI -->
+              <div class="col-md-6">
+                <label class="border rounded p-4 d-block cursor-pointer"
+                  [class.border-primary]="shippingMethod==='Ship'" (click)="shippingMethod='Ship'">
+                  <div class="d-flex align-items-center">
+                    <input type="radio" [(ngModel)]="shippingMethod" value="Ship" name="shippingMethod" class="me-3">
+                    <div>
+                      <strong class="text-primary">Giao hàng tận nơi</strong>
+                      <small class="text-muted d-block">Nhận hàng tại nhà</small>
+                    </div>
+                  </div>
+                </label>
+              </div>
 
-
+              <!-- LAY HANG TAI CUA HANG -->
+              <div class="col-md-6">
+                <label class="border rounded p-4 d-block cursor-pointer"
+                  [class.border-success]="shippingMethod==='Pickup'" (click)="shippingMethod='Pickup'">
+                  <div class="d-flex align-items-center">
+                    <input type="radio" [(ngModel)]="shippingMethod" value="Pickup" name="shippingMethod" class="me-3">
+                    <div>
+                      <strong class="text-success">Lấy hàng tại cửa hàng</strong>
+                      <small class="text-muted d-block">Tiết kiệm phí ship</small>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
 
           <div class="tab-content">
-            <div class="tab-pane fade show active" id="ship">
+            @if(shippingMethod === 'Ship'){
+            <h4 class="mb-4">Địa chỉ giao hàng</h4>
+            <!-- FORM THÔNG TIN -->
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Tên <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" [(ngModel)]="firstName" (input)="validateFirstName()"
+                  [class.is-invalid]="firstNameError" name="firstName">
+                @if(firstNameError) {<div class="invalid-feedback">{{lastNameError}}</div>}
+              </div>
 
-              <h4 class="mb-4">Shipping Address</h4>
+              <div class="col-md-6">
+                <label class="form-label">Họ <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" [(ngModel)]="lastName" (input)="validateLastName()"
+                  [class.is-invalid]="lastNameError" name="lastName">
+                @if(lastNameError) {<div class="invalid-feedback">{{lastNameError}}</div>}
+              </div>
 
-              <!-- FORM THÔNG TIN -->
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <label class="form-label">Tên *</label>
-                  <input type="text" formControlName="firstName" class="form-control" id="name"
-                    [class.is-invalid]="orderForm.get('firstName')!.invalid && orderForm.get('firstName')!.touched">
-                  @if (orderForm.get('firstName')!.invalid && orderForm.get('firstName')!.touched) {
-                  <div class="invalid-feedback">Tên bắt buộc</div>
+              <div class="col-12">
+                <label class="form-label">Tỉnh / Thành phố <span class="text-danger">*</span></label>
+                <select class="form-select" [(ngModel)]="selectedProvinceCode" (change)="onProvinceChange()"
+                  [class.is-invalid]="provinceError" name="province">
+                  <option [ngValue]="null">-- Chọn tỉnh/thành --</option>
+                  @for(p of provinces; track p.code){
+                  <option [ngValue]="p.code">{{p.name}}</option>
                   }
-                </div>
+                </select>
+                @if(provinceError) { <div class="invalid-feedback">{{provinceError}}</div>}
+              </div>
 
-                <div class="col-md-6">
-                  <label class="form-label">Họ *</label>
-                  <input type="text" formControlName="lastName" class="form-control" id="name"
-                    [class.is-invalid]="orderForm.get('lastName')!.invalid && orderForm.get('lastName')!.touched">
-                  @if (orderForm.get('lastName')!.invalid && orderForm.get('lastName')!.touched) {
-                  <div class="invalid-feedback">Họ bắt buộc</div>
+              <div class="col-md-6">
+                <label class="form-label">Quận / Huyện <span class="text-danger">*</span></label>
+                <select class="form-select" [(ngModel)]="selectedDistrictCode" (change)="onDistrictChange()"
+                  [disabled]="!selectedProvinceCode" [class.is-invalid]="districtError" name="district">
+                  <option [ngValue]="null">-- Chọn quận/huyện --</option>
+                  @for(d of districts; track d.code){
+                  <option [ngValue]="d.code">{{d.name}}</option>
                   }
-                </div>
+                </select>
+                @if(districtError){<div class="invalid-feedback">{{districtError}}</div>}
+              </div>
 
-                <div class="col-12">
-                  <label class="form-label">Tỉnh / Thành phố *</label>
-                  <select class="form-select" (change)="onProvinceChange($event)" formControlName="city">
-                    <option value="">-- Chọn tỉnh/thành --</option>
-                    @for (p of provinces; track p.code) {
-                    <option [value]="p.code">{{ p.name }}</option>
-                    }
-                  </select>
-                </div>
-
-                <div class="col-md-6">
-                  <label class="form-label">Quận / Huyện *</label>
-                  <select class="form-select" (change)="onDistrictChange($event)" formControlName="district"
-                    [disabled]="districts.length === 0">
-                    <option value="">-- Chọn quận/huyện --</option>
-                    @for (d of districts; track d.code) {
-                    <option [value]="d.code">{{ d.name }}</option>
-                    }
-                  </select>
-                </div>
-
-                <div class="col-md-6">
-                  <label class="form-label">Phường / Xã *</label>
-                  <select class="form-select" (change)="onWardChange($event)" formControlName="ward"
-                    [disabled]="wards.length === 0">
-                    <option value="">-- Chọn phường/xã --</option>
-                    @for (w of wards; track w.code) {
-                    <option [value]="w.code">{{ w.name }}</option>
-                    }
-                  </select>
-                </div>
-
-                <div class="col-12">
-                  <label class="form-label">Địa chỉ *</label>
-                  <textarea formControlName="address" class="form-control" id="address" rows="2"
-                    [class.is-invalid]="orderForm.get('address')!.invalid && orderForm.get('address')!.touched"></textarea>
-                  @if (orderForm.get('address')!.invalid && orderForm.get('address')!.touched) {
-                  <div class="invalid-feedback">Địa chỉ không hợp lệ</div>
+              <div class="col-md-6">
+                <label class="form-label">Phường / Xã <span class="text-danger">*</span></label>
+                <select class="form-select" [(ngModel)]="selectedWardCode" (change)="onWardChange()"
+                  [disabled]="!selectedDistrictCode" [class.is-invalid]="wardError" name="ward">
+                  <option [ngValue]="null">-- Chọn phường/xã --</option>
+                  @for(w of wards; track w.code){
+                  <option [ngValue]="w.code">{{w.name}}</option>
                   }
-                </div>
+                </select>
+                @if(wardError){<div class="invalid-feedback">{{wardError}}</div>}
+              </div>
 
-                <div class="col-md-6">
-                  <label for="phuongthucthanhtoan" class="form-label">Phương thức thanh toán *</label>
-                  <select class="form-select" id="phuongthucthanhtoan" formControlName="phuongthucthanhtoan">
-                    <option value="cod">Thanh toán khi nhận hàng (COD)</option>
-                    <option value="vnpay">Thanh toán VNPAY</option>
-                  </select>
-                </div>
+              <div class="col-12">
+                <label class="form-label">Địa chỉ <span class="text-danger">*</span></label>
+                <textarea class="form-control" [(ngModel)]="addressDetail" (input)="validateAddress()"
+                  [class.is-invalid]="addressError" name="addressDetail" rows="2"></textarea>
+                @if(addressError){<div class="invalid-feedback">{{addressError}}</div>}
+              </div>
 
-                <div class="col-md-6">
-                  <label class="form-label">Số điện thoại *</label>
-                  <div class="input-group">
-                    <span class="input-group-text">+84</span>
-                    <input type="tel" formControlName="phoneNumber" class="form-control" id="phone"
-                      [class.is-invalid]="orderForm.get('phoneNumber')!.invalid && orderForm.get('phoneNumber')!.touched">
-                    @if (orderForm.get('phoneNumber')!.invalid && orderForm.get('phoneNumber')!.touched) {
-                    <div class="invalid-feedback">Số điện thoại không hợp lệ</div>
-                    }
-                  </div>
-                </div>
+              <div class="col-12">
+                <label class="form-label">Chọn ngày giao hàng mong muốn <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" [(ngModel)]="shippingDate" (change)="validateShippingDate()"
+                  [min]="todayDate" [max]="maxDate" [class.is-invalid]="shippingDateError" name="shippingDate">
+                @if(shippingDateError){<div class="invalid-feedback">{{shippingDateError}}</div>}
+              </div>
 
-                <div class="col-12">
-                  <label class="form-label">Ghi chú (tùy chọn)</label>
-                  <textarea formControlName="note" class="form-control" rows="2" id="note" ></textarea>
+              <div class="col-md-6">
+                <label for="paymentMethod" class="form-label">Phương thức thanh toán <span
+                    class="text-danger">*</span></label>
+                <select class="form-select" id="paymentMethod" [(ngModel)]="paymentMethod" name="paymentMethod">
+                  <option value="Cash">Thanh toán khi nhận hàng (Cash)</option>
+                  <option value="BankTransfer">Thanh toán VNPAY</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">+84</span>
+                  <input type="tel" class="form-control" [(ngModel)]="phoneNumber" (input)="validatePhone()"
+                    [class.is-invalid]="phoneError" name="phoneNumber">
+                  @if(phoneError){<div class="invalid-feedback">{{phoneError}}</div>}
                 </div>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Ghi chú (tùy chọn)</label>
+                <textarea class="form-control" [(ngModel)]="note" name="note" rows="2"></textarea>
               </div>
             </div>
 
-            <div class="tab-pane fade" id="pickup">
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <label class="form-label">Tên *</label>
-                  <input type="text" formControlName="firstName" class="form-control" id="name"
-                    [class.is-invalid]="orderForm.get('firstName')!.invalid && orderForm.get('firstName')!.touched">
-                  @if (orderForm.get('firstName')!.invalid && orderForm.get('firstName')!.touched) {
-                  <div class="invalid-feedback">Tên bắt buộc</div>
-                  }
-                </div>
+            }@else{
+            <h4 class="mb-4">Thông tin đặt hàng</h4>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Tên <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" [(ngModel)]="firstName" (input)="validateFirstName()"
+                  [class.is-invalid]="firstNameError" name="firstName">
+                @if(firstNameError){<div class="invalid-feedback">{{firstNameError}}</div>}
+              </div>
 
-                <div class="col-md-6">
-                  <label class="form-label">Họ *</label>
-                  <input type="text" formControlName="lastName" class="form-control" id="name"
-                    [class.is-invalid]="orderForm.get('lastName')!.invalid && orderForm.get('lastName')!.touched">
-                  @if (orderForm.get('lastName')!.invalid && orderForm.get('lastName')!.touched) {
-                  <div class="invalid-feedback">Họ bắt buộc</div>
-                  }
-                </div>
+              <div class="col-md-6">
+                <label class="form-label">Họ <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" [(ngModel)]="lastName" (input)="validateLastName()"
+                  [class.is-invalid]="lastNameError" name="lastName">
+                @if(lastNameError){<div class="invalid-feedback">{{lastNameError}}</div>}
+              </div>
 
-                <div class="col-md-6">
-                  <label for="phuongthucthanhtoan" class="form-label">Phương thức thanh toán *</label>
-                  <select class="form-select" id="phuongthucthanhtoan" formControlName="phuongthucthanhtoan">
-                    <option value="cod">Thanh toán khi nhận hàng (COD)</option>
-                    <option value="vnpay">Thanh toán VNPAY</option>
-                  </select>
-                </div>
+              <div class="col-12">
+                <label class="form-label">Chọn ngày giao hàng mong muốn <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" [(ngModel)]="shippingDate" (change)="validateShippingDate()"
+                  [min]="todayDate" [max]="maxDate" [class.is-invalid]="shippingDateError" name="shippingDate">
+                @if(shippingDateError){<div class="invalid-feedback">{{shippingDateError}}</div>}
+              </div>
 
-                <div class="col-md-6">
-                  <label class="form-label">Số điện thoại *</label>
-                  <div class="input-group">
-                    <span class="input-group-text">+84</span>
-                    <input type="tel" formControlName="phoneNumber" class="form-control" id="phone"
-                      [class.is-invalid]="orderForm.get('phoneNumber')!.invalid && orderForm.get('phoneNumber')!.touched">
-                    @if (orderForm.get('phoneNumber')!.invalid && orderForm.get('phoneNumber')!.touched) {
-                    <div class="invalid-feedback">Số điện thoại không hợp lệ</div>
-                    }
-                  </div>
+              <div class="col-md-6">
+                <label for="paymentMethod" class="form-label">Phương thức thanh toán <span
+                    class="text-danger">*</span></label>
+                <select class="form-select" id="paymentMethod" [(ngModel)]="paymentMethod" name="paymentMethod">
+                  <option value="Cash">Thanh toán khi nhận hàng (Cash)</option>
+                  <option value="BankTransfer">Thanh toán VNPAY</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">+84</span>
+                  <input type="tel" class="form-control" [(ngModel)]="phoneNumber" (input)="validatePhone()"
+                    [class.is-invalid]="phoneError" name="phoneNumber">
+                  @if(phoneError){<div class="invalid-feedback">{{phoneError}}</div>}
                 </div>
               </div>
+
+              <div class="col-12">
+                <label class="form-label">Ghi chú (tùy chọn)</label>
+                <textarea class="form-control" [(ngModel)]="note" name="note" rows="2"></textarea>
+              </div>
             </div>
+            }
           </div>
 
           <!-- Thông tin người nhận - Responsive order
@@ -372,7 +399,7 @@
                 </h3>
 
                 <div class="mb-3">
-                  <label for="name" class="form-label">Họ và tên *</label>
+                  <label for="name" class="form-label">Họ và tên <span class="text-danger">*</span></label>
                   <input type="text" formControlName="fullname" class="form-control" id="name"
                     [class.is-invalid]="orderForm.get('fullname')!.invalid && orderForm.get('fullname')!.touched">
                   @if (orderForm.get('fullname')!.invalid && orderForm.get('fullname')!.touched) {
@@ -381,7 +408,7 @@
                 </div>
 
                 <div class="mb-3">
-                  <label for="email" class="form-label">Email *</label>
+                  <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
                   <input type="email" formControlName="email" class="form-control" id="email"
                     [class.is-invalid]="orderForm.get('email')!.invalid && orderForm.get('email')!.touched">
                   @if (orderForm.get('email')!.invalid && orderForm.get('email')!.touched) {
@@ -390,7 +417,7 @@
                 </div>
 
                 <div class="mb-3">
-                  <label for="phone" class="form-label">Số điện thoại *</label>
+                  <label for="phone" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
                   <input type="tel" formControlName="phoneNumber" class="form-control" id="phone"
                     [class.is-invalid]="orderForm.get('phoneNumber')!.invalid && orderForm.get('phoneNumber')!.touched">
                   @if (orderForm.get('phoneNumber')!.invalid && orderForm.get('phoneNumber')!.touched) {
@@ -399,7 +426,7 @@
                 </div>
 
                 <div class="mb-3">
-                  <label for="address" class="form-label">Địa chỉ *</label>
+                  <label for="address" class="form-label">Địa chỉ <span class="text-danger">*</span></label>
                   <textarea formControlName="diachi" class="form-control" id="address" rows="2"
                     [class.is-invalid]="orderForm.get('diachi')!.invalid && orderForm.get('diachi')!.touched"></textarea>
                   @if (orderForm.get('diachi')!.invalid && orderForm.get('diachi')!.touched) {
@@ -420,7 +447,7 @@
         <div class="col-lg-5">
           <div class="order-summary-card bg-white shadow-sm rounded p-4 sticky-top" style="top: 20px;">
 
-            <h4 class="mb-4">Order Summary <span class="text-muted small">877.583.7724</span></h4>
+            <h4 class="mb-4">Order Summary</h4>
 
             <!-- DANH SÁCH SẢN PHẨM -->
             @for (item of cartItems; track item.product.id) {
@@ -460,7 +487,8 @@
             <!-- PROMO CODE -->
             <div class="mb-4">
               <div class="d-flex">
-                <input type="text" class="form-control" placeholder="Promo Code" formControlName="couponCode">
+                <input type="text" class="form-control" [(ngModel)]="couponCode" placeholder="Mã giảm giá"
+                  name="couponCode">
                 <button class="btn btn-outline-dark ms-2 px-4" (click)="applyCoupon()">APPLY</button>
               </div>
               @if (couponDiscount > 0) {
@@ -471,7 +499,7 @@
             </div>
 
             <!-- NÚT ĐẶT HÀNG -->
-            <button class="btn btn-dark btn-lg w-100 py-3 fw-bold" (click)="placeOrder()">
+            <button class="btn btn-dark btn-lg w-100 py-3 fw-bold" type="submit">
               ĐẶT HÀNG
             </button>
           </div>

@@ -23,8 +23,10 @@ public class OrderResponse {
     private String note;
     private String status;
     private LocalDate orderDate;
+    private LocalDate shippingDate;
     private BigDecimal totalPrice;
     private String paymentMethod;
+    private String shippingMethod;
     private Boolean isActive;
     private String vnpTxnRef;
     private List<OrderDetailResponse> orderDetailResponses;
@@ -40,8 +42,10 @@ public class OrderResponse {
                 .note(order.getNote())
                 .status(order.getStatus().name())
                 .orderDate(order.getOrderDate())
+                .shippingDate(order.getShippingDate())
                 .totalPrice(order.getTotalMoney())
                 .paymentMethod(order.getPaymentMethod().name())
+                .shippingMethod(order.getShippingMethod().name())
                 .isActive(order.getIsActive())
                 .vnpTxnRef(order.getVnpTxnRef())
                 .orderDetailResponses(orderDetailResponses)

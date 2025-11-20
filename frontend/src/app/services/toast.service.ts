@@ -81,4 +81,94 @@ export class ToastService {
             toastContainer.removeChild(toast);
         });
     }
+
+    async showConfirmToast({
+        message = 'Bạn có chắc không?',
+        title = 'Xác nhận',
+        okText = 'OK',
+        cancelText = 'Hủy',
+        type = 'warning',
+        delay = 0 // Không auto-hide
+    }: {
+        message?: string,
+        title?: string,
+        okText?: string,
+        cancelText?: string,
+        type?: 'success' | 'danger' | 'info' | 'warning',
+        delay?: number
+    }): Promise<boolean> {
+        return new Promise(resolve => {
+            if (typeof document === 'undefined') return resolve(false);
+
+            // Tạo container nếu chưa có
+            let toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toast-container';
+                toastContainer.style.position = 'fixed';
+                toastContainer.style.top = '0';
+                toastContainer.style.right = '0';
+                toastContainer.style.padding = '20px';
+                toastContainer.style.zIndex = '99999';
+                document.body.appendChild(toastContainer);
+            }
+
+            // Tạo toast
+            const toast = document.createElement('div');
+            toast.classList.add('toast', 'show', `bg-${type}`, 'text-black');
+            toast.style.minWidth = '300px';
+            toast.style.paddingBottom = '10px';
+            toast.style.marginBottom = '1rem';
+
+            toast.innerHTML = `
+            <div class="toast-header">
+                <strong class="mr-auto">${title}</strong>
+                <button type="button" class="close" aria-label="Close"
+                    style="position: absolute; right: 10px; background: none; border: none;">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="toast-body">
+                ${message}
+                <div style="display: flex; justify-content: flex-end; margin-top: 10px; gap: 10px;">
+                    <button class="btn btn-light btn-sm btn-cancel">${cancelText}</button>
+                    <button class="btn btn-dark btn-sm btn-ok">${okText}</button>
+                </div>
+            </div>
+        `;
+
+            toastContainer.appendChild(toast);
+
+            // Sự kiện OK
+            toast.querySelector('.btn-ok')?.addEventListener('click', () => {
+                toast.classList.remove('show');
+                toastContainer.removeChild(toast);
+                resolve(true);
+            });
+
+            // Sự kiện Cancel
+            toast.querySelector('.btn-cancel')?.addEventListener('click', () => {
+                toast.classList.remove('show');
+                toastContainer.removeChild(toast);
+                resolve(false);
+            });
+
+            // Nút X
+            toast.querySelector('.close')?.addEventListener('click', () => {
+                toast.classList.remove('show');
+                toastContainer.removeChild(toast);
+                resolve(false);
+            });
+
+            // Không tự động hide nếu delay = 0
+            if (delay > 0) {
+                setTimeout(() => {
+                    if (toastContainer.contains(toast)) {
+                        toastContainer.removeChild(toast);
+                        resolve(false);
+                    }
+                }, delay);
+            }
+        });
+    }
 }

@@ -9,6 +9,8 @@ export class OrderDto{
     note:string;
     totalPrice:number;
     paymentMethod:string;
+    shippingMethod:string;
+    shippingDate:Date;
     status:string;
     vnp_TxnRef?:string;
     cartItems: CartItemDto[];
@@ -22,6 +24,8 @@ export class OrderDto{
     this.note=data.note;
     this.totalPrice=data.totalPrice;
     this.paymentMethod=data.paymentMethod;
+    this.shippingMethod=data.shippingMethod;
+    this.shippingDate=data.shippingDate;
     this.status=data.status;
     this.vnp_TxnRef = data.vnp_TxnRef;
     this.cartItems=data.cartItems

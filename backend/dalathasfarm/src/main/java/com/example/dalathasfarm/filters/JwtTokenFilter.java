@@ -38,12 +38,22 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                                     @Nonnull FilterChain filterChain)
             throws ServletException, IOException {
         try {
+            final String authHeader = request.getHeader("Authorization");
+            String requestPath = request.getServletPath();
+            String requestMethod = request.getMethod();
+
+            if (requestPath.equals(String.format("%s/orders", apiPrefix))
+                    && requestMethod.equals("POST")) {
+                if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+            }
+
             if (isBypassToken(request)) {
                 filterChain.doFilter(request, response); //enable bypass
                 return;
             }
-
-            final String authHeader = request.getHeader("Authorization");
 
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
@@ -85,6 +95,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of(String.format("%s/users/login", apiPrefix), "POST"),
                 Pair.of(String.format("%s/users/refreshToken", apiPrefix), "POST"),
 
+//                Pair.of(String.format("%s/orders**", apiPrefix), "POST"),
+
                 // Healthcheck, khong yeu cau JWT token
                 Pair.of(String.format("%s/healthcheck/health", apiPrefix), "GET"),
                 Pair.of(String.format("%s/actuator**", apiPrefix), "GET"),
@@ -98,19 +110,19 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 // policy
                 Pair.of(String.format("%s/policies**", apiPrefix), "GET")
 
-                );
+        );
 
         String requestPath = request.getServletPath();
         String requestMethod = request.getMethod();
 
-        if (requestPath.startsWith(String.format("/%s/orders", apiPrefix))
+        if (requestPath.startsWith(String.format("%s/orders", apiPrefix))
                 && requestMethod.equals("GET")) {
             // Check if the requestPath matches the desired pattern
-            if (requestPath.matches(String.format("/%s/orders/\\d+", apiPrefix))) {
+            if (requestPath.matches(String.format("%s/orders/\\d+", apiPrefix))) {
                 return true;
             }
             // If the requestPath is just "api/v1/orders", return true
-            if (requestPath.equals(String.format("/%s/orders", apiPrefix))) {
+            if (requestPath.equals(String.format("%s/orders", apiPrefix))) {
                 return true;
             }
         }

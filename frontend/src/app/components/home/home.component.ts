@@ -205,12 +205,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
   addToCart(event: Event, productId: number): void {
     event.stopPropagation();
     debugger
-    const token = this.tokenService.getToken();
-    if (!token) {
-      this.router.navigate(['/login']);
-      return;
-    }
-
+  
     this.isPressAddToCart = true;
     if (productId) {
       this.cartService.addToCart(productId, 1);
@@ -227,12 +222,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
   }
 
   buyNow(event: Event, productId: number): void {
-    event.stopPropagation(); // Ngăn sự kiện click lan ra div cha
-    const token = this.tokenService.getToken();
-    if (!token) {
-      this.router.navigate(['/login']);
-      return;
-    }
+    event.stopPropagation();
 
     if (productId) {
       this.cartService.addToCart(productId, 1);

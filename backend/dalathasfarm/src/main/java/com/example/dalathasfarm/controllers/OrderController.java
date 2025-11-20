@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -48,9 +49,14 @@ public class OrderController {
                     .build());
         }
         User loginUser = securityUtils.getLoggedInUser();
-        if (orderDto.getUserId() != loginUser.getId()) {
+        if (loginUser != null) {
+            if (orderDto.getUserId() != loginUser.getId()) {
+                throw new Exception("You can not order as another user");
+            }
+        }else if (orderDto.getUserId() != 1) {
             throw new Exception("You can not order as another user");
         }
+
         OrderResponse orderResponse = orderService.createOrder(orderDto);
         return ResponseEntity.ok(ResponseObject.builder()
                 .message("Insert order successfully")

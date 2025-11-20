@@ -33,7 +33,7 @@ export class TokenService {
     getUserId(): number {
         debugger
         const token = this.getToken();
-        if (!token) return 0;
+        if (!token) return 1;
 
         let accountObject = this.jwtHelperService.decodeToken(this.getToken() ?? '');
         if (!accountObject || typeof accountObject !== 'object') return 0;

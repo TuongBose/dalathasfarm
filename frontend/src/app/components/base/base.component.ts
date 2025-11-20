@@ -13,6 +13,7 @@ import { ProductService } from "../../services/product.service";
 import { UserService } from "../../services/user.service";
 import { OrderService } from "../../services/order.service";
 import { OccasionService } from "../../services/occasion.service";
+import { ProvinceService } from "../../services/province.service";
 
 @Component({
   selector: 'app-base',
@@ -39,6 +40,7 @@ export class BaseComponent {
   paymentService: PaymentService = inject(PaymentService);
   feedbackService:FeedbackService=inject(FeedbackService);
   notificationService:NotificationService=inject(NotificationService);
+  provinceService:ProvinceService=inject(ProvinceService);
 
   generateVisiblePageArray(currentPage: number, totalPages: number): number[] {
     const maxVisiblePages = 5;

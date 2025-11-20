@@ -19,6 +19,7 @@ export class CartService {
     }
 
     public refreshCart() {
+        debugger
         const storedCart = localStorage.getItem(this.getCartKey());
         if (storedCart) {
             this.cart = new Map(JSON.parse(storedCart));
@@ -34,7 +35,7 @@ export class CartService {
         const userResponseJSON = localStorage.getItem('user') || sessionStorage.getItem('user');
 
         if (!userResponseJSON) {
-            console.warn('Chưa đăng nhập, không thể tạo key giỏ hàng.');
+            console.warn('Chưa đăng nhập, tạo giỏ hàng với trạng thái là khách.');
             return 'cart:anonymous';
         }
 

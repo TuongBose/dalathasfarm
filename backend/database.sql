@@ -447,9 +447,17 @@ INSERT INTO product_discount_items (product_id, product_discount_id) VALUES
 --  Cyber Monday 
 (1, 12), (3, 12), (6, 12), (8, 12);
 
-INSERT INTO product_images(product_id,name) VALUES
-(1,'196c84c5-5353-4c3a-8cf1-fe731cdbbe45_2.jpg'),
-(1,'8d73a2b2-c1df-4a91-9e1e-085c558f6c61_4.jpg'),
-(1,'bb363a58-28ca-46ba-8af1-8754c23ea80e_5.jpg'),
-(1,'c3029e87-f91f-4c98-8af4-c3dd30a25937_3.jpg'),
-(1,'d751083a-33f5-41ee-a523-e88f6a6155c7_6.jpg');
+INSERT INTO product_images(id,product_id,name) VALUES
+(1,1,'196c84c5-5353-4c3a-8cf1-fe731cdbbe45_2.jpg'),
+(2,1,'8d73a2b2-c1df-4a91-9e1e-085c558f6c61_4.jpg'),
+(3,1,'bb363a58-28ca-46ba-8af1-8754c23ea80e_5.jpg'),
+(4,1,'c3029e87-f91f-4c98-8af4-c3dd30a25937_3.jpg'),
+(5,1,'d751083a-33f5-41ee-a523-e88f6a6155c7_6.jpg'),
+(6, 2, 'ed30a03a-abd6-4277-9ee3-d981dc775918_2.jpg'),
+(7, 2, '4b00406f-54bf-4cd6-b527-9f7e2687477a_3.jpg'),
+(8, 2, '157d9ab9-bf3a-4ea1-92d8-39bcda2a0abc_4.jpg'),
+(9, 2, 'ed7a519e-9ce6-4216-b2c0-96e679c9dbeb_5.jpg'),
+(10, 2, 'c6467f7a-b399-44da-a873-f275dfc616ef_6.jpg');
+
+INSERT INTO users(password,fullname,phone_number,is_active,role_id) VALUES
+('123456','Khách','0000000000',1,3);

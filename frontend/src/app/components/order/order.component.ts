@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { environment } from '../../environments/environment';
-import {  RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { CommonModule } from '@angular/common';
@@ -10,6 +10,9 @@ import { BaseComponent } from '../base/base.component';
 import { ApiResponse } from '../../responses/api.response';
 import { Product } from '../../models/product';
 import { OrderDto } from '../../dtos/order.dto';
+import { Province } from '../../responses/province.response';
+import { District } from '../../responses/district.response';
+import { Ward } from '../../responses/ward.response';
 
 @Component({
   selector: 'app-order',
@@ -51,6 +54,14 @@ export class OrderComponent extends BaseComponent implements OnInit {
     cartItems: []
   }
 
+  provinces: Province[] = [];
+  districts: District[] = [];
+  wards: Ward[] = [];
+
+  selectedProvince: Province | null = null;
+  selectedDistrict: District | null = null;
+  selectedWard: Ward | null = null;
+
   constructor() {
     super();
 
@@ -61,8 +72,8 @@ export class OrderComponent extends BaseComponent implements OnInit {
       phoneNumber: ['090009848', [Validators.required, Validators.minLength(6)]],
       address: ['123 le trong tan, phuong 5', [Validators.required, Validators.minLength(5)]],
       city: ['123 le trong tan, phuong 5', [Validators.required, Validators.minLength(5)]],
-      district:['ads',[Validators.required, Validators.minLength(5)]],
-      ward:['áđá',[Validators.required, Validators.minLength(5)]],
+      district: ['ads', [Validators.required, Validators.minLength(5)]],
+      ward: ['áđá', [Validators.required, Validators.minLength(5)]],
       note: ['ádf'],
       couponCode: [''],
       phuongthucthanhtoan: ['cod']
@@ -81,6 +92,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.cartService.forceRefreshCart();
     this.cart = this.cartService.getCart();
     this.updateCartItems();
+    this.loadProvinces();
 
 
     const productIds = Array.from(this.cart.keys()); // Truyền danh sách MASANPHAM từ Map giỏ hàng
@@ -93,7 +105,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
 
     this.productService.getProductByProductIds(productIds).subscribe({
       next: (apiResponse: ApiResponse) => {
-        const products: Product[] = apiResponse.data.sanPhamResponseList;
+        const products: Product[] = apiResponse.data.productResponses;
         debugger
         this.cartItems = productIds.map((productId) => {
           debugger
@@ -133,8 +145,46 @@ export class OrderComponent extends BaseComponent implements OnInit {
     })
   }
 
+  loadProvinces() {
+    this.provinceService.getProvinces().subscribe({
+      next: (data) => {
+        this.provinces = data;
+      },
+      error: () => {
+        this.toastService.showToast({ defaultMsg: 'Không tải được danh sách tỉnh/thành', type: 'danger' });
+      }
+    });
+  }
+
+  onProvinceChange(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    const code = Number(select.value);
+    this.selectedProvince = this.provinces.find(p => p.code === code) || null;
+    this.districts = this.selectedProvince?.districts || [];
+    this.wards = [];
+    this.selectedDistrict = null;
+    this.selectedWard = null;
+    this.orderForm.patchValue({ district: '', ward: '' });
+  }
+
+  onDistrictChange(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    const code = Number(select.value);
+    this.selectedDistrict = this.districts.find(d => d.code === code) || null;
+    this.wards = this.selectedDistrict?.wards || [];
+    this.selectedWard = null;
+    this.orderForm.patchValue({ ward: '' });
+  }
+
+  onWardChange(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    const code = Number(select.value);
+    this.selectedWard = this.wards.find(w => w.code === code) || null;
+  }
+
   placeOrder() {
     debugger
+
     if (this.orderForm.errors == null) {
       debugger
       if (!this.hasStockIssue) {
@@ -148,16 +198,35 @@ export class OrderComponent extends BaseComponent implements OnInit {
         this.orderData.phuongthucthanhtoan=this.orderForm.get('phuongthucthanhtoan')!.value;
         */
         // Sử dụng toán tử spread (...) để sao chép giá trị từ form vào orderData
+
+        // GỘP HỌ TÊN
+        const firstName = this.orderForm.get('firstName')?.value?.trim() || '';
+        const lastName = this.orderForm.get('lastName')?.value?.trim() || '';
+        const fullName = `${lastName} ${firstName}`.trim();
+
+        // GỘP ĐỊA CHỈ CHI TIẾT
+        const houseAddress = this.orderForm.get('address')?.value?.trim() || '';
+        const ward = this.selectedWard?.name || this.orderForm.get('ward')?.value || '';
+        const district = this.selectedDistrict?.name || this.orderForm.get('district')?.value || '';
+        const province = this.selectedProvince?.name || this.orderForm.get('city')?.value || '';
+
+        const fullAddress = [houseAddress, ward, district, province]
+          .filter(Boolean)
+          .join(', ');
+
         this.orderData = {
           ...this.orderData,
-          ...this.orderForm.value
+          fullName: fullName,
+          address: fullAddress,
+          phoneNumber: this.orderForm.get('phoneNumber')?.value,
+          note: this.orderForm.get('note')?.value || '',
+          paymentMethod: this.orderForm.get('phuongthucthanhtoan')?.value || 'cod',
+          cartItems: this.cartItems.map(item => ({
+            productId: item.product.id,
+            quantity: item.quantity
+          })),
+          totalPrice: this.totalAmount
         };
-        this.orderData.cartItems = this.cartItems.map(cartItem => ({
-          productId: cartItem.product.id,
-          quantity: cartItem.quantity
-        }));
-
-        this.orderData.totalPrice = this.totalAmount;
 
         debugger
         if (this.orderData.paymentMethod === 'vnpay') {
@@ -223,6 +292,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.loading = true;
     this.orderService.placeOrder(this.orderData).subscribe({
       next: (apiResponse: ApiResponse) => {
+        debugger
         this.loading = false;
         this.toastService.showToast({
           defaultMsg: 'Đặt hàng thành công',

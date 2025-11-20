@@ -140,37 +140,35 @@
                 </div>
 
                 <div class="col-12">
-                  <label class="form-label">Country/Region *</label>
-                  <select class="form-select form-select-lg">
-                    <option>Việt Nam</option>
+                  <label class="form-label">Tỉnh / Thành phố *</label>
+                  <select class="form-select" (change)="onProvinceChange($event)" formControlName="city">
+                    <option value="">-- Chọn tỉnh/thành --</option>
+                    @for (p of provinces; track p.code) {
+                    <option [value]="p.code">{{ p.name }}</option>
+                    }
                   </select>
                 </div>
 
-                <div class="col-12">
-                  <label class="form-label">Thành phố *</label>
-                  <input type="text" formControlName="city" class="form-control" id="city"
-                    [class.is-invalid]="orderForm.get('city')!.invalid && orderForm.get('city')!.touched">
-                  @if (orderForm.get('city')!.invalid && orderForm.get('city')!.touched) {
-                  <div class="invalid-feedback">Tên bắt buộc</div>
-                  }
+                <div class="col-md-6">
+                  <label class="form-label">Quận / Huyện *</label>
+                  <select class="form-select" (change)="onDistrictChange($event)" formControlName="district"
+                    [disabled]="districts.length === 0">
+                    <option value="">-- Chọn quận/huyện --</option>
+                    @for (d of districts; track d.code) {
+                    <option [value]="d.code">{{ d.name }}</option>
+                    }
+                  </select>
                 </div>
 
                 <div class="col-md-6">
-                  <label class="form-label">Phường *</label>
-                  <input type="text" formControlName="ward" class="form-control" id="ward"
-                    [class.is-invalid]="orderForm.get('ward')!.invalid && orderForm.get('ward')!.touched">
-                  @if (orderForm.get('ward')!.invalid && orderForm.get('ward')!.touched) {
-                  <div class="invalid-feedback">Tên bắt buộc</div>
-                  }
-                </div>
-
-                <div class="col-md-6">
-                  <label class="form-label">Quận *</label>
-                  <input type="text" formControlName="district" class="form-control" id="district"
-                    [class.is-invalid]="orderForm.get('district')!.invalid && orderForm.get('district')!.touched">
-                  @if (orderForm.get('district')!.invalid && orderForm.get('district')!.touched) {
-                  <div class="invalid-feedback">Họ bắt buộc</div>
-                  }
+                  <label class="form-label">Phường / Xã *</label>
+                  <select class="form-select" (change)="onWardChange($event)" formControlName="ward"
+                    [disabled]="wards.length === 0">
+                    <option value="">-- Chọn phường/xã --</option>
+                    @for (w of wards; track w.code) {
+                    <option [value]="w.code">{{ w.name }}</option>
+                    }
+                  </select>
                 </div>
 
                 <div class="col-12">
@@ -200,6 +198,11 @@
                     <div class="invalid-feedback">Số điện thoại không hợp lệ</div>
                     }
                   </div>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label">Ghi chú (tùy chọn)</label>
+                  <textarea formControlName="note" class="form-control" rows="2" id="note" ></textarea>
                 </div>
               </div>
             </div>
@@ -244,10 +247,10 @@
                   </div>
                 </div>
               </div>
-              </div>
             </div>
+          </div>
 
-            <!-- Thông tin người nhận - Responsive order
+          <!-- Thông tin người nhận - Responsive order
           <div class="col-12 col-lg-8 order-1 order-lg-1">
             <div class="card shadow-sm mb-3">
               <div class="card shadow-sm">
@@ -412,68 +415,68 @@
               </div>
             </div>
           </div>-->
-          </div>
-          <!-- CỘT PHẢI: ORDER SUMMARY -->
-          <div class="col-lg-5">
-            <div class="order-summary-card bg-white shadow-sm rounded p-4 sticky-top" style="top: 20px;">
+        </div>
+        <!-- CỘT PHẢI: ORDER SUMMARY -->
+        <div class="col-lg-5">
+          <div class="order-summary-card bg-white shadow-sm rounded p-4 sticky-top" style="top: 20px;">
 
-              <h4 class="mb-4">Order Summary <span class="text-muted small">877.583.7724</span></h4>
+            <h4 class="mb-4">Order Summary <span class="text-muted small">877.583.7724</span></h4>
 
-              <!-- DANH SÁCH SẢN PHẨM -->
-              @for (item of cartItems; track item.product.id) {
-              <div class="d-flex mb-3 pb-3 border-bottom">
-                <img [src]="item.product.thumbnail" class="me-3 rounded"
-                  style="width: 70px; height: 70px; object-fit: cover;">
-                <div class="flex-grow-1">
-                  <h6 class="mb-1">{{ item.product.name }}</h6>
-                  <small class="text-muted">Qty: {{ item.quantity }}</small>
-                </div>
-                <strong>{{ item.product.price * item.quantity | number:'1.0-0' }}đ</strong>
+            <!-- DANH SÁCH SẢN PHẨM -->
+            @for (item of cartItems; track item.product.id) {
+            <div class="d-flex mb-3 pb-3 border-bottom">
+              <img [src]="item.product.thumbnail" class="me-3 rounded"
+                style="width: 70px; height: 70px; object-fit: cover;">
+              <div class="flex-grow-1">
+                <h6 class="mb-1">{{ item.product.name }}</h6>
+                <small class="text-muted">Số lượng: {{ item.quantity }}</small>
               </div>
-              }
-
-              <hr class="my-4">
-
-              <!-- TỔNG TIỀN -->
-              <div class="mb-3">
-                <div class="d-flex justify-content-between mb-2">
-                  <span>Subtotal</span>
-                  <strong>{{ totalAmount | number:'1.0-0' }}đ</strong>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                  <span>Shipping</span>
-                  <span class="text-success">TBD</span>
-                </div>
-                <div class="d-flex justify-content-between mb-3">
-                  <span>Estimated Tax</span>
-                  <strong>0đ</strong>
-                </div>
-                <div class="d-flex justify-content-between fs-5 fw-bold text-dark">
-                  <span>Total</span>
-                  <span>{{ totalAmount | number:'1.0-0' }}đ</span>
-                </div>
-              </div>
-
-              <!-- PROMO CODE -->
-              <div class="mb-4">
-                <div class="d-flex">
-                  <input type="text" class="form-control" placeholder="Promo Code" formControlName="couponCode">
-                  <button class="btn btn-outline-dark ms-2 px-4" (click)="applyCoupon()">APPLY</button>
-                </div>
-                @if (couponDiscount > 0) {
-                <small class="text-success mt-2 d-block">
-                  Đã áp dụng mã giảm giá: -{{ couponDiscount | number:'1.0-0' }}đ
-                </small>
-                }
-              </div>
-
-              <!-- NÚT ĐẶT HÀNG -->
-              <button class="btn btn-dark btn-lg w-100 py-3 fw-bold" (click)="placeOrder()">
-                ĐẶT HÀNG
-              </button>
+              <strong>{{ item.product.price * item.quantity | number:'1.0-0' }}đ</strong>
             </div>
+            }
+
+            <hr class="my-4">
+
+            <!-- TỔNG TIỀN -->
+            <div class="mb-3">
+              <div class="d-flex justify-content-between mb-2">
+                <span>Subtotal</span>
+                <strong>{{ totalAmount | number:'1.0-0' }}đ</strong>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span>Shipping</span>
+                <span class="text-success">TBD</span>
+              </div>
+              <div class="d-flex justify-content-between mb-3">
+                <span>Estimated Tax</span>
+                <strong>0đ</strong>
+              </div>
+              <div class="d-flex justify-content-between fs-5 fw-bold text-dark">
+                <span>Total</span>
+                <span>{{ totalAmount | number:'1.0-0' }}đ</span>
+              </div>
+            </div>
+
+            <!-- PROMO CODE -->
+            <div class="mb-4">
+              <div class="d-flex">
+                <input type="text" class="form-control" placeholder="Promo Code" formControlName="couponCode">
+                <button class="btn btn-outline-dark ms-2 px-4" (click)="applyCoupon()">APPLY</button>
+              </div>
+              @if (couponDiscount > 0) {
+              <small class="text-success mt-2 d-block">
+                Đã áp dụng mã giảm giá: -{{ couponDiscount | number:'1.0-0' }}đ
+              </small>
+              }
+            </div>
+
+            <!-- NÚT ĐẶT HÀNG -->
+            <button class="btn btn-dark btn-lg w-100 py-3 fw-bold" (click)="placeOrder()">
+              ĐẶT HÀNG
+            </button>
           </div>
         </div>
+      </div>
     </form>
   </div>
 </div>

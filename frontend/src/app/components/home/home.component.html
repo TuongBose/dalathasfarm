@@ -234,10 +234,16 @@
             </p>
             <p class="product-price mb-1">{{ product.price | currency: 'VND':'symbol':'1.0-0'}}</p>
             <div class="product-actions d-flex gap-1 mt-2">
+              @if(product.stockQuantity>0){
               <button class=" btn-sm btn-outline-light-product flex-fill"
                 (click)="$event.stopPropagation(); addToCart($event, product.id)">
                 Thêm vào giỏ
               </button>
+              }@else{
+              <button class="btn btn-sm btn-danger flex-fill fw-medium" disabled>
+                <i class="fas fa-ban me-1"></i> Hết hàng
+              </button>
+              }
               <!-- <button class="btn btn-sm btn-primary flex-fill"
               (click)="$event.stopPropagation(); buyNow($event, product.id)">
               Mua

@@ -53,7 +53,7 @@ export class NotificationComponent extends BaseComponent implements OnInit {
       next: () => {
         debugger
         this.notifications = this.notifications.map(notification =>
-          notification.id === notificationId ? { ...notification, isRead: true } : notification
+          notification.notification_id === notificationId ? { ...notification, isRead: true } : notification
         );
         this.loadNotifications();
         this.updateUnreadCount();
@@ -72,7 +72,7 @@ export class NotificationComponent extends BaseComponent implements OnInit {
 
   markAllAsRead(): void {
     if (this.account && this.notifications.length > 0) {
-      const unreadNotifications = this.notifications.filter(n => !n.isRead).map(n => n.id);
+      const unreadNotifications = this.notifications.filter(n => !n.is_read).map(n => n.notification_id);
       if (unreadNotifications.length === 0) {
         this.toastService.showToast({
           defaultMsg: 'Không có thông báo nào để đánh dấu đọc',
@@ -108,7 +108,7 @@ export class NotificationComponent extends BaseComponent implements OnInit {
   }
 
   private updateUnreadCount(): void {
-    const unreadCount = this.notifications.filter(n => !n.isRead).length;
+    const unreadCount = this.notifications.filter(n => !n.is_read).length;
     this.notificationService.updateUnreadCount(unreadCount); // Cập nhật qua service
   }
 }

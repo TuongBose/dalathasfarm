@@ -10,18 +10,21 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { IntroduceComponent } from './components/introduce/introduce.component';
 import { ContactComponent } from './components/contact/contact.component';
 import { NotificationComponent } from './components/notification/notification.component';
-import { OrderConfirmComponent } from './components/order-confirm/order-confirm.component';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './components/terms-of-service/terms-of-service.component';
 import { CategoriesComponent } from './components/categories/categories.component';
 import { CategoryComponent } from './components/category/category.component';
 import { OccasionsComponent } from './components/occasions/occasions.component';
 import { OccasionComponent } from './components/occasion/occasion.component';
+import { PaymentSuccessComponent } from './components/payment-success/payment-success.component';
+import { OrderSearchComponent } from './components/order-search/order-search.component';
+import { ProductSearchComponent } from './components/product-search/product-search.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
     { path: 'login', component: LoginComponent },
     { path: 'payments/payment-callback', component: PaymentCallbackComponent },
+    { path: 'payment-success', component: PaymentSuccessComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'products/:id', component: DetailProductComponent },
     { path: 'orders', component: OrderComponent },
@@ -29,11 +32,12 @@ export const routes: Routes = [
     { path: 'introduce', component: IntroduceComponent },
     { path: 'contact', component: ContactComponent },
     { path: 'notification', component: NotificationComponent },
-    { path: 'orders/:id', component: OrderConfirmComponent },
+    { path: 'order-invoice', component: OrderSearchComponent },
     { path: 'privacy-policy', component: PrivacyPolicyComponent },
     { path: 'terms-of-service', component: TermsOfServiceComponent },
     { path: 'categories', component: CategoriesComponent },
     { path: 'category/:id', component: CategoryComponent },
     { path: 'occasions', component: OccasionsComponent },
     { path: 'occasion/:id', component: OccasionComponent },
+    { path: 'product-search', component: ProductSearchComponent },
 ];

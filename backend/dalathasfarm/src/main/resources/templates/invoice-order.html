@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <style>
+        body {
+            font-family: 'DejaVu Sans', Arial, sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .invoice-box {
+            background-color: #fff;
+            max-width: 900px;
+            margin: auto;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            color: #333;
+        }
+
+        /* Header Layout */
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .title-section {
+            width: 40%;
+            text-align: center;
+        }
+
+        .invoice-title {
+            font-size: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .invoice-date {
+            font-size: 13px;
+            font-style: italic;
+            color: #000080;
+            /* Màu xanh đậm ngày tháng */
+        }
+
+        .serial-section {
+            width: 30%;
+            text-align: right;
+            font-size: 13px;
+        }
+
+        .invoice-number {
+            color: #ff0000;
+            /* Màu đỏ cho số hóa đơn */
+            font-weight: bold;
+        }
+
+        /* Thông tin công ty và khách hàng */
+        .section-info {
+            margin-bottom: 15px;
+        }
+
+        .company-name {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .label {
+            display: inline-block;
+            min-width: 120px;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        /* Bảng hàng hóa */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+
+        th {
+            border-top: 2px solid #ccc;
+            border-bottom: 2px solid #ccc;
+            text-align: center;
+            padding: 8px 5px;
+            font-weight: normal;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 8px 5px;
+            vertical-align: top;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* --- Footer --- */
+        .page-indicator {
+            text-align: right;
+            font-size: 11px;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .footer-lookup {
+            border-top: 1px dotted #ccc;
+            padding-top: 10px;
+            text-align: center;
+            font-style: italic;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .footer-lookup a {
+            color: blue;
+            text-decoration: underline;
+        }
+
+        .provider-info {
+            text-align: center;
+            font-size: 11px;
+            margin-top: 5px;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Summary Section */
+        .summary-section {
+            border-top: 1px solid #999;
+            padding-top: 10px;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .summary-grid {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .col-summary {
+            flex: 1;
+        }
+
+        .col-summary-right {
+            flex: 1;
+            text-align: right;
+            padding-left: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .total-payment-row {
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .amount-text {
+            margin-top: 10px;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        /* --- Signature Section (Chữ ký) --- */
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .sig-box {
+            width: 45%;
+        }
+
+        .sig-title {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .sig-note {
+            font-style: italic;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+        /* --- Digital Signature Box --- */
+        .digital-signature {
+            width: 100%;
+            border: 2px solid #eaa;
+            color: #d00;
+            padding: 10px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .check-icon {
+            color: green;
+            font-size: 16px;
+            position: absolute;
+            top: 5px;
+            left: 5px;
+        }
+
+        .sig-content {
+            margin-left: 20px;
+            line-height: 1.3;
+        }
+    </style>
+</head>
+
+<body>
+<div class="invoice-box">
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td style="width: 30%; vertical-align: middle;">
+                <img src="{{logoImage}}" width="120"/>
+            </td>
+            <td style="width: 50%; text-align: center; vertical-align: middle;">
+                <h1 class="invoice-title">HÓA ĐƠN GIÁ TRỊ GIA TĂNG</h1>
+                <div class="invoice-date">Ngày {{orderDay}} tháng {{orderMonth}} năm {{orderYear}}</div>
+            </td>
+            <td style="width: 20%; text-align: right; vertical-align: top;">
+                <div class="serial-section">
+                    <div class="invoice-number">Số: {{invoiceNumber}}</div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-info">
+        <div class="company-name">{{companyName}}</div>
+        <div>Địa chỉ: {{companyAddress}}</div>
+        <div>Mã số thuế: {{companyTaxCode}} <span style="margin-left: 200px;">Điện thoại: {{companyPhone}}</span>
+        </div>
+        <div>Số TK: {{companyBankAccount}} tại {{companyBank}}</div>
+    </div>
+
+    <div class="section-info">
+        <div>Họ tên người mua hàng: {{customerName}}</div>
+        <div>Địa chỉ: {{customerAddress}}</div>
+        <div>Hình thức thanh toán: {{paymentMethod}}</div>
+    </div>
+
+    <table>
+        <thead>
+        <tr style="text-align: center;">
+            <th style="width: 30px;">STT</th>
+            <th>MÃ HÀNG</th>
+            <th>TÊN HÀNG</th>
+            <th>ĐVT</th>
+            <th>SỐ LƯỢNG</th>
+            <th>ĐƠN GIÁ</th>
+            <th>THÀNH TIỀN</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{items}}
+        </tbody>
+    </table>
+
+    <div class="summary-section">
+        <div class="summary-grid">
+            <div class="col-summary"></div>
+
+            <div class="col-summary" style="padding-left: 20px;"></div>
+
+            <div class="col-summary-right">
+                <div class="summary-row total-payment-row"><span>Tổng cộng tiền thanh toán:</span>
+                    <strong>{{totalAmount}}</strong></div>
+            </div>
+        </div>
+
+        <div class="amount-text">
+            Số tiền viết bằng chữ: {{totalAmountInWords}}
+        </div>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; text-align: center; margin-top: 50px;">
+        <tr>
+            <td style="width: 50%; vertical-align: top;">
+                <div class="sig-title">Người mua hàng</div>
+                <div class="sig-note">(Ký, ghi rõ họ tên)</div>
+                <div style="height: 60px;"></div>
+            </td>
+
+            <td style="width: 50%; vertical-align: top;">
+                <div class="sig-title">Người bán hàng</div>
+                <div class="sig-note">(Ký, ghi rõ họ tên)</div>
+
+                <div class="digital-signature" style="max-width: 90%; margin: 10px auto;">
+                    <span class="check-icon">✔</span>
+                    <div class="sig-content">
+                        Signature Valid<br></br>
+                        Ký bởi: CHI NHÁNH CÔNG TY TNHH DALAT HASFARM TẠI THÀNH PHỐ HỒ CHÍ MINH<br></br>
+                        Ký ngày: {{orderDay}}/{{orderMonth}}/{{orderYear}}
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="footer-lookup">
+        (Tra cứu hóa đơn điện tử tại: <a href="http://localhost:4200/order-invoice">{{lookupUrl}}</a>, mã tra cứu: <strong>{{lookupCode}}</strong>)<br></br>
+        Mã Cơ quan thuế: <strong>00EE3714C954DB45948480B4391CE53178</strong>
+    </div>
+    <div class="provider-info">
+        Đơn vị cung cấp dịch vụ Hóa đơn điện tử : Viettel Lâm Đồng - CN Tập đoàn Công nghiệp-Viễn thông Quân đội, MST:
+        0100109106-049
+    </div>
+</div>
+</body>
+</html>

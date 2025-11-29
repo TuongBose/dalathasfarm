@@ -13,7 +13,8 @@ CREATE TABLE categories
 CREATE TABLE occasions
 (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE,      
+    name VARCHAR(255) NOT NULL UNIQUE,     
+    description VARCHAR(500), 
     thumbnail VARCHAR(300) UNIQUE,           
     start_date DATE,                                    
     end_date DATE,                                      
@@ -116,12 +117,13 @@ CREATE TABLE orders (
     status ENUM('Pending', 'Processing', 'Shipping', 'Delivered', 'Cancelled'),  
     order_date DATE,
     total_money DECIMAL(10,2) NOT NULL CHECK (total_money >= 0),
-    payment_method ENUM('Bank Transfer', 'Cash') NOT NULL,
+    payment_method ENUM('BankTransfer', 'Cash') NOT NULL,
     shipping_method ENUM('Ship', 'Pickup') NOT NULL,
     shipping_date DATE,
     is_active BIT DEFAULT 1,
     coupon_id INT,
     vnp_txn_ref VARCHAR(50),
+    invoice_file VARCHAR(255) NOT NULL,
     CONSTRAINT fk_orders_users FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_orders_coupons FOREIGN KEY (coupon_id) REFERENCES coupons(id)
 );
@@ -179,6 +181,7 @@ CREATE TABLE supplier_invoices (
     payment_method ENUM('Bank Transfer', 'Cash'),
     payment_status ENUM('Unpaid', 'Paid') DEFAULT 'Unpaid',
     note VARCHAR(255),
+    invoice_file VARCHAR(255) NOT NULL,
     CONSTRAINT fk_supplier_invoices_suppliers FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
 );
 
@@ -200,6 +203,7 @@ CREATE TABLE purchase_orders (
     user_id INT NOT NULL,
     import_date DATETIME NOT NULL,
     note VARCHAR(255),
+    receipt_file VARCHAR(255) NOT NULL,
     CONSTRAINT fk_purchase_orders_users FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_purchase_orders_supplier_invoices FOREIGN KEY (supplier_invoice_id) REFERENCES supplier_invoices(id)
 );
@@ -221,6 +225,7 @@ CREATE TABLE supplier_orders (
     status ENUM('Unconfirmed', 'Confirmed') DEFAULT 'Unconfirmed',
     total_money DECIMAL(10,2) NOT NULL CHECK (total_money >= 0),
     note VARCHAR(255),
+    order_file VARCHAR(255) NOT NULL,
     CONSTRAINT fk_supplier_orders_suppliers FOREIGN KEY (supplier_id) REFERENCES suppliers(id),
     CONSTRAINT fk_supplier_orders_users FOREIGN KEY (user_id) REFERENCES users(id)
 );
@@ -275,15 +280,15 @@ INSERT INTO categories (name, thumbnail, description) VALUES
 ('Hoa cắm bình', 'hoa-cam-binh.jpg','Hoa cắm bình đa dạng phong cách, từ hiện đại đến cổ điển, mang đến vẻ đẹp nhẹ nhàng và tinh tế cho không gian sống.');
 
 -- BẢNG DỮ LIỆU OCCASIONS
-INSERT INTO occasions (name, thumbnail, start_date, end_date, banner_image, is_active) VALUES
-('Tết Dương Lịch', 'newyear.jpg', '2025-12-01', '2026-01-01', 'banner_newyear.jpg', 1),
-('Tết Nguyên Đán', 'tet.jpg', '2026-01-01', '2026-02-04', 'banner_tet.jpg', 1),
-('Ngày quốc tế phụ nữ', 'womenday.jpg', '2026-02-15', '2026-03-08', 'banner_womenday.jpg', 1),
-('Ngày Thương binh Liệt sĩ', 'thuongbinh.jpg', '2026-06-27', '2026-07-27', 'banner_thuongbinh.jpg', 1),
-('Ngày Phụ nữ Việt Nam', 'phunu.jpg', '2026-09-20', '2026-10-20', 'banner_phunu.jpg', 1),
-('Ngày Nhà giáo Việt Nam', 'ngaynhagiaovietnam.jpg', '2025-10-20', '2025-11-20', 'banner_ngaynhagiaovietnam.jpg', 1),
-('Lễ tạ ơn', 'thanksgiving.jpg', '2026-10-20', '2026-11-27', 'banner_thanksgiving.png', 1),
-('Lễ giáng sinh', 'christmas.jpg', '2025-11-01', '2025-12-24', 'banner_christmas.jpg', 1);
+INSERT INTO occasions (name, description, thumbnail, start_date, end_date, banner_image, is_active) VALUES
+('Tết Dương Lịch', 'Ngày lễ đánh dấu sự chuyển giao từ năm cũ sang năm mới, mang ý nghĩa khởi đầu và hy vọng.', 'newyear.jpg', '2025-12-01', '2026-01-01', 'banner_newyear.jpg', 1),
+('Tết Nguyên Đán',  'Lễ hội truyền thống lớn nhất của người Việt, thể hiện sự sum họp gia đình, tưởng nhớ tổ tiên và chào đón năm mới âm lịch.', 'tet.jpg', '2026-01-01', '2026-02-04', 'banner_tet.jpg', 1),
+('Ngày Quốc tế Phụ nữ 8/3',  'Ngày tôn vinh những đóng góp và vai trò quan trọng của phụ nữ trong gia đình và xã hội, được tổ chức trên toàn thế giới.', 'womenday.jpg', '2026-02-15', '2026-03-08', 'banner_womenday.jpg', 1),
+('Ngày Thương binh Liệt sĩ 27/7',  'Ngày tưởng niệm và ghi nhớ công ơn của các anh hùng liệt sĩ và thương binh đã hy sinh vì độc lập dân tộc.', 'thuongbinh.jpg', '2026-06-27', '2026-07-27', 'banner_thuongbinh.jpg', 1),
+('Ngày Phụ nữ Việt Nam 20/10',  'Ngày tri ân phụ nữ Việt Nam, tôn vinh phẩm chất cao đẹp và vai trò của họ trong gia đình và xã hội.', 'phunu.jpg', '2026-09-20', '2026-10-20', 'banner_phunu.jpg', 1),
+('Ngày Nhà giáo Việt Nam 20/11',  'Ngày thể hiện lòng biết ơn đối với các thầy cô giáo, những người đã cống hiến cho sự nghiệp giáo dục.', 'ngaynhagiaovietnam.jpg', '2025-10-20', '2025-11-20', 'banner_ngaynhagiaovietnam.jpg', 1),
+('Lễ Tạ Ơn (Thanksgiving)',  'Lễ hội truyền thống của các nước phương Tây, nhằm bày tỏ lòng tri ân đối với những điều tốt đẹp trong cuộc sống.', 'thanksgiving.jpg', '2026-10-20', '2026-11-27', 'banner_thanksgiving.png', 1),
+('Lễ Giáng Sinh',  'Ngày lễ kỷ niệm sự ra đời của Chúa Jesus, gắn liền với các hoạt động đoàn tụ, trao yêu thương và trang hoàng không gian sống.','christmas.jpg', '2025-11-01', '2025-12-24', 'banner_christmas.jpg', 1);
 
 -- BẢNG DỮ LIỆU SUPPLIERS
 INSERT INTO suppliers (name, address, phone_number, email) VALUES

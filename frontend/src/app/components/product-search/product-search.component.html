@@ -1,0 +1,97 @@
+<app-header></app-header>
+
+<!-- HERO SECTION -->
+<div class="hero-hbloom position-relative overflow-hidden">
+  <!-- Background Image -->
+  <div class="hero-bg">
+    <img [src]="bannerUrl" alt="Luxury Flowers" class="hero-img-desktop">
+  </div>
+
+  <!-- Overlay Gradient -->
+  <div class="hero-overlay"></div>
+
+  <!-- Content -->
+  <div class="container position-relative z-10">
+    <div class="row align-items-center min-vh-100 py-5">
+      <div class="col-lg-7 col-xl-6 text-white">
+        <!-- Main Title -->
+        <h1 class="display-3 fw-light mb-4 lh-1" style="font-family: 'Playfair Display', serif;">
+          SỰ SANG TRỌNG TRONG TỪNG BÔNG HOA
+        </h1>
+
+        <!-- Sub Title -->
+        <p class="text-uppercase fs-6 tracking-widest mb-2 opacity-80">
+          GIAO HOA TẬN TAY
+          <span class="fw-bold">TRÊN TOÀN QUỐC</span>
+        </p>
+
+
+        <!-- Description -->
+        <p class="lead mb-5 max-w-2xl opacity-90">
+          Chúng tôi xem mỗi bông hoa là một tác phẩm nghệ thuật sống.
+          Từ những thiết kế ấn tượng đến các loại cây cao cấp,
+          chúng tôi giao hoa tươi – đẹp – sang trọng đến tận nơi trên toàn quốc.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="d-flex flex-column flex-sm-row gap-3">
+          <button class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-medium" (click)="scrollToProducts()">
+            Mua sắm ngay
+          </button>
+          <a routerLink="/introduce"
+            class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill fw-medium d-flex align-items-center justify-content-center gap-2">
+            <span>Thông tin về chúng tôi</span>
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT SECTION -->
+<div id="product-section" class="featured-products-section py-5 bg-white">
+  <div class="container">
+    <div class="occasion-block mb-5">
+      <!-- <div class="d-flex align-items-center justify-content-center mb-4">
+        <h2 class="mb-0 fw-light fs-2 text-dark text-center" style="font-family: 'Playfair Display', serif;">
+          {{ category.name }}
+        </h2>
+      </div> -->
+      <!-- Danh sách sản phẩm theo category -->
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 g-lg-5">
+        @for (product of products; track product.id) {
+        <div class="col">
+          <div class="product-minimal" (click)="onProductClick(product.id)">
+
+            <img [src]="product.thumbnailUrl" [alt]="product.name" class="product-img img-fluid rounded-2 mb-2">
+
+            <h3 class="product-name fs-6 fw-medium text-dark mb-1" style="font-family: 'Playfair Display', serif;">{{
+              product.name }}</h3>
+            <p class="product-subtitle text-muted small mb-2" style="font-size: 12px;font-style: italic;">
+              {{ product.description || 'The design darling' }}
+            </p>
+            <p class="product-price mb-1">{{ product.price | currency: 'VND':'symbol':'1.0-0'}}</p>
+            <div class="product-actions d-flex gap-1 mt-2">
+              <button class=" btn-sm btn-outline-light-product flex-fill"
+                (click)="$event.stopPropagation(); addToCart($event, product.id)">
+                Thêm vào giỏ
+              </button>
+              <!-- <button class="btn btn-sm btn-primary flex-fill"
+              (click)="$event.stopPropagation(); buyNow($event, product.id)">
+              Mua
+            </button> -->
+            </div>
+          </div>
+        </div>
+        } @empty {
+        <div class="col-12 text-center py-4 text-muted">
+          <p>Chưa có sản phẩm cho danh mục này</p>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

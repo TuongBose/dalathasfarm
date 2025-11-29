@@ -47,6 +47,9 @@ public class SupplierInvoice {
 
     private String note;
 
+    @Column(name = "invoice_file", nullable = false)
+    private String invoiceFile;
+
     public enum SupplierInvoicePaymentMethod { BankTransfer, Cash }
     public enum SupplierInvoicePaymentStatus { Unpaid, Paid }
 }

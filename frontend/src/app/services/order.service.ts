@@ -26,7 +26,11 @@ export class OrderService {
         const params = new HttpParams()
             .set('status', status.toString())
             .set('vnpTxnRef', vnp_TxnRef.toString());
-        const url = `${environment.apiBaseUrl}/donhangs/status`;
+        const url = `${environment.apiBaseUrl}/orders/status`;
         return this.http.put<ApiResponse>(url,null, { params });
+    }
+
+    viewFile(fileName:string){
+        return `${this.apiCreateOrder}/files/${fileName}`;
     }
 }

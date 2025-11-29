@@ -50,6 +50,22 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 }
             }
 
+            if (requestPath.equals(String.format("%s/orders/status", apiPrefix))
+                    && requestMethod.equals("PUT")) {
+                if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+            }
+
+            if (requestPath.equals(String.format("%s/payments/create-payment-url", apiPrefix))
+                    && requestMethod.equals("POST")) {
+                if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+            }
+
             if (isBypassToken(request)) {
                 filterChain.doFilter(request, response); //enable bypass
                 return;
@@ -94,6 +110,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of(String.format("%s/users/register/admin", apiPrefix), "POST"),
                 Pair.of(String.format("%s/users/login", apiPrefix), "POST"),
                 Pair.of(String.format("%s/users/refreshToken", apiPrefix), "POST"),
+                Pair.of(String.format("%s/orders/files**", apiPrefix), "GET"),
 
 //                Pair.of(String.format("%s/orders**", apiPrefix), "POST"),
 

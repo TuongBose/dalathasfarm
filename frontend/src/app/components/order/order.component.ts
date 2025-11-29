@@ -13,6 +13,8 @@ import { OrderDto } from '../../dtos/order.dto';
 import { Province } from '../../responses/province.response';
 import { District } from '../../responses/district.response';
 import { Ward } from '../../responses/ward.response';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AuthModalComponent } from '../auth-modal/auth-modal.component';
 
 @Component({
   selector: 'app-order',
@@ -68,7 +70,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
   selectedDistrictCode: number | null = null;
   selectedWardCode: number | null = null;
 
-  todayDate: string = new Date().toISOString().split('T')[0];
+  todayDate: string = new Date().toLocaleDateString('en-CA');
   maxDate: string = '';
 
   // ==== LỖI VALIDATE ====
@@ -81,7 +83,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
   wardError: string = '';
   shippingDateError: string = '';
 
-  constructor(private cdr: ChangeDetectorRef) {
+  constructor(private cdr: ChangeDetectorRef, private modalService: NgbModal) {
     super();
 
     this.cartService.cartChanged.subscribe(() => {
@@ -98,9 +100,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.cart = this.cartService.getCart();
     this.updateCartItems();
 
-    const max = new Date();
-    max.setMonth(max.getMonth() + 6);
-    this.maxDate = max.toISOString().split('T')[0];
+    this.setShippingDateRange();
 
     this.loadProvinces();
 
@@ -152,6 +152,27 @@ export class OrderComponent extends BaseComponent implements OnInit {
         console.error(error?.error?.message ?? '')
       }
     })
+  }
+
+  setShippingDateRange() {
+    const now = new Date();
+    const currentHour = now.getHours();
+    let minDate = new Date();
+
+    // Nếu đã qua 12h trưa → không cho chọn hôm nay nữa
+    if (currentHour >= 12) {
+      minDate.setDate(minDate.getDate() + 1); // Ngày mai
+    }
+
+    this.todayDate = this.formatDate(minDate);
+
+    const max = new Date();
+    max.setMonth(max.getMonth() + 6);
+    this.maxDate = max.toISOString().split('T')[0];
+  }
+
+  private formatDate(date: Date): string {
+    return date.toLocaleDateString('en-CA');
   }
 
   loadProvinces() {
@@ -421,11 +442,21 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.loading = true; // Hiển thị loading
     this.paymentService.createPaymentUrl({ amount, language: 'vn' }).subscribe({
       next: (res: ApiResponse) => {
+        debugger
         const paymentUrl = res.data as string;
-        const vnp_TxnRef = new URL(paymentUrl).searchParams.get('vnp_TxnRef') || '';
+        const vnpTxnRef = new URL(paymentUrl).searchParams.get('vnp_TxnRef') || '';
 
-        this.orderService.placeOrder({ ...this.orderData, vnp_TxnRef }).subscribe({
+        this.orderService.placeOrder({ ...this.orderData, vnpTxnRef }).subscribe({
           next: (placeOrderResponse: ApiResponse) => {
+            debugger
+            const data = placeOrderResponse.data;
+            const orderId = data.id;
+            const invoiceFile = data.invoiceFile;
+
+            sessionStorage.setItem('pendingOrder', JSON.stringify({
+              orderId,
+              invoiceFile
+            }));
             this.loading = false;
             window.location.href = paymentUrl;
           },
@@ -458,6 +489,10 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.orderService.placeOrder(this.orderData).subscribe({
       next: (apiResponse: ApiResponse) => {
         debugger
+        const data = apiResponse.data;
+        const orderId = data.id;
+        const invoiceFile = data.invoiceFile;
+
         this.loading = false;
         this.toastService.showToast({
           defaultMsg: 'Đặt hàng thành công',
@@ -466,7 +501,12 @@ export class OrderComponent extends BaseComponent implements OnInit {
           type: 'success'
         });
         this.cartService.clearCart();
-        this.router.navigate(['/']);
+        this.router.navigate(['/payment-success'], {
+          queryParams: {
+            orderId: orderId,
+            invoiceFile: invoiceFile
+          }
+        });
       },
       error: (error: HttpErrorResponse) => {
         debugger;
@@ -599,6 +639,14 @@ export class OrderComponent extends BaseComponent implements OnInit {
       error: (error: HttpErrorResponse) => {
         console.error(error?.error?.message ?? '');
       }
+    });
+  }
+
+  openAuthModal() {
+    this.modalService.open(AuthModalComponent, {
+      centered: true,
+      size: 'md',
+      windowClass: 'auth-modal-window'
     });
   }
 }

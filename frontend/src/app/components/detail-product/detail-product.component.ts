@@ -136,11 +136,6 @@ export class DetailProductComponent extends BaseComponent implements OnInit {
 
   addToCart(): void {
     debugger
-    const token = this.tokenService.getToken();
-    if (!token) {
-      this.router.navigate(['/login']);
-      return;
-    }
 
     this.isPressAddToCart = true;
     if (this.product) {
@@ -179,16 +174,10 @@ export class DetailProductComponent extends BaseComponent implements OnInit {
   }
 
   buyNow(): void {
-    this.user = this.userService.getUserFromLocalStorage();
-    if (this.user == null) {
-      this.router.navigate(['/login']);
+    if (this.isPressAddToCart == false) {
+      this.addToCart();
     }
-    else {
-      if (this.isPressAddToCart == false) {
-        this.addToCart();
-      }
-      this.router.navigate(['/orders']);
-    }
+    this.router.navigate(['/orders']);
   }
 
   getTotalPrice(): number {

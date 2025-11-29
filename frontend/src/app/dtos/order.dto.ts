@@ -12,7 +12,7 @@ export class OrderDto{
     shippingMethod:string;
     shippingDate:Date;
     status:string;
-    vnp_TxnRef?:string;
+    vnpTxnRef?:string;
     cartItems: CartItemDto[];
 
   constructor(data:any){
@@ -27,7 +27,7 @@ export class OrderDto{
     this.shippingMethod=data.shippingMethod;
     this.shippingDate=data.shippingDate;
     this.status=data.status;
-    this.vnp_TxnRef = data.vnp_TxnRef;
+    this.vnpTxnRef = data.vnpTxnRef;
     this.cartItems=data.cartItems
   }
 }

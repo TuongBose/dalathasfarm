@@ -1,0 +1,97 @@
+<app-header></app-header>
+
+<div class="checkout-page py-5">
+    <div class="container">
+        <div class="row g-5">
+
+            <!-- CỘT TRÁI: FORM TRA CỨU -->
+            <div class="col-lg-6">
+                <div class="success-message bg-white rounded shadow-sm p-5">
+                    <div class="text-center mb-5">
+                        <i class="fas fa-search fa-4x text-primary mb-4"></i>
+                        <h2 class="mb-3">Tra cứu đơn hàng</h2>
+                        <p class="text-muted">Nhập mã đơn hàng để xem hóa đơn điện tử</p>
+                    </div>
+
+                    <form (ngSubmit)="searchOrder()" class="search-form">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Mã đơn hàng <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-lg text-center"
+                                [(ngModel)]="orderIdInput" placeholder="Ví dụ: 12345" name="orderId" required autofocus>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark btn-lg w-100 py-3" [disabled]="searching">
+                            <i class="fas fa-search me-2"></i>
+                            {{ searching ? 'Đang tìm...' : 'Tra cứu ngay' }}
+                        </button>
+                    </form>
+
+                    <!-- KẾT QUẢ -->
+                    @if (notFound) {
+                    <div class="alert alert-danger mt-4 text-center">
+                        <i class="fas fa-times-circle"></i>
+                        Không tìm thấy đơn hàng #{{ orderIdInput }}<br>
+                        <small>Vui lòng kiểm tra lại mã đơn hàng</small>
+                    </div>
+                    }
+
+                    @if (orderId) {
+                    <div class="alert alert-success mt-4 text-center">
+                        <i class="fas fa-check-circle"></i>
+                        Tìm thấy đơn hàng <strong>#{{ orderId }}</strong> thành công!
+                    </div>
+                    }
+                </div>
+
+                <!-- Nút về trang chủ -->
+                <div class="text-center mt-5">
+                    <a href="/" class="btn btn-goto-homepage w-50">
+                        TRANG CHỦ
+                    </a>
+                </div>
+            </div>
+
+            <!-- CỘT PHẢI: HIỂN THỊ HÓA ĐƠN -->
+            <div class="col-lg-6">
+                <div class="order-summary-card bg-white shadow-sm rounded p-4 sticky-top" style="top: 20px;">
+                    <h4 class="text-center mb-4">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>
+                        Hóa đơn điện tử
+                    </h4>
+
+                    @if (!orderId) {
+                    <div class="text-center py-5 text-muted">
+                        <i class="fas fa-file-pdf fa-5x mb-4 opacity-25"></i>
+                        <p>Nhập mã đơn hàng để xem hóa đơn</p>
+                    </div>
+                    } @else {
+                    <div class="invoice-container border rounded overflow-hidden bg-light">
+                        <iframe [src]="invoiceUrl | safe" width="100%" height="600" style="border: none;"
+                            title="Hóa đơn">
+                        </iframe>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-grid gap-3">
+                        <!-- NÚT TẢI XUỐNG THẬT SỰ (không mở tab) -->
+                        <button type="button" class="btn btn-download" (click)="downloadPdf()">
+                            <i class="fas fa-download"></i>
+                            Tải xuống PDF
+                        </button>
+
+                        <!-- NÚT IN CHỈ IN PDF (bypass cross-origin) -->
+                        <button type="button" class="btn btn-print" (click)="printPdfOnly()">
+                            <i class="fas fa-print"></i>
+                            In hóa đơn
+                        </button>
+                    </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<app-footer></app-footer>

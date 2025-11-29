@@ -141,7 +141,7 @@ public class ProductController {
     @GetMapping("/images/{imageName}")
     public ResponseEntity<?> viewImage(@PathVariable String imageName) {
         try {
-            Path imagePath = Paths.get("uploads/" + imageName);
+            Path imagePath = Paths.get("uploads/images/" + imageName);
             UrlResource resource = new UrlResource(imagePath.toUri());
 
             if (resource.exists()) {
@@ -151,7 +151,7 @@ public class ProductController {
             } else {
                 return ResponseEntity.ok()
                         .contentType(MediaType.IMAGE_JPEG)
-                        .body(new UrlResource(Paths.get("uploads/notfound.jpg").toUri()));
+                        .body(new UrlResource(Paths.get("uploads/images/notfound.jpg").toUri()));
                 //return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {

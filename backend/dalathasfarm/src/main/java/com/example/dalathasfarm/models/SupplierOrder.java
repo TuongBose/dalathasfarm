@@ -39,5 +39,8 @@ public class SupplierOrder {
 
     private String note;
 
+    @Column(name = "order_file", nullable = false)
+    private String orderFile;
+
     public enum SupplierOrderStatus {Unconfirmed, Confirmed}
 }

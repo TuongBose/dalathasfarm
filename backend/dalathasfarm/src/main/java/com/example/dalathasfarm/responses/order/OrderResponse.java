@@ -29,6 +29,7 @@ public class OrderResponse {
     private String shippingMethod;
     private Boolean isActive;
     private String vnpTxnRef;
+    private String invoiceFile;
     private List<OrderDetailResponse> orderDetailResponses;
 
     public static OrderResponse fromOrder(Order order, List<OrderDetailResponse> orderDetailResponses) {
@@ -48,6 +49,7 @@ public class OrderResponse {
                 .shippingMethod(order.getShippingMethod().name())
                 .isActive(order.getIsActive())
                 .vnpTxnRef(order.getVnpTxnRef())
+                .invoiceFile(order.getInvoiceFile())
                 .orderDetailResponses(orderDetailResponses)
                 .build();
     }

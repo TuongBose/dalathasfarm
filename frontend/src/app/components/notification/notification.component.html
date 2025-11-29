@@ -4,14 +4,14 @@
   @if (notifications.length > 0) {
     <button class="mark-all-read-btn" (click)="markAllAsRead()">Đánh dấu tất cả là đã đọc</button>
     <ul class="notification-list">
-      @for (notification of notifications.slice(0, 10); track notification.id) {
-        <li class="notification-item" [ngClass]="{'unread': !notification.isRead}">
+      @for (notification of notifications.slice(0, 10); track notification.notification_id) {
+        <li class="notification-item" [ngClass]="{'unread': !notification.is_read}">
           <div class="notification-content">
             <p>{{ notification.title }} - {{ notification.content }}</p>
             <small>{{ notification.createdAt | date:'dd/MM/yyyy HH:mm' }}</small>
           </div>
-          @if (!notification.isRead) {
-            <button (click)="markAsRead(notification.id)" class="mark-read-btn">Đánh dấu đã đọc</button>
+          @if (!notification.is_read) {
+            <button (click)="markAsRead(notification.notification_id)" class="mark-read-btn">Đánh dấu đã đọc</button>
           }@else {
             <span>Đã đọc</span>
           }

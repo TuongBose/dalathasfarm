@@ -10,6 +10,7 @@ import { UserResponse } from '../../responses/user/user.response';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Category } from '../../models/category';
 import { AuthModalComponent } from '../auth-modal/auth-modal.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-header',
@@ -19,7 +20,8 @@ import { AuthModalComponent } from '../auth-modal/auth-modal.component';
   imports: [
     CommonModule,
     NgbModule,
-    RouterModule
+    RouterModule,
+    FormsModule
   ]
 })
 export class HeaderComponent extends BaseComponent implements OnInit {
@@ -32,6 +34,7 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   currentPage: number = 0;
   itemsPerPage: number = 12;
   categories: Category[] = [];
+searchKeyword: string = '';
 
   activeNavItem: number = 0;
   navItems = [
@@ -84,6 +87,16 @@ export class HeaderComponent extends BaseComponent implements OnInit {
 
     this.getAllCategory(0, 20);
   }
+
+  performSearch(): void {
+  if (!this.searchKeyword.trim()) return;
+  this.router.navigate(['/product-search'], {
+    queryParams: { keyword: this.searchKeyword.trim() }
+  });
+
+  // Reset ô tìm kiếm
+  this.searchKeyword = '';
+}
 
   openAuthModal() {
     this.modalService.open(AuthModalComponent, {

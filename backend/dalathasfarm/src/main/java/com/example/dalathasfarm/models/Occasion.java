@@ -23,6 +23,8 @@ public class Occasion {
     @Column(unique = true)
     private String thumbnail;
 
+    private String description;
+
     @Column(name = "start_date")
     private LocalDate startDate;
 

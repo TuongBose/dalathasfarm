@@ -42,36 +42,46 @@ export class PaymentCallbackComponent extends BaseComponent {
 
   handlePaymentSuccess(vnp_TxnRef: string): void {
     debugger
-    // Su dung this.orderService tu BaseComponent
-    this.orderService.updateOrderStatus(vnp_TxnRef, OrderStatus.SHIPPING).subscribe({
-      next: (response: ApiResponse) => {
-        this.loading = false;
-        this.paymentSuccess = true;
-        // Sử dụng this.toastService từ BaseComponent
-        this.toastService.showToast({
-          defaultMsg: 'Thanh toán thành công',
-          title: 'Thông báo',
-          delay: 3000,
-          type: 'success'
-        });
-        // Sử dụng this.router từ baseComponent để chuyển hướng
-        setTimeout(() => {
-          debugger
-          this.cartService.clearCart();
-          this.router.navigate(['/']);
-        }, 3000);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.loading = false;
-        this.paymentSuccess = false;
-        this.toastService.showToast({
-          defaultMsg: 'Lỗi khi cập nhật trạng thái đơn hàng',
-          title: 'Thông báo',
-          delay: 3000,
-          type: 'danger'
-        });
-      }
-    })
+    const pendingOrder = sessionStorage.getItem('pendingOrder');
+    if (pendingOrder) {
+      const { orderId, invoiceFile } = JSON.parse(pendingOrder);
+      sessionStorage.removeItem('pendingOrder');
+      // Su dung this.orderService tu BaseComponent
+      this.orderService.updateOrderStatus(vnp_TxnRef, OrderStatus.Shipping).subscribe({
+        next: (response: ApiResponse) => {
+          this.loading = false;
+          this.paymentSuccess = true;
+          // Sử dụng this.toastService từ BaseComponent
+          this.toastService.showToast({
+            defaultMsg: 'Thanh toán thành công',
+            title: 'Thông báo',
+            delay: 3000,
+            type: 'success'
+          });
+          // Sử dụng this.router từ baseComponent để chuyển hướng
+          setTimeout(() => {
+            debugger
+            this.cartService.clearCart();
+            this.router.navigate(['/payment-success'], {
+              queryParams: { orderId, invoiceFile }
+            });
+          }, 3000);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.loading = false;
+          this.paymentSuccess = false;
+          this.toastService.showToast({
+            defaultMsg: 'Lỗi khi cập nhật trạng thái đơn hàng',
+            title: 'Thông báo',
+            delay: 3000,
+            type: 'danger'
+          });
+          setTimeout(() => {
+            this.router.navigate(['/']);
+          }, 3000);
+        }
+      })
+    }
   }
 
   handlePaymentFailure(errorMsg: string): void {

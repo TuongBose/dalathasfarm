@@ -2,7 +2,7 @@
     <div class="top-bar">
         <div class="container">
             <div class="top-links text-end">
-                <a routerLink="/dining"><i class="fas fa-truck"></i>Theo dõi đơn hàng</a>
+                <a routerLink="/order-invoice"><i class="fas fa-truck"></i>Tra cứu đơn hàng</a>
                 <a routerLink="/introduce"><i class="fas fa-info-circle"></i>Giới thiệu</a>
                 <a routerLink="/contact"><i class="fas fa-envelope"></i>Liên hệ</a>
                 @if(!user){
@@ -32,8 +32,9 @@
 
             <div class="right-group d-flex align-items-center">
                 <div class="search-box me-3">
-                    <input type="text" placeholder="Search" class="form-control" />
-                    <button class="search-btn">
+                    <input type="text" placeholder="Tìm kiếm sản phẩm..." class="form-control"
+                        [(ngModel)]="searchKeyword" (keyup.enter)="performSearch()" name="searchKeyword" />
+                    <button class="search-btn" (click)="performSearch()">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
@@ -43,9 +44,11 @@
                 </a> -->
                 <a routerLink="/orders" class="icon-btn position-relative">
                     <i class="fas fa-shopping-bag"></i>
-                    <span class="badge" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+                    @if(cartItemCount>0){
+                    <span class="badge">{{ cartItemCount }}</span>
+                    }
                 </a>
-                <a routerLink="/notifications" class="icon-btn me-3 position-relative" title="Thông báo">
+                <a routerLink="/notification" class="icon-btn me-3 position-relative" title="Thông báo">
                     <i class="far fa-bell"></i>
                     @if (unreadNotificationCount > 0) {
                     <span class="badge">{{ unreadNotificationCount }}</span>

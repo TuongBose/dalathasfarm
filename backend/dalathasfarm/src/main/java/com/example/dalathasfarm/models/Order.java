@@ -68,6 +68,9 @@ public class Order {
     @Column(name = "vnp_txn_ref")
     private String vnpTxnRef;
 
+    @Column(name = "invoice_file", nullable = false)
+    private String invoiceFile;
+
     public enum OrderStatus {
         Pending, Processing, Shipping, Delivered, Cancelled
     }

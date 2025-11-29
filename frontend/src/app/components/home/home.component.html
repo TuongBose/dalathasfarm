@@ -49,7 +49,7 @@
 </div>
 
 <!-- OCCASIONS SECTION -->
-<div class="occasions-section py-5 bg-white">
+<div id="product-section" class="occasions-section py-5 bg-white">
   <div class="container">
     <!-- Tiêu đề -->
     <h2 class="mb-5 fw-light fs-1 text-dark" style="font-family: 'Playfair Display', serif;">
@@ -95,7 +95,7 @@
         </h2>
       </div>
       <!-- Danh sách sản phẩm theo occasion -->
-      <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 g-lg-5">
         @for (product of getProductsByOccasion(occasion.id); track product.id) {
         <div class="col">
           <div class="product-minimal" (click)="onProductClick(product.id)">
@@ -104,15 +104,21 @@
 
             <h3 class="product-name fs-6 fw-medium text-dark mb-1" style="font-family: 'Playfair Display', serif;">{{
               product.name }}</h3>
-            <p class="product-subtitle text-muted small mb-2 line-clamp-3" style="font-size: 12px;font-style: italic;">
+            <p class="product-subtitle text-muted small mb-2" style="font-size: 12px;font-style: italic;">
               {{ product.description || 'The design darling' }}
             </p>
             <p class="product-price mb-1">{{ product.price | currency: 'VND':'symbol':'1.0-0'}}</p>
-            <div class="product-actions mt-auto">
-              <button class=" btn-sm btn-outline-light-product w-100"
+            <div class="product-actions d-flex gap-1 mt-2">
+              @if(product.stockQuantity>0){
+              <button class="btn-sm btn-outline-light-product flex-fill"
                 (click)="$event.stopPropagation(); addToCart($event, product.id)">
                 Thêm vào giỏ
               </button>
+              }@else {
+              <button class="btn btn-sm btn-danger flex-fill fw-medium" disabled>
+                <i class="fas fa-ban me-1"></i> Hết hàng
+              </button>
+              }
               <!-- <button class="btn btn-sm btn-primary flex-fill"
               (click)="$event.stopPropagation(); buyNow($event, product.id)">
               Mua
@@ -213,7 +219,7 @@
           {{ category.name }}
         </h2>
       </div> -->
-      <!-- Danh sách sản phẩm theo occasion -->
+      <!-- Danh sách sản phẩm theo category -->
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 g-lg-5">
         @for (product of getProductsByCategory(category.id); track product.id) {
         <div class="col">
@@ -324,13 +330,14 @@
       <!-- CỘT TRÁI: ABOUT -->
       <div class="col-lg-6">
         <h2 class="display-6 fw-bold mb-4 lh-sm" style="font-family: 'Playfair Display', serif;">
-          Về Tiệm hoa FLOWER BOUTIQUE – giao hoa &<br>giao cây tận nơi
+          Về Dalat Hasfarm – giao hoa &<br>giao cây tận nơi
         </h2>
         <p class="lead mb-4 text-dark opacity-90">
-          Xin chào, chúng tôi là Tiệm hoa. Chúng tôi không chỉ gửi hoa – chúng tôi giúp bạn gửi gắm sự quan tâm một
+          Xin chào, chúng tôi là Dalat Hasfarm. Chúng tôi không chỉ gửi hoa – chúng tôi giúp bạn gửi gắm sự quan tâm một
           cách trọn vẹn nhất. Mỗi đơn hàng đều được chúng tôi chăm chút như dành tặng cho chính mình.
           <br><br>
-          Đó là lý do Tiệm hoa luôn quan tâm đến việc bó hoa của bạn đến đúng giờ. Tại sao Tiệm hoa tỉ mỉ lựa chọn từng
+          Đó là lý do Dalat Hasfarm luôn quan tâm đến việc bó hoa của bạn đến đúng giờ. Tại sao Dalat Hasfarm tỉ mỉ lựa
+          chọn từng
           loại
           hoa độc đáo. Tại sao đội ngũ Chăm Sóc Khách Hàng luôn sẵn sàng hết mình nếu có bất kỳ điều gì chưa hoàn hảo.
           <br><br>
@@ -374,7 +381,8 @@
               <li class="mb-2"><a routerLink="/categories" class="text-dark text-decoration-none hover-underline">Hoa
                   theo danh mục</a></li>
               @for(category of categories; track category.id){
-              <li class="mb-2"><a routerLink="/category/{{ category.id }}" class="text-dark text-decoration-none hover-underline">{{
+              <li class="mb-2"><a routerLink="/category/{{ category.id }}"
+                  class="text-dark text-decoration-none hover-underline">{{
                   category.name }}</a></li>
               }
             </ul>
@@ -386,7 +394,8 @@
               <li class="mb-2"><a routerLink="/occasions" class="text-dark text-decoration-none hover-underline">Hoa
                   theo dịp</a></li>
               @for(occasion of occasions; track occasion.id){
-              <li class="mb-2"><a routerLink="/occasion/{{ occasion.id }}" class="text-dark text-decoration-none hover-underline">{{
+              <li class="mb-2"><a routerLink="/occasion/{{ occasion.id }}"
+                  class="text-dark text-decoration-none hover-underline">{{
                   occasion.name }}</a></li>
               }
             </ul>

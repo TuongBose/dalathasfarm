@@ -13,7 +13,6 @@ export class PaymentService{
 
   constructor(private http: HttpClient) { }
   createPaymentUrl(payload: { amount: number,language: string}): Observable<ApiResponse> {
-    debugger
-    return this.http.post<ApiResponse>(`${this.apiPayment}/create_payment_url`, payload);
+    return this.http.post<ApiResponse>(`${this.apiPayment}/create-payment-url`, payload);
   }
 }

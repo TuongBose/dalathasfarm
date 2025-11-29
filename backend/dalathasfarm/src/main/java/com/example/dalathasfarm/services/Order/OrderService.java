@@ -8,18 +8,21 @@ import com.example.dalathasfarm.models.*;
 import com.example.dalathasfarm.repositories.*;
 import com.example.dalathasfarm.responses.order.OrderResponse;
 import com.example.dalathasfarm.responses.orderdetail.OrderDetailResponse;
+import com.example.dalathasfarm.services.InvoicePdfService;
 import com.example.dalathasfarm.utils.MessageKeys;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,8 +57,9 @@ public class OrderService implements IOrderService {
         order.setStatus(Order.OrderStatus.Pending);
         order.setIsActive(true);
         order.setTotalMoney(orderDto.getTotalPrice());
+        order.setInvoiceFile("");
 
-        if ("BankTransfer".equalsIgnoreCase(orderDto.getPaymentMethod()) && orderDto.getVnpTxnRef() != null) {
+        if ("Bank Transfer".equalsIgnoreCase(orderDto.getPaymentMethod()) && orderDto.getVnpTxnRef() != null) {
             order.setVnpTxnRef(orderDto.getVnpTxnRef());
         }
 
@@ -103,14 +107,33 @@ public class OrderService implements IOrderService {
 
         orderDetailRepository.saveAll(orderDetails);
 
+        // Tạo PDF hóa đơn
+        byte[] pdf = InvoicePdfService.generateInvoicePdf(order, orderDetails);
+
+        // Lưu file PDF vào thư mục
+        Path uploadDir = Paths.get("uploads/files/orders/");
+        if (!Files.exists(uploadDir)) {
+            Files.createDirectories(uploadDir);
+        }
+
+        String fileName = "invoice_order_" + order.getId() + ".pdf";
+        String uniqueFilename = UUID.randomUUID().toString() + "_" + fileName;
+        Path destination = Paths.get(uploadDir.toString(), uniqueFilename);
+        Files.write(destination, pdf);
+
+        // Lưu đường dẫn file vào DB
+        order.setInvoiceFile(uniqueFilename);
+        orderRepository.save(order);
+
         List<OrderDetailResponse> orderDetailResponses = orderDetails.stream().map(OrderDetailResponse::fromOrderDetail).toList();
         OrderResponse orderResponse = modelMapper.map(order, OrderResponse.class);
         orderResponse.setOrderDetailResponses(orderDetailResponses);
 
         Notification newNotification = Notification.builder()
                 .user(existingUser)
-                .title(localizationUtils.getLocalizedMessage(MessageKeys.CREATE_DONHANG_SUCCESSFULLY, orderResponse.getId()))
-                .content("Join us to protect your rights, only receive goods and pay when the order is in \"delivery\" status")
+//                .title(localizationUtils.getLocalizedMessage(MessageKeys.CREATE_DONHANG_SUCCESSFULLY, orderResponse.getId()))
+                .title("Tạo đơn hàng với mã đơn hàng: " + orderResponse.getId() + " thành công")
+                .content("Cùng Dalat Hasfarm bảo vệ quyền lợi của bạn. Chỉ nhận hàng và thanh toán khi đơn hàng ở trạng thái \"Đang giao hàng\"")
                 .type(Notification.Importance.Normal)
                 .isRead(false)
                 .build();

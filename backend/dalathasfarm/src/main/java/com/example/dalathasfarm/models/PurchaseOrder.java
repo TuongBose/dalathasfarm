@@ -29,4 +29,7 @@ public class PurchaseOrder {
     private LocalDateTime importDate;
 
     private String note;
+
+    @Column(name = "receipt_file", nullable = false)
+    private String receiptFile;
 }

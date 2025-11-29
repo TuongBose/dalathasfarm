@@ -143,11 +143,6 @@ export class OccasionsComponent extends BaseComponent implements OnInit {
   addToCart(event: Event, productId: number): void {
     event.stopPropagation();
     debugger
-    const token = this.tokenService.getToken();
-    if (!token) {
-      this.router.navigate(['/login']);
-      return;
-    }
 
     this.isPressAddToCart = true;
     if (productId) {

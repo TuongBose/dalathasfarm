@@ -13,10 +13,12 @@ import com.example.dalathasfarm.services.Order.IOrderService;
 import com.example.dalathasfarm.utils.MessageKeys;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +26,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 
@@ -79,7 +83,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER') or hasRole('ROLE_EMPLOYEE')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER') or hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity<ResponseObject> getOrderById(@Valid @PathVariable Integer id) throws Exception {
         OrderResponse orderResponse = orderService.getOrderById(id);
         return ResponseEntity.ok(ResponseObject.builder()
@@ -122,7 +126,7 @@ public class OrderController {
     }
 
     @PutMapping("/status")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER') or hasRole('ROLE_EMPLOYEE')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER') or hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity<ResponseObject> updateStatusOrder(
             @RequestParam(name = "status") String status,
             @RequestParam(name = "vnpTxnRef") String vnpTxnRef
@@ -211,5 +215,24 @@ public class OrderController {
                         .status(HttpStatus.OK)
                         .data(order)
                         .build());
+    }
+
+    @GetMapping("/files/{fileName}")
+    public ResponseEntity<?> viewFile(@PathVariable String fileName) {
+        try {
+            Path imagePath = Paths.get("uploads/files/orders/" + fileName);
+            UrlResource resource = new UrlResource(imagePath.toUri());
+
+            if (resource.exists()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+                //return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

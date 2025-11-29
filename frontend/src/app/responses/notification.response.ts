@@ -1,10 +1,11 @@
 export interface NotificationResponse {
-    id: number;
-    userId: number;
+    notification_id: number;
+    user_id: number;
     title: string;
     content: string;
     type: string;
-    isRead: boolean;
+    is_read: boolean;
     showMenu?: boolean;
     createdAt :Date;
+    updatedAt :Date;
 }

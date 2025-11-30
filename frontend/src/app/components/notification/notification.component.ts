@@ -4,6 +4,8 @@ import { NotificationResponse } from "../../responses/notification.response";
 import { HeaderComponent } from "../header/header.component";
 import { FooterComponent } from "../footer/footer.component";
 import { BaseComponent } from "../base/base.component";
+import { AuthModalComponent } from "../auth-modal/auth-modal.component";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-notification',
@@ -20,6 +22,8 @@ import { BaseComponent } from "../base/base.component";
 export class NotificationComponent extends BaseComponent implements OnInit {
   notifications: NotificationResponse[] = [];
   account?: number | null;
+
+  constructor(private modalService: NgbModal){super()}
 
   ngOnInit(): void {
     debugger
@@ -111,4 +115,12 @@ export class NotificationComponent extends BaseComponent implements OnInit {
     const unreadCount = this.notifications.filter(n => !n.is_read).length;
     this.notificationService.updateUnreadCount(unreadCount); // Cập nhật qua service
   }
+
+  openAuthModal() {
+      this.modalService.open(AuthModalComponent, {
+        centered: true,
+        size: 'md',
+        windowClass: 'auth-modal-window'
+      });
+    }
 }

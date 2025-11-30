@@ -34,7 +34,7 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   currentPage: number = 0;
   itemsPerPage: number = 12;
   categories: Category[] = [];
-searchKeyword: string = '';
+  searchKeyword: string = '';
 
   activeNavItem: number = 0;
   navItems = [
@@ -89,14 +89,14 @@ searchKeyword: string = '';
   }
 
   performSearch(): void {
-  if (!this.searchKeyword.trim()) return;
-  this.router.navigate(['/product-search'], {
-    queryParams: { keyword: this.searchKeyword.trim() }
-  });
+    if (!this.searchKeyword.trim()) return;
+    this.router.navigate(['/product-search'], {
+      queryParams: { keyword: this.searchKeyword.trim() }
+    });
 
-  // Reset ô tìm kiếm
-  this.searchKeyword = '';
-}
+    // Reset ô tìm kiếm
+    this.searchKeyword = '';
+  }
 
   openAuthModal() {
     this.modalService.open(AuthModalComponent, {
@@ -151,6 +151,10 @@ searchKeyword: string = '';
     this.userService.removeUserFromLocalStorage();
     this.tokenService.removeToken();
     this.user = null;
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
   }
 
   getAllCategory(page: number, limit: number) {

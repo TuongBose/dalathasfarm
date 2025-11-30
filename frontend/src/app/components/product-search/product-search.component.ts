@@ -33,9 +33,6 @@ export class ProductSearchComponent extends BaseComponent implements OnInit {
   selectedOccasionId: number = 0;
   isPressAddToCart: boolean = false;
 
-  bannerName: string = 'banner.jpg';
-  bannerUrl?: string;
-
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
       const keyword = params['keyword'] || '';
@@ -45,8 +42,6 @@ export class ProductSearchComponent extends BaseComponent implements OnInit {
         this.getAllProduct(this.keyword, this.selectedCategoryId, this.selectedOccasionId, this.currentPage, this.itemsPerPage);
       }
     });
-    this.currentPage = Number(localStorage.getItem('currentProductPage')) || 0;
-    this.bannerUrl = `${environment.apiBaseUrl}/products/images/${this.bannerName}`;
   }
 
   getAllProduct(keyword: string, selectedCategoryId: number, selectedOccasionId: number, page: number, limit: number) {

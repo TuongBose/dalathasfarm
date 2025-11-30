@@ -156,7 +156,7 @@ export class AuthModalComponent extends BaseComponent {
     this.userService.login(loginDto).pipe(
       tap((apiResponse: ApiResponse) => {
         const { token } = apiResponse.data;
-        this.tokenService.setToken(token);
+        this.tokenService.setToken(token,this.rememberMe);
       }),
       switchMap((apiResponse: ApiResponse) => {
         const { token } = apiResponse.data;
@@ -166,6 +166,7 @@ export class AuthModalComponent extends BaseComponent {
               ...apiResponse2.data,
               dateOfBirth: new Date(apiResponse2.data.dateOfBirth),
             };
+            debugger
             this.userService.saveUserToLocalStorage(this.userResponse, this.rememberMe);
           }),
           catchError((error: HttpErrorResponse) => {

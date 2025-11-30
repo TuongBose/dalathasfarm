@@ -1,28 +1,57 @@
 <app-header></app-header>
+
+@if(account){
 <div class="notification-container">
   <h2>Thông báo</h2>
   @if (notifications.length > 0) {
-    <button class="mark-all-read-btn" (click)="markAllAsRead()">Đánh dấu tất cả là đã đọc</button>
-    <ul class="notification-list">
-      @for (notification of notifications.slice(0, 10); track notification.notification_id) {
-        <li class="notification-item" [ngClass]="{'unread': !notification.is_read}">
-          <div class="notification-content">
-            <p>{{ notification.title }} - {{ notification.content }}</p>
-            <small>{{ notification.createdAt | date:'dd/MM/yyyy HH:mm' }}</small>
-          </div>
-          @if (!notification.is_read) {
-            <button (click)="markAsRead(notification.notification_id)" class="mark-read-btn">Đánh dấu đã đọc</button>
-          }@else {
-            <span>Đã đọc</span>
-          }
-        </li>
+  <button class="mark-all-read-btn" (click)="markAllAsRead()">Đánh dấu tất cả là đã đọc</button>
+  <ul class="notification-list">
+    @for (notification of notifications.slice(0, 10); track notification.notification_id) {
+    <li class="notification-item" [ngClass]="{'unread': !notification.is_read}">
+      <div class="notification-content">
+        <p>{{ notification.title }} - {{ notification.content }}</p>
+        <small>{{ notification.createdAt | date:'dd/MM/yyyy HH:mm' }}</small>
+      </div>
+      @if (!notification.is_read) {
+      <button (click)="markAsRead(notification.notification_id)" class="mark-read-btn">Đánh dấu đã đọc</button>
+      }@else {
+      <span>Đã đọc</span>
       }
-    </ul>
-    @if (notifications.length > 10) {
-      <p class="more-notifications">Chỉ hiển thị 10 thông báo mới nhất. Tổng cộng có {{ notifications.length }} thông báo.</p>
+    </li>
     }
+  </ul>
+  @if (notifications.length > 10) {
+  <p class="more-notifications">Chỉ hiển thị 10 thông báo mới nhất. Tổng cộng có {{ notifications.length }} thông báo.
+  </p>
+  }
   } @else {
-    <p>Không có thông báo nào.</p>
+  <p>Không có thông báo nào.</p>
   }
 </div>
+}
+@else {
+  <div class="notification-container d-flex align-items-center justify-content-center min-vh-60">
+    <div class="text-center py-5">
+      <div class="mb-4">
+        <i class="fas fa-bell-slash text-muted" style="font-size: 5rem; opacity: 0.4;"></i>
+      </div>
+      <h3 class="mb-3 text-dark fw-light">Bạn chưa đăng nhập</h3>
+      <p class="lead text-muted mb-4" style="max-width: 500px; margin: 0 auto;">
+        Hãy đăng nhập để nhận thông báo mới nhất về đơn hàng, khuyến mãi độc quyền và ưu đãi đặc biệt từ <strong>Dalat Hasfarm</strong>
+      </p>
+      <button 
+        class="btn btn-primary btn-lg px-5 py-3 rounded-pill shadow-sm fw-medium"
+        (click)="openAuthModal()">
+        <i class="fas fa-sign-in-alt me-2"></i>
+        Đăng nhập ngay
+      </button>
+      <p class="mt-4 text-muted small">
+        Chưa có tài khoản? 
+        <a class="text-primary fw-medium" (click)="openAuthModal()" style="cursor: pointer;">
+          Đăng ký miễn phí
+        </a>
+      </p>
+    </div>
+  </div>
+}
 <app-footer></app-footer>

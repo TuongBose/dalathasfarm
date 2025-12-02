@@ -27,10 +27,14 @@ export class OrderService {
             .set('status', status.toString())
             .set('vnpTxnRef', vnp_TxnRef.toString());
         const url = `${environment.apiBaseUrl}/orders/status`;
-        return this.http.put<ApiResponse>(url,null, { params });
+        return this.http.put<ApiResponse>(url, null, { params });
     }
 
-    viewFile(fileName:string){
+    viewFile(fileName: string) {
         return `${this.apiCreateOrder}/files/${fileName}`;
+    }
+
+    getOrdersByUserId(userId: number): Observable<ApiResponse> {
+        return this.http.get<ApiResponse>(`${this.apiCreateOrder}/user/${userId}`);
     }
 }

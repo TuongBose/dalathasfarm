@@ -417,10 +417,11 @@ export class OrderComponent extends BaseComponent implements OnInit {
       phoneNumber: this.phoneNumber,
       address: fullAddress,
       note: this.note || '',
-      totalPrice: this.totalAmount - this.couponDiscount,
+      totalPrice: this.totalAmount,
       paymentMethod: this.paymentMethod,
       shippingMethod: this.shippingMethod,
       shippingDate: new Date(this.shippingDate),
+      couponCode:this.couponApplied?this.couponCode:undefined,
       cartItems: this.cartItems.map(item => ({
         productId: item.product.id,
         quantity: item.quantity
@@ -585,18 +586,63 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.cartService.setCart(this.cart);
   }
 
+  removeCoupon(): void {
+    this.couponCode = '';
+    this.couponDiscount = 0;
+    this.couponApplied = false;
+    this.calculateTotal();
+    this.toastService.showToast({
+      defaultMsg: 'Đã xóa mã giảm giá',
+      type: 'info'
+    });
+  }
+
   applyCoupon(): void {
+    debugger
     // Xử lý áp dụng mã giảm giá
     // cập nhật giá trị totalAmount dựa trên mã giảm giá
+    if (!this.couponCode.trim()) {
+      this.toastService.showToast({
+        defaultMsg: 'Vui lòng nhập mã giảm giá',
+        type: 'warning',
+        delay: 3000
+      });
+      return;
+    }
     debugger
+    if (this.couponApplied) {
+      this.toastService.showToast({
+        defaultMsg: 'Bạn đã áp dụng mã giảm giá rồi!',
+        type: 'info',
+        delay: 3000
+      });
+      return;
+    }
+
     if (!this.couponApplied && this.couponCode) {
       this.loading = true;
-      this.calculateTotal();
       this.couponService.calculateCouponValue(this.couponCode, this.totalAmount).subscribe({
         next: (apiResponse: ApiResponse) => {
-          this.couponDiscount = apiResponse.data as number;
-          this.totalAmount -= this.couponDiscount;
+          debugger
+          this.couponDiscount = apiResponse.data.result as number;
+          
+
+          if (this.couponDiscount > 0) {
+            this.calculateTotal();
           this.couponApplied = true;
+            this.toastService.showToast({
+              defaultMsg: `Áp dụng mã "${this.couponCode}" thành công! Bạn được giảm ${this.couponDiscount.toLocaleString('vi-VN')}₫`,
+              type: 'success',
+              delay: 5000
+            });
+          } else {
+            this.toastService.showToast({
+              defaultMsg: 'Mã giảm giá không hợp lệ hoặc không áp dụng được',
+              type: 'danger',
+              delay: 4000
+            });
+          }
+
           this.loading = false;
         },
         error: (err: HttpErrorResponse) => {

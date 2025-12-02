@@ -5,25 +5,26 @@
     <div class="newsletter-section mb-5 pb-5 border-bottom">
       <div class="row align-items-center">
         <div class="col-lg-6 mb-4 mb-lg-0">
-          <h3 class="h4 fw-bold mb-2">Sign Up for Email</h3>
+          <h3 class="h4 fw-bold mb-2">Đăng ký nhận Email</h3>
           <p class="text-muted mb-0">
-            For a first look at our newest arrivals, exclusive sales, and special events
+            Nhận thông tin sớm nhất về sản phẩm mới, ưu đãi độc quyền và các sự kiện đặc biệt.
           </p>
         </div>
         <div class="col-lg-6">
           <form (ngSubmit)="onSubmit()" class="d-flex gap-2">
-            <input type="email" class="form-control form-control-lg" placeholder="Email Address*" [(ngModel)]="email"
+            <input type="email" class="form-control form-control-lg" placeholder="Địa chỉ Email*" [(ngModel)]="email"
               name="email" required>
             <button type="submit" class="btn btn-success btn-lg px-4 text-white" style="font-size: 18px;">
-              SUBMIT
+              GỬI
             </button>
           </form>
         </div>
       </div>
       <p class="text-xs text-muted mt-4" style="font-size: 15px;">
-        By signing up, you will receive Terrain offers, promotions, and other commercial messages.
-        You are also agreeing to Terrain's <a href="#" class="text-decoration-underline">Privacy Policy</a>.
-        You may unsubscribe at any time.
+        Khi đăng ký, bạn sẽ nhận được các ưu đãi, thông tin khuyến mãi và tin nhắn thương mại khác từ Dalat Hasfarm.
+        Bạn cũng đồng ý với <a href="/privacy-policy" class="text-decoration-underline">Chính Sách Quyền Riêng Tư</a> của Dalat
+        Hasfarm.
+        Bạn có thể hủy đăng ký bất cứ lúc nào.
       </p>
     </div>
 
@@ -32,63 +33,55 @@
 
       <!-- CỘT 1: Help + Info -->
       <div class="col">
-        <h5 class="fw-bold mb-3">Help + Info</h5>
+        <h5 class="fw-bold mb-3">Trợ giúp & Thông tin</h5>
         <ul class="list-unstyled text-small">
-          <li class="mb-2"><a routerLink="/track-order" class="text-muted text-decoration-none hover-text-dark">Track
-              Your Order</a></li>
-          <li class="mb-2"><a routerLink="/returns" class="text-muted text-decoration-none hover-text-dark">Start A
-              Return Or Exchange</a></li>
-          <li class="mb-2"><a routerLink="/returns" class="text-muted text-decoration-none hover-text-dark">Returns &
-              Exchanges</a></li>
+          <li class="mb-2"><a routerLink="/track-order" class="text-muted text-decoration-none hover-text-dark">Tra cứu
+              đơn hàng</a></li>
+          <li class="mb-2"><a routerLink="/returns" class="text-muted text-decoration-none hover-text-dark">Bắt đầu trả
+              hàng hoặc đổi hàng</a></li>
+          <li class="mb-2"><a routerLink="/returns" class="text-muted text-decoration-none hover-text-dark">Trả hàng &
+              Đổi hàng</a></li>
           <li class="mb-2"><a routerLink="/customer-service"
-              class="text-muted text-decoration-none hover-text-dark">Customer Service</a></li>
-          <li class="mb-2"><a routerLink="/gift-card" class="text-muted text-decoration-none hover-text-dark">Check Gift
-              Card Balance</a></li>
-          <li class="mb-2"><a routerLink="/promotions" class="text-muted text-decoration-none hover-text-dark">Current
-              Promotions</a></li>
+              class="text-muted text-decoration-none hover-text-dark">Dịch vụ khách hàng</a></li>
+          <li class="mb-2"><a routerLink="/gift-card" class="text-muted text-decoration-none hover-text-dark">Kiểm tra số dư thẻ quà tặng</a></li>
+          <li class="mb-2"><a routerLink="/promotions" class="text-muted text-decoration-none hover-text-dark">Khuyến mãi hiện tại</a></li>
         </ul>
       </div>
 
       <!-- CỘT 2: About Us -->
       <div class="col">
-        <h5 class="fw-bold mb-3">About Us</h5>
+        <h5 class="fw-bold mb-3">Về chúng tôi</h5>
         <ul class="list-unstyled text-small">
-          <li class="mb-2"><a routerLink="/our-story" class="text-muted text-decoration-none hover-text-dark">Our
-              Story</a></li>
-          <li class="mb-2"><a routerLink="/philanthropy" class="text-muted text-decoration-none hover-text-dark">Our
-              Philanthropy</a></li>
-          <li class="mb-2"><a routerLink="/careers" class="text-muted text-decoration-none hover-text-dark">Careers</a>
+          <li class="mb-2"><a routerLink="/our-story" class="text-muted text-decoration-none hover-text-dark">Câu chuyện của chúng tôi</a></li>
+          <li class="mb-2"><a routerLink="/philanthropy" class="text-muted text-decoration-none hover-text-dark">Hoạt động thiện nguyện</a></li>
+          <li class="mb-2"><a routerLink="/careers" class="text-muted text-decoration-none hover-text-dark">Tuyển dụng</a>
           </li>
         </ul>
       </div>
 
       <!-- CỘT 3: Services -->
       <div class="col">
-        <h5 class="fw-bold mb-3">Services</h5>
+        <h5 class="fw-bold mb-3">Dịch vụ</h5>
         <ul class="list-unstyled text-small">
           <li class="mb-2"><a routerLink="/design-services"
-              class="text-muted text-decoration-none hover-text-dark">Design Services</a></li>
+              class="text-muted text-decoration-none hover-text-dark">Dịch vụ thiết kế</a></li>
           <li class="mb-2"><a routerLink="/private-events"
-              class="text-muted text-decoration-none hover-text-dark">Private Events</a></li>
-          <li class="mb-2"><a routerLink="/dining" class="text-muted text-decoration-none hover-text-dark">Dining</a>
+              class="text-muted text-decoration-none hover-text-dark">Sự kiện riêng tư</a></li>
+          <li class="mb-2"><a routerLink="/dining" class="text-muted text-decoration-none hover-text-dark">Ẩm thực</a>
           </li>
-          <li class="mb-2"><a routerLink="/trade" class="text-muted text-decoration-none hover-text-dark">Trade
-              Account</a></li>
-          <li class="mb-2"><a routerLink="/gift-cards" class="text-muted text-decoration-none hover-text-dark">Gift
-              Cards</a></li>
+          <li class="mb-2"><a routerLink="/trade" class="text-muted text-decoration-none hover-text-dark">Tài khoản thương mại</a></li>
+          <li class="mb-2"><a routerLink="/gift-cards" class="text-muted text-decoration-none hover-text-dark">Thẻ quà tặng</a></li>
           <li class="mb-2"><a routerLink="/afterpay"
-              class="text-muted text-decoration-none hover-text-dark">Afterpay</a></li>
+              class="text-muted text-decoration-none hover-text-dark">Trả góp Afterpay</a></li>
         </ul>
       </div>
 
       <!-- CỘT 4: Connect -->
       <div class="col">
-        <h5 class="fw-bold mb-3">Connect</h5>
+        <h5 class="fw-bold mb-3">Kết nối</h5>
         <ul class="list-unstyled text-small">
-          <li class="mb-2"><a routerLink="/contact" class="text-muted text-decoration-none hover-text-dark">Contact
-              Us</a></li>
-          <li class="mb-2"><a routerLink="/events" class="text-muted text-decoration-none hover-text-dark">Store Events
-              + Workshops</a></li>
+          <li class="mb-2"><a routerLink="/contact" class="text-muted text-decoration-none hover-text-dark">Liên hệ</a></li>
+          <li class="mb-2"><a routerLink="/events" class="text-muted text-decoration-none hover-text-dark">Sự kiện và Hội thảo</a></li>
           <li class="mb-2"><a routerLink="/blog" class="text-muted text-decoration-none hover-text-dark">Blog</a></li>
         </ul>
       </div>
@@ -98,19 +91,19 @@
         <ul class="list-unstyled text-small">
           <li class="mb-3 d-flex align-items-center gap-2">
             <i class="fas fa-map-marker-alt text-muted"></i>
-            <a routerLink="/store-locator" class="text-muted text-decoration-none hover-text-dark">Store Locator</a>
+            <a routerLink="/store-locator" class="text-muted text-decoration-none hover-text-dark">Tìm sửa hàng</a>
           </li>
           <li class="mb-3 d-flex align-items-center gap-2">
             <i class="fas fa-envelope text-muted"></i>
-            <a routerLink="/get-email" class="text-muted text-decoration-none hover-text-dark">Get Email</a>
+            <a routerLink="/get-email" class="text-muted text-decoration-none hover-text-dark">Nhận Email</a>
           </li>
           <li class="mb-3 d-flex align-items-center gap-2">
             <i class="fas fa-comment-dots text-muted"></i>
-            <a routerLink="/sign-up-texts" class="text-muted text-decoration-none hover-text-dark">Sign Up For Texts</a>
+            <a routerLink="/sign-up-texts" class="text-muted text-decoration-none hover-text-dark">Đăng ký nhận tin nhắn</a>
           </li>
           <li class="mb-3 d-flex align-items-center gap-2">
             <i class="fas fa-comment text-muted"></i>
-            <a routerLink="/chat" class="text-muted text-decoration-none hover-text-dark">Chat With Us</a>
+            <a routerLink="/chat" class="text-muted text-decoration-none hover-text-dark">Trò chuyện với chúng tôi</a>
           </li>
         </ul>
       </div>
@@ -120,23 +113,20 @@
     <div class="row align-items-center border-top pt-4">
       <div class="col-md-6 mb-3 mb-md-0">
         <div class="d-flex gap-3 justify-content-center justify-content-md-start">
-          <a href="#" class="text-muted fs-4"><i class="fab fa-instagram"></i></a>
-          <a href="#" class="text-muted fs-4"><i class="fab fa-pinterest"></i></a>
-          <a href="#" class="text-muted fs-4"><i class="fab fa-facebook-f"></i></a>
-          <a href="#" class="text-muted fs-4"><i class="fab fa-tiktok"></i></a>
+          <a href="https://www.instagram.com/dalat.hasfarm/" class="text-muted fs-4"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.pinterest.com/dalathasfarm/" class="text-muted fs-4"><i class="fab fa-pinterest"></i></a>
+          <a href="https://www.facebook.com/hoatuoi.dalathasfarm" class="text-muted fs-4"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://www.tiktok.com/@dalathasfarmofficial" class="text-muted fs-4"><i class="fab fa-tiktok"></i></a>
         </div>
       </div>
       <div class="col-md-6 text-center text-md-end">
         <p class="text-xs text-muted mb-1">
-          <a href="#" class="text-muted text-decoration-underline me-2">Privacy Policy</a> |
-          <a href="#" class="text-muted text-decoration-underline mx-2">Terms of Use</a> |
-          <a href="#" class="text-muted text-decoration-underline mx-2">CA Transparency</a> |
-          <a href="#" class="text-muted text-decoration-underline mx-2">Accessibility</a> |
-          <a href="#" class="text-muted text-decoration-underline mx-2">URBN.com</a> |
-          <a href="#" class="text-muted text-decoration-underline mx-2">Support Code</a> |
-          <a href="#" class="text-muted text-decoration-underline ms-2">Your Privacy Choices</a>
+          <a href="/privacy-policy" class="text-muted text-decoration-underline me-2">Chính Sách Quyền Riêng Tư</a> |
+          <a href="/terms-of-service" class="text-muted text-decoration-underline mx-2">Điều Khoản Sử Dụng</a> |
+          <a href="#" class="text-muted text-decoration-underline mx-2">Khả năng truy cập</a> |
+          <a href="#" class="text-muted text-decoration-underline ms-2">Lựa chọn quyền riêng tư của bạn</a>
         </p>
-        <p class="text-xs text-muted mb-0">&copy; 2025 URBN.com. All Rights Reserved.</p>
+        <p class="text-xs text-muted mb-0">&copy; 2025 dalathasfarm.com. All Rights Reserved.</p>
       </div>
     </div>
 

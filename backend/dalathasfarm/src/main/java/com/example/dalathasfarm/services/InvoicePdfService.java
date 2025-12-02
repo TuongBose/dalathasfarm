@@ -3,10 +3,12 @@ package com.example.dalathasfarm.services;
 import com.example.dalathasfarm.models.Order;
 import com.example.dalathasfarm.models.OrderDetail;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,7 +25,11 @@ public class InvoicePdfService {
     public static byte[] generateInvoicePdf(Order order, List<OrderDetail> orderDetails) throws IOException {
 
         // 1. Load template HTML
-        String html = Files.readString(Path.of("src/main/resources/templates/invoice-order.html"));
+        ClassPathResource resource = new ClassPathResource("templates/invoice-order.html");
+        String html = new String(
+                resource.getInputStream().readAllBytes(),
+                StandardCharsets.UTF_8
+        );
 
         String logoBase64 = Base64.getEncoder().encodeToString(
                 Files.readAllBytes(Paths.get("uploads/images/logo.png"))

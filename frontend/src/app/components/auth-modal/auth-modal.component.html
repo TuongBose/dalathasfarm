@@ -7,10 +7,10 @@
     @if(isSignIn){
     <div class="modal-body pt-5 px-4 pb-5">
         <div class="text-center mb-4">
-            <h2 class="mb-3" style="font-family: 'Sainte Colombe', serif;">Sign In</h2>
+            <h2 class="mb-3" style="font-family: 'Sainte Colombe', serif;">Đăng nhập</h2>
             <div class="divider my-3 py-2"></div>
             <p class="text-muted small">
-                Sign in so you can save items to your wishlists, track your orders, and check out faster!
+                Đăng nhập để lưu sản phẩm vào danh sách yêu thích, theo dõi đơn hàng và thanh toán nhanh hơn!
             </p>
         </div>
 
@@ -37,23 +37,23 @@
                 <input class="form-check-input" type="checkbox" [(ngModel)]="rememberMe" id="keepSignedIn"
                     name="rememberMe">
                 <label class="form-check-label small text-primary" for="keepSignedIn">
-                    Keep me signed in
+                    Giữ tôi luôn đăng nhập
                     <i class="fas fa-info-circle ms-1 text-muted"></i>
                 </label>
             </div>
 
             <button type="button" class="btn btn-next w-100 mb-3" (click)="login()"
-                [disabled]="phoneError || passwordError || !phoneNumber || !password">NEXT</button>
+                [disabled]="phoneError || passwordError || !phoneNumber || !password">TIẾP TỤC</button>
 
             <div class="divider my-3 py-2"></div>
 
             <div class="text-center">
-                <h2 class="mb-2" style="font-family: 'Sainte Colombe', serif;">Sign Up</h2>
+                <h2 class="mb-2" style="font-family: 'Sainte Colombe', serif;">Đăng ký</h2>
                 <p class="text-muted small mb-3">
-                    Welcome! It's quick and easy to set up an account
+                    Chào mừng bạn! Tạo tài khoản nhanh chóng và dễ dàng.
                 </p>
                 <button type="button" class="btn btn-goto-signup w-100" (click)="switchToSignUp()">
-                    CREATE AN ACCOUNT
+                    TẠO TÀI KHOẢN
                 </button>
             </div>
         </form>
@@ -63,10 +63,10 @@
     <!-- FORM ĐĂNG KÝ -->
     <div class="modal-body pt-5 px-4 pb-5">
         <div class="text-center mb-4">
-            <h3 class="mb-3" style="font-family: 'Sainte Colombe', serif;">Create An Account</h3>
+            <h3 class="mb-3" style="font-family: 'Sainte Colombe', serif;">Tạo tài khoản</h3>
             <div class="divider my-3 py-2"></div>
             <p class="text-muted small mb-3">
-                Welcome to Terrain! It's quick and easy to set up an account.
+                Chào mừng đến với Dalat Hasfarm! Việc tạo tài khoản rất nhanh và đơn giản.
             </p>
         </div>
 
@@ -89,9 +89,8 @@
             </div>
             <div class="mb-3">
                 <label class="form-label small fw-medium">Mật khẩu*</label>
-                <input type="password" class="form-control" [(ngModel)]="passwordRegister"
-                    (input)="validatePassword()" placeholder="Nhập mật khẩu" name="passwordRegister"
-                    [class.is-invalid]="passwordError">
+                <input type="password" class="form-control" [(ngModel)]="passwordRegister" (input)="validatePassword()"
+                    placeholder="Nhập mật khẩu" name="passwordRegister" [class.is-invalid]="passwordError">
                 @if(passwordError){
                 <div class="invalid-feedback">{{ passwordError }}</div>
                 }
@@ -117,23 +116,23 @@
                        !fullName || !phoneNumberRegister || !passwordRegister || !retypePassword">NEXT</button>
 
             <p class="text-muted small mb-2">
-                By creating an account, you agree to receive Terrain marketing emails to get first dibs on new
-                arrivals, sales, exclusive content and more! You may unsubscribe at any time. Creating an
-                account will not enroll you in SMS marketing.
+                Khi tạo tài khoản, bạn đồng ý nhận email marketing từ Dalat Hasfarm để cập nhật sản phẩm mới, giảm giá,
+                nội
+                dung độc quyền và nhiều hơn nữa! Bạn có thể hủy đăng ký bất kỳ lúc nào. Việc tạo tài khoản không đồng
+                nghĩa đăng ký nhận tin nhắn SMS.
             </p>
             <p class="text-muted small mb-3">
-                By creating an account, you agree to Terrain's
-                <a href="#" class="text-decoration-underline">terms of use</a> and
-                <a href="#" class="text-decoration-underline">privacy policy</a>. Landlines, VoIP, and prepaid phones
-                are not supported. Standard message & data rates may apply. Message frequency may vary. Reply
-                HELP for help, and STOP to cancel.
-                <a href="#" class="text-decoration-underline">Contact us</a> for more information.
+                Bằng cách tạo tài khoản, bạn đồng ý với
+                <a href="/terms-of-service" class="text-decoration-underline">điều khoản sử dụng</a> and
+                <a href="/privacy-policy" class="text-decoration-underline">chính sách bảo mật</a> của Dalat Hasfarm. Không hỗ trợ số điện thoại bàn, VoIP hoặc thuê bao trả trước. Có thể áp dụng phí nhắn tin &
+                dữ liệu tiêu chuẩn. Tần suất tin nhắn có thể thay đổi. Soạn HELP để được hỗ trợ, STOP để hủy.
+                <a href="/contact" class="text-decoration-underline">Liên hệ với chúng tôi</a> để biết thêm.
             </p>
 
             <div class="divider my-3 py-2"></div>
-            <h2 class="text-center mb-2" style="font-family: 'Sainte Colombe', serif;">Already Have an Account?</h2>
+            <h2 class="text-center mb-2" style="font-family: 'Sainte Colombe', serif;">Đã có tài khoản?</h2>
             <button type="button" class="btn btn-goto-signin w-100" (click)="switchToSignIn()">
-                SIGN IN
+                ĐĂNG NHẬP
             </button>
         </form>
     </div>

@@ -1,0 +1,161 @@
+<app-header></app-header>
+
+<div class="order-history-luxury">
+    <div class="container">
+
+        <!-- Tiêu đề sang trọng -->
+        <div class="text-center mb-6">
+            <h1 class="display-5 fw-light py-3"
+                style="font-family: 'Playfair Display', serif; letter-spacing: 2px; color: #1a1a1a;">
+                Lịch sử đơn hàng
+            </h1>
+            <p class="text-muted fs-5 opacity-80">Mỗi đơn hàng là một câu chuyện riêng của bạn tại Dalat Hasfarm</p>
+        </div>
+
+        <!-- CHƯA ĐĂNG NHẬP -->
+        @if (!userId || userId === 1) {
+        <div class="text-center py-6">
+            <div class="py-5">
+                <i class="fas fa-lock fa-4x text-gold"></i>
+            </div>
+            <h3 class="mb-4 text-dark fw-light">Bạn chưa đăng nhập</h3>
+            <p class="lead text-muted mb-5">Đăng nhập để theo dõi hành trình của những bông hoa bạn đã chọn</p>
+            <button class="btn btn-gold btn-lg px-6 py-3 rounded-pill shadow-lg" (click)="openAuthModal()">
+                <i class="fas fa-sign-in-alt me-2"></i> Đăng nhập ngay
+            </button>
+        </div>
+        }
+
+        <!-- CHƯA CÓ ĐƠN HÀNG -->
+        @else if (orders.length === 0) {
+        <div class="text-center py-6">
+            <div class="py-5">
+                <i class="fas fa-gift fa-4x text-gold opacity-70"></i>
+            </div>
+            <h3 class="mb-4 text-dark fw-light">Bạn chưa có đơn hàng nào</h3>
+            <p class="lead text-muted mb-5">Hãy để chúng tôi gửi đến bạn điều gì đó thật đặc biệt</p>
+            <a routerLink="/" class="btn btn-outline-gold btn-lg px-6 py-3 rounded-pill">
+                Khám phá ngay
+            </a>
+        </div>
+        }
+
+        <!-- CÓ ĐƠN HÀNG -->
+        @else {
+        <!-- TABS SANG TRỌNG -->
+        <div class="luxury-tabs mb-6">
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                @for (tab of tabs; track tab.key) {
+                <button class="luxury-tab-btn" [class.active]="activeTab === tab.key" (click)="setActiveTab(tab.key)">
+                    <i [class]="tab.icon"></i>
+                    {{ tab.label }}
+                    <span class="count-badge">{{ tab.count }}</span>
+                </button>
+                }
+            </div>
+        </div>
+
+        <!-- DANH SÁCH ĐƠN HÀNG -->
+        <div class="orders-elegant py-5">
+            @if (filteredOrders.length === 0) {
+            <div class="text-center py-6 text-muted">
+                <i class="fas fa-heart-broken fa-3x mb-4 opacity-50"></i>
+                <p class="fs-5">Không có đơn hàng nào ở trạng thái này</p>
+            </div>
+            } @else {
+            @for (order of filteredOrders; track order.id) {
+            <div class="order-luxury-card" [class.expanded]="selectedOrder?.id === order.id"
+                (click)="toggleOrderDetails(order)">
+
+                <!-- Header đơn hàng -->
+                <div class="order-luxury-header">
+                    <div>
+                        <h5 class="order-id">Mã đơn hàng {{ order.id }}</h5>
+                        <p class="order-date text-muted small">Ngày đặt hàng:
+                            {{ order.orderDate | date:'dd MMMM yyyy, HH:mm' }}
+                        </p>
+                    </div>
+                    <div class="text-end">
+                        <div class="status-elegant" [ngClass]="'status-' + order.status.toLowerCase()">
+                            {{ getStatusText(order.status) }}
+                        </div>
+                        <div class="order-total">{{ order.totalMoney | currency:'VND':'symbol':'1.0-0' }}</div>
+                    </div>
+                </div>
+
+                <!-- Body chi tiết -->
+                @if (selectedOrder?.id === order.id) {
+                <div class="order-luxury-body">
+                    <div class="row g-5">
+                        <div class="col-lg-8">
+                            <h6 class="section-title">Sản phẩm đã chọn</h6>
+                            @for (item of order.orderDetails; track item.product.id) {
+                            <div class="product-elegant-item">
+                                <img [src]="getProductThumbnail(item.product.thumbnail)" class="product-thumb"
+                                    alt="{{ item.product.name }}">
+                                <div class="product-info">
+                                    <h6 class="product-name">{{ item.product.name }}</h6>
+                                    <p class="text-muted small">
+                                        {{ item.quantity }} × {{ item.price | currency:'VND':'symbol':'1.0-0' }}
+                                    </p>
+                                </div>
+                                <strong class="product-total">
+                                    {{ item.totalPrice | currency:'VND':'symbol':'1.0-0' }}
+                                </strong>
+                            </div>
+                            }
+                        </div>
+
+                        <div class="col-lg-4">
+                            <h6 class="section-title">Thông tin nhận hàng</h6>
+                            <div class="info-item">
+                                <span class="label">Người nhận:</span>
+                                <span class="value">{{ order.fullName }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Số điện thoại:</span>
+                                <span class="value">{{ order.phoneNumber }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Địa chỉ:</span>
+                                <span class="value">{{ order.address }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Ngày nhận hàng:</span>
+                                <span class="value">{{ order.shippingDate }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Phương thức thanh toán:</span>
+                                <span class="value">{{ order.paymentMethod === 'Cash' ? 'Tiền mặt khi nhận hàng' :
+                                    'Chuyển khoản' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Phương thức giao hàng:</span>
+                                <span class="value">{{ order.shippingMethod }}</span>
+                            </div>
+
+                            @if (order.invoiceFile) {
+                            <div class="invoice-actions mt-4">
+                                <button class="btn btn-download w-100 mb-3"
+                                    (click)="$event.stopPropagation(); downloadPdf(order.invoiceFile, order.id)">
+                                    <i class="fas fa-download me-2"></i> Tải hóa đơn
+                                </button>
+                                <button class="btn btn-print w-100"
+                                    (click)="$event.stopPropagation(); printPdfOnly(order.invoiceFile)">
+                                    <i class="fas fa-print me-2"></i> In hóa đơn
+                                </button>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+            }
+            }
+        </div>
+        }
+    </div>
+</div>
+
+<app-footer></app-footer>

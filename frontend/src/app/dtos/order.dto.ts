@@ -13,6 +13,7 @@ export class OrderDto{
     shippingDate:Date;
     status:string;
     vnpTxnRef?:string;
+    couponCode?:string;
     cartItems: CartItemDto[];
 
   constructor(data:any){
@@ -28,6 +29,7 @@ export class OrderDto{
     this.shippingDate=data.shippingDate;
     this.status=data.status;
     this.vnpTxnRef = data.vnpTxnRef;
+    this.couponCode=data.couponCode;
     this.cartItems=data.cartItems
   }
 }

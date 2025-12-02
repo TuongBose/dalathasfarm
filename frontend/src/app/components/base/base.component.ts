@@ -14,6 +14,7 @@ import { UserService } from "../../services/user.service";
 import { OrderService } from "../../services/order.service";
 import { OccasionService } from "../../services/occasion.service";
 import { ProvinceService } from "../../services/province.service";
+import { OrderDetailService } from "../../services/order-detail.service";
 
 @Component({
   selector: 'app-base',
@@ -37,6 +38,7 @@ export class BaseComponent {
   cartService: CartService = inject(CartService);
   couponService: CouponService = inject(CouponService);
   orderService: OrderService = inject(OrderService);
+  orderDetailService: OrderDetailService = inject(OrderDetailService);
   paymentService: PaymentService = inject(PaymentService);
   feedbackService:FeedbackService=inject(FeedbackService);
   notificationService:NotificationService=inject(NotificationService);

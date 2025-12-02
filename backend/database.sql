@@ -377,26 +377,27 @@ INSERT INTO coupons (code, is_active) VALUES
 
 -- BẢNG DỮ LIỆU COUPON_CONDITIONS
 INSERT INTO coupon_conditions (coupon_id, attribute, operator, value, discount_amount) VALUES
-(1, 'total_money', '>=', '500000', 10.00),         -- HAS10OFF: giảm 10% khi đơn ≥ 500k
-(2, 'shipping_city', '=', 'TP.HCM', 100.00),       -- FREESHIPHCM: miễn phí vận chuyển nội thành TP.HCM
-(3, 'birthday_month', '=', 'current_month', 20.00),-- BIRTHDAY20: giảm 20% sinh nhật KH
-(4, 'is_new_customer', '=', 'true', 15.00),        -- NEWCUSTOMER15: khách hàng mới
-(5, 'occasion', '=', 'Valentine', 25.00),          -- VALENTINE25: dịp Valentine
-(6, 'occasion', '=', 'Womens Day', 10.00),         -- WOMENDAY10: ngày 8/3
-(7, 'occasion', '=', 'Tet Holiday', 50000.00),     -- TET50: giảm 50.000đ dịp Tết
-(8, 'season', '=', 'Summer', 15.00),               -- SUMMER15: mùa hè
-(9, 'season', '=', 'Autumn', 20.00),               -- AUTUMN20: mùa thu
-(10, 'occasion', '=', 'Black Friday', 30.00),      -- BLACKFRIDAY30: dịp Black Friday
-(11, 'occasion', '=', 'Cyber Monday', 25.00),      -- CYBERMONDAY25: Cyber Monday
-(12, 'occasion', '=', 'Christmas', 30.00),         -- CHRISTMAS30: Giáng sinh
-(13, 'occasion', '=', 'New Year', 40.00),          -- NEWYEAR40: Năm mới
-(14, 'occasion', '=', 'Vietnamese Women Day', 10.00), -- FLOWERDAY10: 20/10
-(15, 'occasion', '=', 'Mothers Day', 15.00),       -- MOTHERSDAY15: Ngày của mẹ
-(16, 'occasion', '=', 'Fathers Day', 10.00),       -- FATHERSDAY10: Ngày của cha
-(17, 'season', '=', 'Spring', 20.00),              -- SPRING20: mùa xuân
-(18, 'season', '=', 'Winter', 25.00),              -- WINTER25: mùa đông
-(19, 'is_first_order', '=', 'true', 30.00),        -- FIRSTORDER30: đơn hàng đầu tiên
-(20, 'occasion', '=', 'Hasfarm Anniversary', 20.00); -- HASFARMANNI20: kỷ niệm thành lập
+(1,  'minimum_amount',   '>=', '500000',           10.00),
+(2,  'application_date', '=',  '2025-01-01',       100.00), 
+(3,  'application_date', '=',  '2025-01-01',       20.00),
+(4,  'minimum_amount',   '>=', '0',                15.00),
+(5,  'application_date', '=',  '2025-02-14',       25.00),    -- Valentine
+(6,  'application_date', '=',  '2025-03-08',       10.00),    -- Women's Day
+(7,  'application_date', '=',  '2025-01-29',       50000.00), -- Tết Nguyên Đán
+(10, 'application_date', '=',  '2025-11-28',       30.00),    -- Black Friday
+(11, 'application_date', '=',  '2025-12-01',       25.00),    -- Cyber Monday
+(12, 'application_date', '=',  '2025-12-25',       30.00),    -- Christmas
+(13, 'application_date', '=',  '2025-01-01',       40.00),    -- New Year
+(14, 'application_date', '=',  '2025-10-20',       10.00),    -- Vietnamese Women Day 20/10
+(15, 'application_date', '=',  '2025-05-11',       15.00),    -- Mother's Day
+(16, 'application_date', '=',  '2025-06-15',       10.00),    -- Father's Day
+(19, 'minimum_amount',   '>=', '0',                30.00),
+(20, 'application_date', '=',  '2025-08-01',       20.00),    -- Hasfarm anniversary
+(8,  'application_date', 'BETWEEN', '2025-06-01,2025-08-31', 15.00),
+(9,  'application_date', 'BETWEEN', '2025-09-01,2025-11-30', 20.00),
+(17, 'application_date', 'BETWEEN', '2025-03-20,2025-05-31', 20.00),
+(18, 'application_date', 'BETWEEN', '2025-12-21,2026-02-28', 25.00);
+
 
 -- BẢNG DỮ LIỆU PRODUCT_DISCOUNTS
 INSERT INTO product_discounts 

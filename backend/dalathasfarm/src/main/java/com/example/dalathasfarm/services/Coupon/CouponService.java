@@ -12,30 +12,27 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CouponService implements ICouponService{
+public class CouponService implements ICouponService {
     private final CouponRepository couponRepository;
     private final CouponConditionRepository couponConditionRepository;
 
     @Override
     public double calculateCouponValue(String couponCode, double totalAmount) {
         Coupon coupon = couponRepository.findByCode(couponCode)
-                .orElseThrow(()-> new IllegalArgumentException("Coupon not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Coupon not found"));
 
-        if(!coupon.getIsActive())
-        {
+        if (!coupon.getIsActive()) {
             throw new IllegalArgumentException("Coupon is not active");
         }
 
-        double discount = calculateDiscount(coupon, totalAmount);
-        return totalAmount - discount;
+        return calculateDiscount(coupon, totalAmount);
     }
 
-    private double calculateDiscount(Coupon coupon, double totalAmount)
-    {
+    private double calculateDiscount(Coupon coupon, double totalAmount) {
         List<CouponCondition> conditions = couponConditionRepository.findByCouponId(coupon.getId());
         double discount = 0.0;
         double updatedTotalAmount = totalAmount;
-        for(CouponCondition condition : conditions ){
+        for (CouponCondition condition : conditions) {
             // EAV(Entity - Attribute - Value) Model
             String attribute = condition.getAttribute();
             String operator = condition.getOperator();
@@ -43,20 +40,53 @@ public class CouponService implements ICouponService{
 
             double percentDiscount = Double.parseDouble(String.valueOf(condition.getDiscountAmount()));
 
-            if(attribute.equals("minimum_amount")){
-                if(operator.equals(">")&&updatedTotalAmount>Double.parseDouble(value)){
-                    discount += updatedTotalAmount * percentDiscount/100;
-                }
-            } else if (attribute.equals("application_date")) {
-                LocalDate applicationDate = LocalDate.parse(value);
-                LocalDate currentDate = LocalDate.now();
-                if(operator.equalsIgnoreCase("BETWEEN") && currentDate.isEqual(applicationDate)){
-                    discount +=updatedTotalAmount*percentDiscount/100;
-                }
+            switch (attribute) {
+                case "minimum_amount":
+                    double requiredAmount = Double.parseDouble(value);
+                    if (compareNumber(updatedTotalAmount, requiredAmount, operator)) {
+                        discount += applyDiscount(updatedTotalAmount, percentDiscount);
+                    }
+                    break;
+                case "application_date":
+                    LocalDate currentDate = LocalDate.now();
+                    if (operator.equals("=")) {
+                        LocalDate comparedDate = LocalDate.parse(value);
+                        if (currentDate.isEqual(comparedDate)) {
+                            discount += applyDiscount(updatedTotalAmount, percentDiscount);
+                        }
+                    } else if (operator.equals("BETWEEN")) {
+                        String[] dates = value.split(",");
+                        LocalDate start = LocalDate.parse(dates[0].trim());
+                        LocalDate end = LocalDate.parse(dates[1].trim());
+
+                        if (!currentDate.isBefore(start) && !currentDate.isAfter(end)) {
+                            discount += applyDiscount(updatedTotalAmount, percentDiscount);
+                        }
+                    }
+                    break;
+
+                default:
+                    System.out.println("Unknown coupon attribute: " + attribute);
             }
-            // Con nhieu dieu kien khac nua
+
             updatedTotalAmount = updatedTotalAmount - discount;
         }
         return discount;
     }
+
+    private double applyDiscount(double currentTotal, double discountAmount) {
+        return currentTotal * (discountAmount / 100);
+    }
+
+    private boolean compareNumber(double a, double b, String operator) {
+        return switch (operator) {
+            case ">" -> a > b;
+            case ">=" -> a >= b;
+            case "<" -> a < b;
+            case "<=" -> a <= b;
+            case "=" -> a == b;
+            default -> false;
+        };
+    }
 }
+

@@ -19,6 +19,7 @@ import { OccasionComponent } from './components/occasion/occasion.component';
 import { PaymentSuccessComponent } from './components/payment-success/payment-success.component';
 import { OrderSearchComponent } from './components/order-search/order-search.component';
 import { ProductSearchComponent } from './components/product-search/product-search.component';
+import { OrderHistoryComponent } from './components/order-history/order-history.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -28,6 +29,7 @@ export const routes: Routes = [
     { path: 'register', component: RegisterComponent },
     { path: 'products/:id', component: DetailProductComponent },
     { path: 'orders', component: OrderComponent },
+    { path: 'orders-history', component: OrderHistoryComponent, canActivate: [AuthGuardFn] },
     { path: 'user-profile', component: UserProfileComponent, canActivate: [AuthGuardFn] },
     { path: 'introduce', component: IntroduceComponent },
     { path: 'contact', component: ContactComponent },

@@ -1,0 +1,273 @@
+.order-history-luxury {
+    background: linear-gradient(to bottom, #fdfbfa 0%, #f8f5f0 100%);
+    min-height: 100vh;
+    font-family: 'Playfair Display', serif;
+
+    .display-5 {
+        font-weight: 300;
+        letter-spacing: 3px;
+    }
+
+    .lead {
+        font-family: 'Helvetica Neue', sans-serif;
+    }
+
+    // Màu chủ đạo sang trọng
+    --gold: #d4af37;
+    --dark: #1a1a1a;
+    --light-gold: #f5e6cc;
+
+    .text-gold {
+        color: var(--gold);
+    }
+
+    .btn-gold {
+        background: var(--gold);
+        color: white;
+        border: none;
+        font-weight: 500;
+        transition: all 0.4s ease;
+
+        &:hover {
+            background: #b8962e;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+        }
+    }
+
+    .btn-outline-gold {
+        border: 2px solid var(--gold);
+        color: var(--gold);
+        background: transparent;
+
+        &:hover {
+            background: var(--gold);
+            color: white;
+        }
+    }
+
+    // Tabs siêu sang
+    .luxury-tabs {
+        .luxury-tab-btn {
+            background: white;
+            border: 1px solid #eee;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.4s ease;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+            i {
+                margin-right: 8px;
+            }
+
+            .count-badge {
+                background: #0c9265;
+                color: white;
+                font-size: 0.75rem;
+                padding: 4px 8px;
+                border-radius: 12px;
+                margin-left: 8px;
+            }
+
+            &.active {
+                background: var(--gold);
+                color: white;
+                box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+                transform: translateY(-4px);
+            }
+
+            &:hover:not(.active) {
+                border-color: var(--gold);
+                color: var(--gold);
+                transform: translateY(-2px);
+            }
+        }
+    }
+
+    // Card đơn hàng siêu sang
+    .order-luxury-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s ease;
+        border: 1px solid #eee;
+
+        &:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+        }
+
+        .order-luxury-header {
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+
+            .order-id {
+                font-size: 1.4rem;
+                font-weight: 600;
+                color: var(--dark);
+                margin: 0;
+            }
+
+            .status-elegant {
+                padding: 8px 20px;
+                font-size: 0.9rem;
+                font-weight: 500;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+
+                &.status-pending {
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: #856404;
+                }
+
+                &.status-processing {
+                    background: #d1ecf1;
+                    color: #0c5460;
+                }
+
+                &.status-shipping {
+                    background: #d4edda;
+                    color: #155724;
+                }
+
+                &.status-delivered {
+                    background: #d1ecf1;
+                    color: #0c5460;
+                }
+
+                &.status-cancelled {
+                    background: #f8d7da;
+                    color: #721c24;
+                }
+            }
+
+            .order-total {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin-top: 8px;
+            }
+        }
+
+        .order-luxury-body {
+            padding: 2.5rem;
+            background: white;
+            border-top: 1px solid #eee;
+            animation: slideDown 0.4s ease;
+
+            .section-title {
+                font-size: 1.3rem;
+                margin-bottom: 1.5rem;
+                color: var(--dark);
+                position: relative;
+                padding-bottom: 10px;
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    width: 50px;
+                    height: 2px;
+                    background: var(--gold);
+                }
+            }
+
+            .product-elegant-item {
+                display: flex;
+                align-items: center;
+                padding: 1rem 0;
+                border-bottom: 1px dashed #eee;
+
+                .product-thumb {
+                    width: 80px;
+                    height: 80px;
+                    object-fit: cover;
+                    border-radius: 12px;
+                    margin-right: 1.5rem;
+                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                }
+
+                .product-name {
+                    margin: 0;
+                    color: var(--dark);
+                    font-weight: 500;
+                }
+
+                .product-total {
+                    margin-left: auto;
+                    font-size: 1.2rem;
+                }
+            }
+
+            .info-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 0.8rem 0;
+                border-bottom: 1px solid #f0f0f0;
+
+                .label {
+                    color: #666;
+                    font-weight: 500;
+                }
+
+                .value {
+                    color: var(--dark);
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+}
+
+.btn-download {
+    border-radius: 0 !important;
+    border: 1.5px solid #0c9265;
+    color: #0c9265;
+    padding: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+
+    &:hover {
+        background: #0c9265;
+        color: white;
+    }
+}
+
+.btn-print {
+    border-radius: 0 !important;
+    border: 1.5px solid blue;
+    color: blue;
+    padding: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+
+    &:hover {
+        background: blue;
+        color: white;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

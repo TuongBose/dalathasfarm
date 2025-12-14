@@ -26,7 +26,6 @@ public class ProductService implements IProductService{
     private final OccasionRepository occasionRepository;
     private final CategoryRepository categoryRepository;
     private final ProductImageRepository productImageRepository;
-    private final UserRepository userRepository;
 
     @Override
     public Product createProduct(ProductDto productDto) throws Exception {

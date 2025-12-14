@@ -1,5 +1,3 @@
-import 'package:android/models/product.dart';
-
 class ProductImage {
     final int productId;
     final String name;

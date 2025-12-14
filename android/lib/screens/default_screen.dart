@@ -53,31 +53,25 @@ class MyDefaultScreenState extends State<MyDefaultScreen> {
       CartScreen(),
       AppConfig.isLogin ? const UserScreen() : const AccountScreen(),
     ];
-
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: widgetOptions,
-      ),
+      body: IndexedStack(index: _selectedIndex, children: widgetOptions),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Color(0xFF4A7C59),
         type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Trang chủ',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Trang chủ'),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart_outlined),
             label: 'Cart',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle_outlined),
+            icon: Icon(Icons.account_circle),
             label: 'Tài khoản',
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blueAccent,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: Colors.orangeAccent[100],
+        unselectedItemColor: Colors.white,
         onTap: _onItemTapped,
         showUnselectedLabels: true,
       ),

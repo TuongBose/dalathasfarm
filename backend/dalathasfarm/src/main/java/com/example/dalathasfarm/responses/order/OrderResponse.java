@@ -24,7 +24,7 @@ public class OrderResponse {
     private String status;
     private LocalDate orderDate;
     private LocalDate shippingDate;
-    private BigDecimal totalPrice;
+    private BigDecimal totalMoney;
     private String paymentMethod;
     private String shippingMethod;
     private Boolean isActive;
@@ -44,7 +44,7 @@ public class OrderResponse {
                 .status(order.getStatus().name())
                 .orderDate(order.getOrderDate())
                 .shippingDate(order.getShippingDate())
-                .totalPrice(order.getTotalMoney())
+                .totalMoney(order.getTotalMoney())
                 .paymentMethod(order.getPaymentMethod().name())
                 .shippingMethod(order.getShippingMethod().name())
                 .isActive(order.getIsActive())

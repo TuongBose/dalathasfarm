@@ -20,7 +20,7 @@ public class UserResponse {
     private String email;
     private Boolean isActive;
     private String profileImage;
-    private Role roleName;
+    private Role role;
 
     public static UserResponse fromUser(User user) {
         return UserResponse
@@ -33,7 +33,7 @@ public class UserResponse {
                 .email(user.getEmail())
                 .profileImage(user.getProfileImage())
                 .isActive(user.getIsActive())
-                .roleName(user.getRole())
+                .role(user.getRole())
                 .build();
     }
 }

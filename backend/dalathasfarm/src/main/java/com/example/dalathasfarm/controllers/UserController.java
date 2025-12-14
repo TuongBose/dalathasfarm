@@ -264,7 +264,7 @@ public class UserController {
                 .build());
     }
 
-    @GetMapping("")
+    @GetMapping("/customers")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ResponseObject> getAllUserCustomer(
             @RequestParam(defaultValue = "", required = false) String keyword,
@@ -288,6 +288,64 @@ public class UserController {
                 .build();
         return ResponseEntity.ok(ResponseObject.builder()
                 .message("Get list of User customer successfully")
+                .status(HttpStatus.OK)
+                .data(userListResponse)
+                .build());
+    }
+
+    @GetMapping("/employees")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ResponseObject> getAllUserEmployee(
+            @RequestParam(defaultValue = "", required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ) throws Exception {
+        PageRequest pageRequest = PageRequest.of(
+                page, limit,
+                Sort.by("id").ascending()
+        );
+        Page<UserResponse> userPage = userService.getAllUserEmployee(keyword, pageRequest)
+                .map(UserResponse::fromUser);
+
+        // Lay tong so trang
+        int totalPages = userPage.getTotalPages();
+        List<UserResponse> userResponses = userPage.getContent();
+        UserListResponse userListResponse = UserListResponse
+                .builder()
+                .userResponseList(userResponses)
+                .totalPages(totalPages)
+                .build();
+        return ResponseEntity.ok(ResponseObject.builder()
+                .message("Get list of User employee successfully")
+                .status(HttpStatus.OK)
+                .data(userListResponse)
+                .build());
+    }
+
+    @GetMapping("/admins")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ResponseObject> getAllUserAdmin(
+            @RequestParam(defaultValue = "", required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ) throws Exception {
+        PageRequest pageRequest = PageRequest.of(
+                page, limit,
+                Sort.by("id").ascending()
+        );
+        Page<UserResponse> userPage = userService.getAllUserAdmin(keyword, pageRequest)
+                .map(UserResponse::fromUser);
+
+        // Lay tong so trang
+        int totalPages = userPage.getTotalPages();
+        List<UserResponse> userResponses = userPage.getContent();
+        UserListResponse userListResponse = UserListResponse
+                .builder()
+                .userResponseList(userResponses)
+                .totalPages(totalPages)
+                .build();
+        return ResponseEntity.ok(ResponseObject.builder()
+                .message("Get list of User admin successfully")
                 .status(HttpStatus.OK)
                 .data(userListResponse)
                 .build());

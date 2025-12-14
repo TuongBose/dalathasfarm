@@ -3,6 +3,7 @@ package com.example.dalathasfarm.repositories;
 import com.example.dalathasfarm.models.Category;
 import com.example.dalathasfarm.models.Occasion;
 import com.example.dalathasfarm.models.Product;
+import com.example.dalathasfarm.models.Supplier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,6 +17,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     Page<Product> findAll(Pageable pageable); // Phan trang
     List<Product> findByCategory(Category category);
     List<Product> findByOccasion(Occasion occasion);
+    List<Product> findBySupplier(Supplier supplier);
 
     @Query(
             "SELECT p FROM Product p WHERE " +

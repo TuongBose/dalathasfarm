@@ -1,0 +1,33 @@
+/* src/app/home/home.component.css */
+.d-flex {
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-right: 1px solid #ddd;
+}
+
+.sidebar a {
+  display: block;
+  padding: 10px;
+  color: #333;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.sidebar a:hover {
+  background-color: #e9ecef;
+  border-radius: 5px;
+}
+
+.sidebar .text-danger {
+  color: #dc3545;
+}
+
+.content {
+  padding: 20px;
+  background-color: #fff;
+}

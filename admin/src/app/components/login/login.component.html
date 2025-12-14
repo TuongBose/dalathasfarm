@@ -1,0 +1,54 @@
+<div class="min-vh-100 d-flex align-items-center justify-content-center p-4"
+  style="background:  rgb(254, 208, 215);">
+  <div class="w-100" style="max-width: 900px;">
+    <div class="card flex-row shadow-lg rounded-3 overflow-hidden"
+      style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);">
+      <!-- Left side with illustration and text -->
+      <div class="col-md-6 p-4 p-md-5 d-flex flex-column align-items-center justify-content-center position-relative">
+        <img src="logo.png" alt="Illustration of a night sky with a yellow moon" class="img-fluid"
+          style="width: 100%; height: auto;">
+        <p class="text-justify text-center mt-4" style="font-size: 15px; opacity: 0.8;">
+          Datlat Hasfarm - Flower your life
+        </p>
+      </div>
+      <!-- Right side with login form -->
+      <div class="col-md-6 bg-white p-4 p-md-5 rounded-end">
+        <h2 class="mb-1" style="font-size: 1.2rem; font-weight: 600;">Hello!</h2>
+        <h3 class="mb-4" style="font-size: 1.5rem; font-weight: bold;">Have a nice day</h3>
+        <form #loginForm="ngForm" (ngSubmit)="login()" class="needs-validation" novalidate>
+          <div class="form-group mb-4">
+            <label for="phonenumber" class="mb-1" style="font-size: 0.875rem; font-weight: 600;">Số điện
+              thoại<span class="text-danger">*</span></label>
+            <input type="text" class="form-control form-control-sm" id="phonenumber" name="phoneNumber"
+              [(ngModel)]="phoneNumber" (input)="validatePhoneNumber()" required placeholder="Nhập số điện thoại"
+              #phoneInput="ngModel" />
+            @if(phoneError){
+            <div class="invalid-feedback">{{ phoneError }}</div>
+            }
+          </div>
+          <div class="form-group mb-4">
+            <label for="password" class="mb-1" style="font-size: 0.875rem; font-weight: 600;">Mật
+              khẩu<span class="text-danger">*</span></label>
+            <input type="password" class="form-control form-control-sm" id="password" name="password"
+              placeholder="Nhập mật khẩu" [(ngModel)]="password" required #passwordInput="ngModel"
+              (input)="passwordError = !password ? 'Vui lòng nhập mật khẩu' : ''" [class.is-invalid]="passwordError" />
+            @if(passwordError){
+            <div class="invalid-feedback">{{ passwordError }}</div>
+            }
+          </div>
+
+          <div class="form-check mb-4">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="rememberMe" id="keepSignedIn"
+                    name="rememberMe">
+                <label class="form-check-label small text-justify" for="keepSignedIn">
+                    Giữ tôi luôn đăng nhập
+                </label>
+            </div>
+
+          <button type="button" class="btn btn-next w-100 mb-3" (click)="login()"
+            [disabled]="phoneError || passwordError || !phoneNumber || !password">TIẾP TỤC</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

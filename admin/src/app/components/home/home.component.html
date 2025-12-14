@@ -1,0 +1,26 @@
+<div class="d-flex">
+  <div class="sidebar">
+    <a routerLink="/home">
+      <h4 class="text-center">Admin Panel</h4>
+    </a>
+    <hr />
+    <a routerLink="/home/statistics">Thống kê doanh thu</a>
+    <a routerLink="/home/products">Quản lý sản phẩm</a>
+    <a routerLink="/home/categories">Quản lý danh mục sản phẩm</a>
+    <a routerLink="/home/occasions">Quản lý dịp, sự kiện</a>
+    <a routerLink="/home/showtimes">Quản lý khuyến mãi</a>
+    <a routerLink="/home/orders">Quản lý đơn hàng</a>
+    <a routerLink="/home/suppliers">Quản lý nhà cung cấp</a>
+    <a routerLink="/home/customers">Quản lý tài khoản khách hàng</a>
+    <a routerLink="/home/admins">Quản lý tài khoản Admin</a>
+    <a routerLink="/home/employees">Quản lý tài khoản nhân viên</a>
+    <hr />
+    <a (click)="logout()" class="text-danger" style="cursor: pointer;">Đăng xuất</a>
+  </div>
+
+  <div class="content flex-grow-1">
+    <div class="container">
+      <router-outlet></router-outlet> <!-- Nội dung sẽ hiển thị ở đây -->
+    </div>
+  </div>
+</div>

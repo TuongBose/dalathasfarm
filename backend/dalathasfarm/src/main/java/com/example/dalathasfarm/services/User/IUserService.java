@@ -20,6 +20,8 @@ public interface IUserService {
     User getUserDetailsFromRefreshToken(String refreshToken) throws Exception;
     User updateUser(UpdateUserDto updateUserDto, int userId) throws Exception;
     Page<User> getAllUserCustomer(String keyword, Pageable pageable) throws Exception;
+    Page<User> getAllUserEmployee(String keyword, Pageable pageable) throws Exception;
+    Page<User> getAllUserAdmin(String keyword, Pageable pageable) throws Exception;
     void resetPassword(int userId, String newPassword) throws DataNotFoundException, InvalidPasswordException;
     void blockOrEnable(int userId, boolean active) throws DataNotFoundException;
     void changeProfileImage(int userId, String imageName) throws Exception;

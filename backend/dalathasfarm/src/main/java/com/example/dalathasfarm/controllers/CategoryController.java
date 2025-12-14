@@ -25,7 +25,6 @@ public class CategoryController {
     private final ICategoryService categoryService;
     private final LocalizationUtils localizationUtils;
 
-
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ResponseObject> createCategory(

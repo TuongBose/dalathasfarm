@@ -6,16 +6,16 @@ import { BaseComponent } from '../base/base.component';
 import { LoginDto } from '../../dtos/user/login.dto';
 import { ApiResponse } from '../../responses/api.response';
 import { HttpErrorResponse } from '@angular/common/http';
-import { catchError, delay, finalize, of, switchMap, tap } from 'rxjs';
+import { catchError, finalize, of, switchMap, tap } from 'rxjs';
 import { RegisterDto } from '../../dtos/user/register.dto';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-auth-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgbNavModule],
   templateUrl: './auth-modal.component.html',
   styleUrl: './auth-modal.component.css',
+  imports: [CommonModule, FormsModule, NgbNavModule],
 })
 export class AuthModalComponent extends BaseComponent {
   phoneNumber: string = '';

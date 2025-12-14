@@ -1,0 +1,126 @@
+<div class="container-fluid py-4">
+
+  <!-- Tiêu đề + Nút thêm sản phẩm -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0 fw-bold text-primary">Quản lý sản phẩm</h2>
+    <button class="btn btn-success btn-lg shadow-sm d-flex align-items-center gap-2" (click)="openAddProductModal()">
+      <i class="fas fa-plus"></i>
+      Thêm sản phẩm mới
+    </button>
+  </div>
+
+  <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr class="text-secondary fw-semibold">
+              <th class="ps-4">ID</th>
+              <th>Hình ảnh</th>
+              <th>Tên sản phẩm</th>
+              <th>Giá</th>
+              <th class="text-center">Tồn kho</th>
+              <th>Danh mục</th>
+              <th>Thành phần</th>
+              <th class="text-center">Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for(product of products;track product.id){
+            <tr class="border-bottom">
+              <td class="ps-4 fw-medium">#{{ product.id }}</td>
+              <td>
+                <img [src]="product.thumbnailUrl || 'assets/images/no-image.jpg'" [alt]="product.name"
+                  class="rounded shadow-sm" style="width: 150px; object-fit: cover;">
+              </td>
+              <td>
+                <div class="fw-bold text-dark">{{ product.name }}</div>
+                <small class="text-muted">{{ product.description | slice:0:60 }}...</small>
+              </td>
+              <td>
+                <span class="fw-bold text-danger fs-5">
+                  {{ product.price | currency:'VND':'symbol':'1.0-0' }}
+                </span>
+              </td>
+              <td class="text-center">
+                @if (product.stockQuantity < 10) { <span class="badge bg-danger fs-6">Cảnh báo: {{ product.stockQuantity
+                  }}</span> }
+                  @else if (product.stockQuantity < 30) { <span class="badge bg-warning text-dark">Cảnh báo: {{
+                    product.stockQuantity }}</span>
+                    }
+                    @else {
+                    <span class="badge bg-success">Bình thường: {{ product.stockQuantity }}</span>
+                    }
+              </td>
+              <td>
+                <span class="badge bg-info text-dark">ID: {{ product.categoryId }}</span>
+              </td>
+              <td>
+                <div class="components-preview" [innerHTML]="product.safeComponents"
+                  style="font-size: 14px; line-height: 1.6; max-height: 100px; overflow-y: auto;">
+                </div>
+              </td>
+              <td class="text-center">
+                <div class="btn-group" role="group">
+
+                  <!-- Nút Sửa -->
+                  <button class="btn btn-outline-primary btn-sm rounded-pill me-2" title="Chỉnh sửa sản phẩm"
+                    (click)="openEditProductModal(product)">
+                    <i class="fas fa-edit"></i>
+                  </button>
+
+                  <!-- Nút Xóa (có xác nhận) -->
+                  <button class="btn btn-outline-danger btn-sm rounded-pill" title="Xóa sản phẩm"
+                    (click)="confirmDelete(product.id, product.name)">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+
+                </div>
+              </td>
+            </tr>
+            }@empty {
+            <tr>
+              <td colspan="8" class="text-center py-5 text-muted">
+                <i class="fas fa-box-open fa-3x mb-3"></i><br>
+                Chưa có sản phẩm nào
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-center mt-5">
+    <nav aria-label="Page navigation">
+      <ul class="pagination">
+        @if (currentPage > 0) {
+        <li class="page-item">
+          <button class="page-link" href="#" (click)="onPageChange(0)">First</button>
+        </li>
+        <li class="page-item">
+          <button class="page-link" href="#" (click)="onPageChange(currentPage - 1)">
+            <i class="fa fa-chevron-left"></i>
+          </button>
+        </li>
+        }
+        @for (page of visiblePages; track page) {
+        <li class="page-item" [ngClass]="{'active': page === currentPage}">
+          <button class="page-link" href="#" (click)="onPageChange(page)">{{ page + 1 }}</button>
+        </li>
+        }
+        @if (currentPage < totalPages - 1) { <li class="page-item">
+          <button class="page-link" href="#" (click)="onPageChange(currentPage + 1)">
+            <i class="fa fa-chevron-right"></i>
+          </button>
+          </li>
+          <li class="page-item">
+            <button class="page-link" href="#" (click)="onPageChange(totalPages)">Last</button>
+          </li>
+          }
+      </ul>
+    </nav>
+  </div>
+</div>

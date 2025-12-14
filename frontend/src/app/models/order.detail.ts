@@ -7,5 +7,5 @@ export interface OrderDetail {
     product: Product;
     price: number;
     quantity: number;
-    totalPrice: number;
+    totalMoney: number;
 }

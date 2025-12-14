@@ -16,7 +16,7 @@
 
         <form (ngSubmit)="login()">
             <div class="mb-3">
-                <label class="form-label small fw-medium">Số điện thoại*</label>
+                <label class="form-label small fw-medium">Số điện thoại<span class="text-danger">*</span></label>
                 <input type="tel" class="form-control" [(ngModel)]="phoneNumber" (input)="validatePhoneNumber()"
                     placeholder="Nhập số điện thoại" [class.is-invalid]="phoneError" name="phoneNumber">
                 @if(phoneError){
@@ -24,7 +24,7 @@
                 }
             </div>
             <div class="mb-3">
-                <label class="form-label small fw-medium">Mật khẩu*</label>
+                <label class="form-label small fw-medium">Mật khẩu<span class="text-danger">*</span></label>
                 <input type="password" class="form-control" [(ngModel)]="password" placeholder="Nhập mật khẩu"
                     name="password" (input)="passwordError = !password ? 'Vui lòng nhập mật khẩu' : ''"
                     [class.is-invalid]="passwordError">

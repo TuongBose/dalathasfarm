@@ -1,0 +1,89 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0 fw-bold text-primary">Quản lý dịp, sự kiện</h2>
+    <button class="btn btn-success btn-lg shadow-sm d-flex align-items-center gap-2" (click)="openAddOccasionModal()">
+      <i class="fas fa-plus"></i>
+      Thêm dịp, sự kiện mới
+    </button>
+  </div>
+
+  <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr class="text-secondary fw-semibold">
+              <th class="ps-4">ID</th>
+              <th>Hình ảnh</th>
+              <th>Banner</th>
+              <th>Tên dịp, sự kiện</th>
+              <th>Ngày bắt đầu</th>
+              <th>Ngày kết thúc</th>
+              <th>Trạng thái</th>
+              <th class="text-center">Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for(occasion of occasions;track occasion.id){
+            <tr class="border-bottom">
+              <td class="ps-4 fw-medium">#{{ occasion.id }}</td>
+              <td>
+                <img [src]="getImage(occasion.thumbnail)" [alt]="occasion.name" class="rounded shadow-sm"
+                  style="width: 150px; object-fit: cover;">
+              </td>
+              <td>
+                <img [src]="getImage(occasion.bannerImage)" [alt]="occasion.name" class="rounded shadow-sm"
+                  style="width: 150px; object-fit: cover;">
+              </td>
+              <td>
+                <div class="fw-bold text-dark">{{ occasion.name }}</div>
+                <small class="text-muted">{{ occasion.description | slice:0:60 }}...</small>
+              </td>
+              <td>
+                <span class="fw-bold text-primary">
+                  {{ occasion.startDate | date:'dd/MM/yyyy' }}
+                </span>
+              </td>
+              <td>
+                <span class="fw-bold text-primary">
+                  {{ occasion.endDate | date:'dd/MM/yyyy' }}
+                </span>
+              </td>
+              <td class="text-center">
+                @if (occasion.isActive === false) { <span class="badge bg-danger fs-6">Ngưng hoạt động</span> }
+                @else {
+                <span class="badge bg-success">Hoạt động</span>
+                }
+              </td>
+              <td class="text-center">
+                <div class="btn-group" role="group">
+
+                  <!-- Nút Sửa -->
+                  <button class="btn btn-outline-primary btn-sm rounded-pill me-2" title="Chỉnh sửa sản phẩm"
+                    (click)="openEditOccasionModal(occasion)">
+                    <i class="fas fa-edit"></i>
+                  </button>
+
+                  <!-- Nút Xóa (có xác nhận) -->
+                  <button class="btn btn-outline-danger btn-sm rounded-pill" title="Xóa sản phẩm"
+                    (click)="confirmDelete(occasion.id, occasion.name)">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+
+                </div>
+              </td>
+            </tr>
+            }@empty {
+            <tr>
+              <td colspan="8" class="text-center py-5 text-muted">
+                <i class="fas fa-box-open fa-3x mb-3"></i><br>
+                Chưa có dịp, sự kiện nào
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

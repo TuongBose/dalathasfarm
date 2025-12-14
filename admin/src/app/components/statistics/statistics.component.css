@@ -1,0 +1,38 @@
+/* src/app/statistics/statistics.component.css */
+.card {
+    border-radius: 10px;
+    transition: transform 0.2s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .card-title {
+    font-size: 1.25rem;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  .card-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .text-primary {
+    color: #007bff !important;
+  }
+  
+  .text-muted {
+    font-style: italic;
+  }
+  
+  .alert-danger {
+    font-size: 1rem;
+  }
+  
+  /* Đảm bảo biểu đồ hiển thị đúng */
+  canvas {
+    max-height: 300px;
+    width: 100%;
+  }

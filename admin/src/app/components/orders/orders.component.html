@@ -1,0 +1,143 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0 fw-bold text-primary">Quản lý đơn hàng</h2>
+    <div class="card shadow-sm mb-4 border-0">
+      <div class="card-body">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Mã đơn hàng</label>
+            <input type="text" class="form-control" placeholder="VD: 123" [(ngModel)]="searchOrderId"
+              (input)="onInputChange('orderId')" (keyup.enter)="onSearch()"
+              [disabled]="isUserIdFilled || isKeywordFilled" [class.border-primary]="isOrderIdFilled"
+              [class.opacity-50]="isUserIdFilled || isKeywordFilled">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Mã khách hàng</label>
+            <input type="text" class="form-control" placeholder="VD: 5" [(ngModel)]="searchUserId"
+              (input)="onInputChange('userId')" (keyup.enter)="onSearch()"
+              [disabled]="isOrderIdFilled || isKeywordFilled" [class.border-primary]="isUserIdFilled"
+              [class.opacity-50]="isOrderIdFilled || isKeywordFilled">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Tên / SĐT / Email</label>
+            <input type="text" class="form-control" placeholder="Nhập từ khóa..." [(ngModel)]="searchKeyword"
+              (input)="onInputChange('keyword')" (keyup.enter)="onSearch()"
+              [disabled]="isOrderIdFilled || isUserIdFilled" [class.border-primary]="isKeywordFilled"
+              [class.opacity-50]="isOrderIdFilled || isUserIdFilled">
+          </div>
+          <div class="col-md-3">
+            <div class="d-flex gap-2 h-100">
+              <button class="btn btn-primary flex-fill d-flex align-items-center justify-content-center gap-2"
+                (click)="onSearch()">
+                <i class="fas fa-search"></i>
+                Tìm kiếm
+              </button>
+              <button class="btn btn-danger d-flex align-items-center justify-content-center"
+                (click)="clearAllFilters()" title="Xóa toàn bộ bộ lọc" [disabled]="!isAnyFilterFilled">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr class="text-secondary fw-semibold">
+              <th class="ps-4">Mã đơn</th>
+              <th>Khách hàng</th>
+              <th>Thành tiền</th>
+              <th>Ngày đặt</th>
+              <th>Thanh toán</th>
+              <th>Trạng thái</th>
+              <th class="text-center">Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of orderResponses; track order.id) {
+            <tr class="align-middle border-bottom">
+              <td class="ps-4 fw-medium">#{{ order.id }}</td>
+              <td>
+                <div><strong>{{ order.fullName || 'Khách lẻ' }}</strong></div>
+                <small class="text-muted">{{ order.phoneNumber }}</small><br>
+                <small class="text-muted">ID khách hàng: {{ order.userId }}</small>
+              </td>
+              <td>
+                <span class="fs-5 fw-bold text-danger">
+                  {{ order.totalMoney | currency:'VND':'symbol':'1.0-0' }}
+                </span>
+              </td>
+              <td>
+                <div class="text-success fw-bold">
+                  {{ order.orderDate | date:'dd/MM/yyyy' }}
+                </div>
+              </td>
+              <td>
+                <span class="badge bg-light text-dark border">
+                  {{ order.paymentMethod === 'Cash' ? 'Tiền mặt' : 'Chuyển khoản' }}
+                </span>
+              </td>
+              <td>
+                <span class="badge px-3 py-2 fs-6" [ngClass]="getStatusClass(order.status)">
+                  {{ getStatusText(order.status) }}
+                </span>
+              </td>
+              <td class="text-center">
+                <!-- <button class="btn btn-outline-info btn-sm rounded-pill"
+                          (click)="viewOrderDetail(order.id)">
+                    <i class="fas fa-eye"></i> Xem chi tiết
+                  </button> -->
+              </td>
+            </tr>
+            }
+            @empty {
+            <tr>
+              <td colspan="8" class="text-center py-5 text-muted">
+                <i class="fas fa-receipt fa-4x mb-3 opacity-50"></i>
+                <br>Chưa có đơn hàng nào
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-center mt-5">
+    <nav aria-label="Page navigation">
+      <ul class="pagination">
+        @if (currentPage > 0) {
+        <li class="page-item">
+          <button class="page-link" href="#" (click)="onPageChange(0)">First</button>
+        </li>
+        <li class="page-item">
+          <button class="page-link" href="#" (click)="onPageChange(currentPage - 1)">
+            <i class="fa fa-chevron-left"></i>
+          </button>
+        </li>
+        }
+        @for (page of visiblePages; track page) {
+        <li class="page-item" [ngClass]="{'active': page === currentPage}">
+          <button class="page-link" href="#" (click)="onPageChange(page)">{{ page + 1 }}</button>
+        </li>
+        }
+        @if (currentPage < totalPages - 1) { <li class="page-item">
+          <button class="page-link" href="#" (click)="onPageChange(currentPage + 1)">
+            <i class="fa fa-chevron-right"></i>
+          </button>
+          </li>
+          <li class="page-item">
+            <button class="page-link" href="#" (click)="onPageChange(totalPages)">Last</button>
+          </li>
+          }
+      </ul>
+    </nav>
+  </div>
+</div>

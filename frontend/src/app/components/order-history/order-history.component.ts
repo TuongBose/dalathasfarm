@@ -100,7 +100,7 @@ export class OrderHistoryComponent extends BaseComponent implements OnInit {
           product: item.productResponse,
           price: item.price,
           quantity: item.quantity,
-          totalPrice: item.totalMoney
+          totalMoney: item.totalMoney
         }));
 
         // Cập nhật vào orders

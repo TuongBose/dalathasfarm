@@ -19,12 +19,23 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByEmail(String email);
     // SELECT * FROM USERS WHERE EMAIL = ?
 
-    // chua hoan thanh
-    @Query("SELECT o FROM User o WHERE o.isActive = true AND o.role.name = 'User' AND (:keyword IS NULL OR :keyword = '' OR " +
+    @Query("SELECT o FROM User o WHERE o.isActive = true AND o.role.name = 'Customer' AND (:keyword IS NULL OR :keyword = '' OR " +
             "o.fullName LIKE %:keyword% " +
             "OR o.address LIKE %:keyword% " +
             "OR o.phoneNumber LIKE %:keyword%)")
-    Page<User> findAll(@Param("keyword") String keyword, Pageable pageable);
+    Page<User> findAllCustomer(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("SELECT o FROM User o WHERE o.isActive = true AND o.role.name = 'Employee' AND (:keyword IS NULL OR :keyword = '' OR " +
+            "o.fullName LIKE %:keyword% " +
+            "OR o.address LIKE %:keyword% " +
+            "OR o.phoneNumber LIKE %:keyword%)")
+    Page<User> findAllEmployee(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("SELECT o FROM User o WHERE o.isActive = true AND o.role.name = 'Admin' AND (:keyword IS NULL OR :keyword = '' OR " +
+            "o.fullName LIKE %:keyword% " +
+            "OR o.address LIKE %:keyword% " +
+            "OR o.phoneNumber LIKE %:keyword%)")
+    Page<User> findAllAdmin(@Param("keyword") String keyword, Pageable pageable);
 
     // doi sang ben user roles
 //    List<User> findAllByROLENAMEFalse(); // user

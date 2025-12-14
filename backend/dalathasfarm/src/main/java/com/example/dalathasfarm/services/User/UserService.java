@@ -247,7 +247,17 @@ public class UserService implements IUserService {
 
     @Override
     public Page<User> getAllUserCustomer(String keyword, Pageable pageable) throws Exception {
-        return userRepository.findAll(keyword, pageable);
+        return userRepository.findAllCustomer(keyword, pageable);
+    }
+
+    @Override
+    public Page<User> getAllUserEmployee(String keyword, Pageable pageable) throws Exception {
+        return userRepository.findAllEmployee(keyword, pageable);
+    }
+
+    @Override
+    public Page<User> getAllUserAdmin(String keyword, Pageable pageable) throws Exception {
+        return userRepository.findAllAdmin(keyword, pageable);
     }
 
     @Override

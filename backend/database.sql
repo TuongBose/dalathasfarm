@@ -637,4 +637,5 @@ INSERT INTO product_images(id,product_id,name) VALUES
 (180, 36, '96b979a9-007b-4aa3-8598-ec6f0c3b2662_2.jpg');
 
 INSERT INTO users(password,fullname,phone_number,is_active,role_id) VALUES
-('123456','Khách','0000000000',1,3);
+('123456','Khách lẻ','0000000000',1,3),
+('$2a$10$L4d814vtjp0WpqyGcZf0o.Wz8fD0xNv/tGZRfqvGlprU1oZedXbmS', 'LE MANH TUONG', '0000000001', 1, 1);

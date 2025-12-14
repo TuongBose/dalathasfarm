@@ -1,0 +1,104 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0 fw-bold text-primary">Quản lý tài khoản admin</h2>
+    <button class="btn btn-success btn-lg shadow-sm d-flex align-items-center gap-2" (click)="openAddCategoryModal()">
+      <i class="fas fa-plus"></i>
+      Thêm danh tài khoản admin mới
+    </button>
+  </div>
+
+  <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr class="text-secondary fw-semibold">
+              <th class="ps-4">ID</th>
+              <th>Hình ảnh người dùng</th>
+              <th>Tên người dùng</th>
+              <th>Địa chỉ</th>
+              <th>Số điện thoại</th>
+              <th>Ngày sinh</th>
+              <th>Email</th>
+              <th>Trạng thái</th>
+              <th class="text-center">Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for(user of users;track user.id){
+            <tr class="border-bottom">
+              <td class="ps-4 fw-medium">#{{ user.id }}</td>
+              <td>
+                <img [src]="getImage(user.profileImage)" [alt]="user.fullName" class="rounded shadow-sm"
+                  style="width: 150px; object-fit: cover;">
+              </td>
+              <td>
+                <div class="fw-bold text-dark">{{ user.fullName }}</div>
+              </td>
+              <td>
+                @if(user.address){
+                <span>{{ user.address}}</span>
+                }@else {
+                <span class="text-danger">Chưa cập nhật</span>
+                }
+              </td>
+              <td>{{ user.phoneNumber }}</td>
+              <td>
+                @if (user.dateOfBirth) {
+                <span>
+                  {{ user.dateOfBirth | date:'dd/MM/yyyy' }}
+                </span>
+                } @else {
+                <span class="text-danger">Chưa cập nhật</span>
+                }
+              </td>
+              <td>
+                @if(user.email){
+                <span>{{ user.email }}</span>
+                }@else {
+                <span class="text-danger">Chưa cập nhật</span>
+                }
+              </td>
+              <td>
+                @if (user.isActive === true) {
+                <span class="badge bg-success px-3 py-2 fs-6">
+                  Hoạt động
+                </span>
+                } @else {
+                <span class="badge bg-danger px-3 py-2 fs-6">
+                  Bị khóa
+                </span>
+                }
+              </td>
+              <td class="text-center">
+                <div class="btn-group" role="group">
+
+                  <!-- Nút Sửa -->
+                  <button class="btn btn-outline-primary btn-sm rounded-pill me-2" title="Chỉnh sửa sản phẩm"
+                    (click)="openEditCategoryModal()">
+                    <i class="fas fa-edit"></i>
+                  </button>
+
+                  <!-- Nút Xóa (có xác nhận) -->
+                  <button class="btn btn-outline-danger btn-sm rounded-pill" title="Xóa sản phẩm"
+                    (click)="confirmDelete(user.id, user.fullName)">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+
+                </div>
+              </td>
+            </tr>
+            }@empty {
+            <tr>
+              <td colspan="8" class="text-center py-5 text-muted">
+                <i class="fas fa-users-slash fa-4x mb-3 opacity-50"></i><br>
+                Chưa có tài khoản khách hàng nào
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

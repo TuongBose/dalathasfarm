@@ -15,7 +15,9 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
+        backgroundColor: Colors.grey[50],
         title: const Text('Tài khoản',
             style: TextStyle(
               fontSize: 20,
@@ -41,12 +43,12 @@ class _AccountScreenState extends State<AccountScreen> {
         child: Column(
           children: [
             Image.asset(
-              'assets/images/bear.jpg',
+              'assets/images/logo.png',
               height: 150,
             ),
             const SizedBox(height: 16),
             const Text(
-              'Đăng Ký Thành Viên Star\nNhận Ngay Ưu Đãi!',
+              'Đăng Ký Thành Viên DalatHasfarm\nNhận Ngay Ưu Đãi!',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
@@ -94,7 +96,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       MaterialPageRoute(builder: (context) => const RegisterScreen()),
                     );
                   },
-                  child: const Text('Đăng ký'),
+                  child: const Text('Đăng ký',style: TextStyle(color: Colors.white),),
                 ),
                 const SizedBox(width: 16),
                 OutlinedButton(
@@ -119,8 +121,8 @@ class _AccountScreenState extends State<AccountScreen> {
             const Divider(),
             Column(
               children: [
-                infoRow("Gọi ĐƯỜNG DÂY NÓNG:", "19001122", isLink: true),
-                infoRow("Email:", "hotro@dnntstudio.vn", isLink: true),
+                infoRow("Gọi ĐƯỜNG DÂY NÓNG:", "1800 1143", isLink: true),
+                infoRow("Email:", "hotro@dalathasfarm.com", isLink: true),
                 infoRow("Thông Tin Công Ty", ""),
                 infoRow("Điều Khoản Sử Dụng", ""),
                 infoRow("Chính Sách Thanh Toán", ""),

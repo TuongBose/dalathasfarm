@@ -5,7 +5,7 @@ import 'package:android/models/product.dart';
 import 'package:http/http.dart' as http;
 
 class ProductService {
-  Future<List<Product>> getAllProduct(
+  Future<Map<String,dynamic>> getAllProduct(
     String keyword,
     int categoryId,
     int occasionId,
@@ -15,11 +15,11 @@ class ProductService {
     try {
       final url = Uri.parse('${AppConfig.baseUrl}/products').replace(
         queryParameters: {
+          'page': page.toString(),
+          'limit': limit.toString(),
           'keyword':keyword.toString(),
           'categoryId':categoryId.toString(),
           'occasionId':occasionId.toString(),
-          'page': page.toString(),
-          'limit': limit.toString()
         },
       );
       final response = await http.get(
@@ -31,8 +31,12 @@ class ProductService {
       );
       if (response.statusCode == 200) {
         final Map<String, dynamic> json =jsonDecode(response.body);
-        final List<dynamic> data = json['data']['productResponses'];
-        return data.map((json) => Product.fromJson(json)).toList();
+        final List<dynamic> items = json['data']['productResponses'];
+        final int totalPages = json['data']['totalPages'];
+        return {
+          'products': items.map((e) => Product.fromJson(e)).toList(),
+          'totalPages': totalPages,
+        };
       } else {
         throw Exception('Failed to load products: ${response.statusCode}');
       }

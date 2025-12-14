@@ -1,0 +1,110 @@
+<!-- <div class="container mt-4">
+  <h3 class="text-center mb-4">Thống kê tháng {{ currentMonth }}</h3>
+
+  <div *ngIf="errorMessage" class="alert alert-danger text-center">
+    {{ errorMessage }}
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="card shadow-sm p-4 text-center">
+        <h5 class="card-title">Tổng doanh thu</h5>
+        <p class="card-text display-4 text-primary">
+          {{ totalRevenue | currency:'VND':'symbol':'1.0-0' }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm p-4">
+        <h5 class="card-title">Top 3 phim được đặt nhiều nhất</h5>
+        <canvas #barChartCanvas></canvas>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card shadow-sm p-4">
+        <h5 class="card-title">Top 3 phim được đặt nhiều nhất</h5>
+        <canvas #pieChartCanvas></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="card shadow-sm p-4">
+        <h5 class="card-title">Rạp được đặt nhiều nhất</h5>
+        <div *ngIf="!mostBookedCinema?.cinemaId" class="text-muted">
+          Không có dữ liệu
+        </div>
+        <div *ngIf="mostBookedCinema?.cinemaId">
+          <p><strong>Tên rạp:</strong> {{ mostBookedCinema.cinemaName }}</p>
+          <p><strong>Số lượng đặt:</strong> {{ mostBookedCinema.totalBookings }} vé</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<div class="container mt-4">
+
+  <h3 class="text-center mb-4">Thống kê kinh doanh - Cửa hàng Hoa</h3>
+
+  <!-- KPI -->
+  <div class="row mb-4">
+    <div class="col-md-3" *ngFor="let card of dashboardCards">
+      <div class="card shadow-sm p-3 text-center">
+        <h6>{{ card.title }}</h6>
+        <p class="display-6 text-primary">{{ card.value }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Doanh thu -->
+  <div class="card shadow-sm p-4 mb-4">
+    <h5>Doanh thu theo ngày</h5>
+    <canvas #revenueLineChart></canvas>
+  </div>
+
+  <!-- Best Sellers + Flower Category -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm p-4">
+        <h5>Top sản phẩm bán chạy</h5>
+        <canvas #bestSellerChart></canvas>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm p-4">
+        <h5>Tỷ lệ loại hoa</h5>
+        <canvas #flowerTypeChart></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sản phẩm sắp hết hàng -->
+  <div class="card shadow-sm p-4 mb-4">
+    <h5>Sản phẩm sắp hết hàng</h5>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Tên sản phẩm</th>
+          <th>Tồn kho</th>
+          <th>Trạng thái</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of lowStockProducts">
+          <td>{{ item.name }}</td>
+          <td>{{ item.stock }}</td>
+          <td>
+            <span class="badge bg-danger" *ngIf="item.stock < 10">Nguy hiểm</span>
+            <span class="badge bg-warning" *ngIf="item.stock >= 10 && item.stock < 20">Sắp hết</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

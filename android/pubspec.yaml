@@ -40,3 +40,4 @@ flutter:
     - assets/images/zalopay_icon.png
     - assets/images/shopeepay_icon.png
     - assets/images/logo.png
+    - assets/openapi.json

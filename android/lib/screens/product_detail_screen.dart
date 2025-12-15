@@ -131,10 +131,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Color(0xFF4A7C59),
-                    ),
+                    icon: const Icon(Icons.arrow_back_ios),
                     onPressed: () => Navigator.pop(context),
                   ),
                   Row(
@@ -175,10 +172,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ],
                   ),
                   IconButton(
-                    icon: const Icon(
-                      Icons.notifications_outlined,
-                      color: Color(0xFF4A7C59),
-                    ),
+                    icon: const Icon(Icons.notifications_outlined),
                     onPressed: () {},
                   ),
                 ],
@@ -505,14 +499,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                         : () {
                                           if (_product == null) return;
                                           // Add to cart logic
-                                          for (int i = 0; i < _quantity; i++) {
                                             cart.addItem(
-                                              productId: _product!.id,
-                                              productName: _product!.name,
-                                              price: _product!.price,
-                                              thumbnail: _product!.thumbnail,
+                                              widget.productId,
+                                              quantity: _quantity,
                                             );
-                                          }
                                           ScaffoldMessenger.of(
                                             context,
                                           ).showSnackBar(
@@ -562,7 +552,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
                             Html(
                               data:
-                              _product!.components ??
+                                  _product!.components ??
                                   'Không có thông tin chi tiết',
                               style: {
                                 "body": Style(

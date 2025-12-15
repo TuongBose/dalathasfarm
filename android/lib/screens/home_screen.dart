@@ -17,6 +17,7 @@ import 'package:shimmer/shimmer.dart';
 import '../models/occasion.dart';
 import '../providers/cart_provider.dart';
 import 'category_screen.dart';
+import 'occasion_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -546,8 +547,17 @@ class HomeScreenState extends State<HomeScreen> {
                               itemCount: _occasions.length,
                               itemBuilder: (context, index) {
                                 final occasion = _occasions[index];
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
+                                return InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => OccasionScreen(occasionId: occasion.id),
+                                      ),
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
                                     horizontal: 8,
                                   ),
                                   child: ClipRRect(
@@ -583,6 +593,7 @@ class HomeScreenState extends State<HomeScreen> {
                                       ],
                                     ),
                                   ),
+                                ),
                                 );
                               },
                             ),

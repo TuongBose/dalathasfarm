@@ -57,7 +57,7 @@ class OccasionService {
     }
   }
 
-  Future<Occasion> getCategoryById(int occasionId) async {
+  Future<Occasion> getOccasionById(int occasionId) async {
     try {
       final url = Uri.parse('${AppConfig.baseUrl}/occasions/$occasionId');
       final response = await http.get(

@@ -1,75 +1,52 @@
 import 'package:flutter/material.dart';
 
-class CartItem {
-  final int productId;
-  final String productName;
-  final double price;
-  final String thumbnail;
-  int quantity;
-
-  CartItem({
-    required this.productId,
-    required this.productName,
-    required this.price,
-    required this.thumbnail,
-    this.quantity = 1,
-  });
-}
-
 class CartProvider extends ChangeNotifier {
-  final List<CartItem> _items = [];
+  // Chỉ lưu productId -> quantity
+  final Map<int, int> _cartMap = {};
 
-  List<CartItem> get items => _items;
+  Map<int, int> get cartMap => Map.unmodifiable(_cartMap);
 
-  int get itemCount => _items.length;
+  int get itemCount => _cartMap.values.fold(0, (sum, qty) => sum + qty);
 
-  double get totalAmount {
-    return _items.fold(0, (sum, item) => sum + item.price * item.quantity);
-  }
+  // Tổng tiền sẽ tính ở nơi hiển thị (Checkout/Cart) sau khi load product detail
+  // Vì ở đây không lưu price
 
-  void addItem({
-    required int productId,
-    required String productName,
-    required double price,
-    required String thumbnail,
-  }) {
-    final existingIndex = _items.indexWhere((item) => item.productId == productId);
-    if (existingIndex >= 0) {
-      _items[existingIndex].quantity++;
-    } else {
-      _items.add(CartItem(
-        productId: productId,
-        productName: productName,
-        price: price,
-        thumbnail: thumbnail,
-      ));
-    }
+  void addItem(int productId, {int quantity = 1}) {
+    _cartMap.update(productId, (existing) => existing + quantity, ifAbsent: () => quantity);
     notifyListeners();
   }
 
   void removeItem(int productId) {
-    _items.removeWhere((item) => item.productId == productId);
+    _cartMap.remove(productId);
     notifyListeners();
   }
 
   void increaseQuantity(int productId) {
-    final item = _items.firstWhere((item) => item.productId == productId);
-    item.quantity++;
-    notifyListeners();
+    if (_cartMap.containsKey(productId)) {
+      _cartMap[productId] = _cartMap[productId]! + 1;
+      notifyListeners();
+    }
   }
 
   void decreaseQuantity(int productId) {
-    final item = _items.firstWhere((item) => item.productId == productId);
-    if (item.quantity > 1) {
-      item.quantity--;
-    } else {
-      removeItem(productId);
+    if (_cartMap.containsKey(productId)) {
+      if (_cartMap[productId]! > 1) {
+        _cartMap[productId] = _cartMap[productId]! - 1;
+      } else {
+        removeItem(productId);
+      }
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   void clear() {
-    _items.clear();
+    _cartMap.clear();
     notifyListeners();
   }
+
+  // Helper: lấy danh sách productId
+  List<int> get productIds => _cartMap.keys.toList();
+
+  // Helper: lấy quantity của 1 sản phẩm
+  int getQuantity(int productId) => _cartMap[productId] ?? 0;
 }

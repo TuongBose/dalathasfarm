@@ -1,4 +1,5 @@
 import 'package:android/screens/cart_screen.dart';
+import 'package:android/screens/news_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:android/app_config.dart';
 import 'package:android/screens/home_screen.dart';
@@ -50,7 +51,9 @@ class MyDefaultScreenState extends State<MyDefaultScreen> {
   Widget build(BuildContext context) {
     final List<Widget> widgetOptions = <Widget>[
       const HomeScreen(),
-      CartScreen(),
+      NewsScreen(),
+      const Center(child: Text('Đơn hàng')),
+      const Center(child: Text('Chatbot AI')),
       AppConfig.isLogin ? const UserScreen() : const AccountScreen(),
     ];
     return Scaffold(
@@ -59,10 +62,21 @@ class MyDefaultScreenState extends State<MyDefaultScreen> {
         backgroundColor: Color(0xFF4A7C59),
         type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Trang chủ'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart_outlined),
-            label: 'Cart',
+              icon: Icon(Icons.home),
+              label: 'Trang chủ'
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.article_outlined),
+            label: 'Tin tức',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.receipt_long),
+            label: 'Đơn hàng',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.smart_toy),
+            label: 'Chatbot AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),

@@ -13,10 +13,12 @@ import '../dtos/cart_item_dto.dart';
 import '../dtos/order_dto.dart';
 import '../models/address.dart';
 import '../providers/cart_provider.dart';
+import '../services/order_service.dart';
+import 'default_screen.dart';
+import 'home_screen.dart';
 
 class CheckoutScreen extends StatefulWidget {
-
-  const CheckoutScreen({    super.key,  });
+  const CheckoutScreen({super.key});
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -75,15 +77,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Future<void> _loadAddressData() async {
     try {
-      final String response = await rootBundle.loadString('assets/openapi.json');
+      final String response = await rootBundle.loadString(        'assets/openapi.json',      );
       final List<dynamic> data = json.decode(response);
       _provinces = data.map((e) => Province.fromJson(e)).toList();
       if (mounted) setState(() {});
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi tải dữ liệu địa chỉ: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Lỗi tải dữ liệu địa chỉ: $e')));
       }
     }
   }
@@ -117,10 +119,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       }
     } catch (e) {
       if (mounted) {
-      setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi tải sản phẩm: $e')),
-        );
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Lỗi tải sản phẩm: $e')));
       }
     }
   }
@@ -172,27 +174,28 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Xác nhận'),
-        content: const Text('Bạn có muốn xóa sản phẩm này?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Hủy'),
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('Xác nhận'),
+            content: const Text('Bạn có muốn xóa sản phẩm này?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Hủy'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  cart.removeItem(productId);
+                  setState(() {
+                    _products.removeAt(index);
+                    _calculateTotal();
+                  });
+                },
+                child: const Text('Xóa', style: TextStyle(color: Colors.red)),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              cart.removeItem(productId);
-              setState(() {
-                _products.removeAt(index);
-                _calculateTotal();
-              });
-            },
-            child: const Text('Xóa', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
     );
   }
 
@@ -206,9 +209,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
 
     if (_couponApplied) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Đã áp dụng mã giảm giá')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Đã áp dụng mã giảm giá')));
       return;
     }
 
@@ -222,7 +225,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Áp dụng mã "$code" thành công! Giảm ${_formatCurrency(_couponDiscount)}'),
+        content: Text(
+          'Áp dụng mã "$code" thành công! Giảm ${_formatCurrency(_couponDiscount)}',
+        ),
         backgroundColor: Colors.green,
       ),
     );
@@ -238,7 +243,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     });
   }
 
-  void _placeOrder() {
+  Future<void> _placeOrder() async {
     if (!_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Vui lòng điền đầy đủ thông tin')),
@@ -247,59 +252,115 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
 
     if (_products.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Giỏ hàng trống')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Giỏ hàng trống')));
       return;
     }
 
     _formKey.currentState!.save();
 
     final cart = Provider.of<CartProvider>(context, listen: false);
-    final cartItemsDto = cart.cartMap.entries.map((e) => CartItemDto(productId: e.key, quantity: e.value)).toList();
+    final cartItemsDto =
+        cart.cartMap.entries
+            .map((e) => CartItemDto(productId: e.key, quantity: e.value))
+            .toList();
 
-    final order = OrderDto(
-      userId: 123, // Replace with real user ID from auth
-      fullName: '$_lastName $_firstName',
-      email: '', // Add email field if needed
-      phoneNumber: _phoneNumber,
-      address: _shippingMethod == 'Ship'
-          ? '$_addressDetail, ${_selectedWard?.name}, ${_selectedDistrict?.name}, ${_selectedProvince?.name}'
-          : 'Lấy tại cửa hàng',
-      note: _note,
-      totalPrice: Decimal.parse(_totalAmount.toString()),
-      paymentMethod: _paymentMethod,
-      status: 'pending',
-      couponCode: _couponApplied ? _couponCode : null,
-      cartItems: cartItemsDto,
-    );
-
-    // Show success
-    showDialog(
+    final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Đặt hàng thành công!'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Họ tên: ${order.fullName}'),
-            Text('SĐT: ${order.phoneNumber}'),
-            Text('Tổng tiền: ${_formatCurrency(_totalAmount)}'),
-            Text('Phương thức: ${_paymentMethod == 'Cash' ? 'COD' : 'VNPAY'}'),
-          ],
+        backgroundColor: Colors.grey[50],
+        title: const Text('Xác nhận đặt hàng', style: TextStyle(fontWeight: FontWeight.bold)),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Họ tên: ${'$_lastName $_firstName'.trim()}', style: const TextStyle(fontWeight: FontWeight.w600)),
+              const SizedBox(height: 8),
+              Text('Số điện thoại: +84 $_phoneNumber'),
+              const SizedBox(height: 8),
+              Text('Địa chỉ: ${_shippingMethod == 'Ship'
+              ? '$_addressDetail, ${_selectedWard?.name}, ${_selectedDistrict?.name}, ${_selectedProvince?.name}'
+                  : 'Lấy tại cửa hàng'}'),
+              const SizedBox(height: 8),
+              Text('Ngày nhận: ${DateFormat('dd/MM/yyyy').format(_shippingDate!)}'),
+              const SizedBox(height: 8),
+              Text('Phương thức thanh toán: ${_paymentMethod == 'Cash' ? 'Thanh toán khi nhận hàng (COD)' : 'Thanh toán VNPAY'}'),
+              const SizedBox(height: 8),
+              Text('Ghi chú: ${_note.isEmpty ? 'Không có' : _note}'),
+              const Divider(height: 20),
+              Text('Tổng tiền: ${_formatCurrency(_totalAmount)}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF4A7C59))),
+            ],
+          ),
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              Navigator.pop(context);
-            },
-            child: const Text('OK'),
+            onPressed: () => Navigator.pop(ctx, false), // Hủy
+            child: const Text('Hủy', style: TextStyle(color: Colors.red)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true), // Xác nhận
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4A7C59)),
+            child: const Text('Xác nhận đặt hàng', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
     );
+
+    // Nếu người dùng bấm Hủy → không làm gì
+    if (confirm != true) return;
+
+    // Người dùng xác nhận → đặt hàng thật
+    setState(() => _isLoading = true);
+
+    final order = OrderDto(
+      userId: 1,
+      fullName: '$_lastName $_firstName'.trim(),
+      email: '',
+      phoneNumber: _phoneNumber,
+      address:
+          _shippingMethod == 'Ship'
+              ? '$_addressDetail, ${_selectedWard?.name}, ${_selectedDistrict?.name}, ${_selectedProvince?.name}'
+              : 'Lấy tại cửa hàng',
+      note: _note,
+      totalPrice: Decimal.parse(_totalAmount.toString()),
+      paymentMethod: _paymentMethod,
+      status: '',
+      shippingMethod: _shippingMethod,
+      shippingDate: _shippingDate!,
+      couponCode: _couponApplied ? _couponCode : null,
+      cartItems: cartItemsDto,
+    );
+
+    setState(() => _isLoading = true);
+    try {
+      final orderService = OrderService();
+      await orderService.placeOrder(order);
+
+      // Thành công
+      cart.clear(); // Xóa giỏ hàng
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Đặt hàng thành công!'), backgroundColor: Colors.green),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => const DefaultScreen(),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Đặt hàng thất bại: $e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   String _getImageUrl(String? fileName) {
@@ -316,9 +377,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
@@ -527,9 +586,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: _shippingMethod == 'Ship' ? const Color(0xFF4A7C59).withOpacity(0.1) : Colors.white,
+                    color:
+                        _shippingMethod == 'Ship'
+                            ? const Color(0xFF4A7C59).withOpacity(0.1)
+                            : Colors.white,
                     border: Border.all(
-                      color: _shippingMethod == 'Ship' ? const Color(0xFF4A7C59) : Colors.grey[300]!,
+                      color:
+                          _shippingMethod == 'Ship'
+                              ? const Color(0xFF4A7C59)
+                              : Colors.grey[300]!,
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -538,7 +603,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     children: [
                       Icon(
                         Icons.local_shipping,
-                        color: _shippingMethod == 'Ship' ? const Color(0xFF4A7C59) : Colors.grey,
+                        color:
+                            _shippingMethod == 'Ship'
+                                ? const Color(0xFF4A7C59)
+                                : Colors.grey,
                         size: 32,
                       ),
                       const SizedBox(height: 8),
@@ -558,9 +626,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: _shippingMethod == 'Pickup' ? const Color(0xFF4A7C59).withOpacity(0.1) : Colors.white,
+                    color:
+                        _shippingMethod == 'Pickup'
+                            ? const Color(0xFF4A7C59).withOpacity(0.1)
+                            : Colors.white,
                     border: Border.all(
-                      color: _shippingMethod == 'Pickup' ? const Color(0xFF4A7C59) : Colors.grey[300]!,
+                      color:
+                          _shippingMethod == 'Pickup'
+                              ? const Color(0xFF4A7C59)
+                              : Colors.grey[300]!,
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -569,7 +643,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     children: [
                       Icon(
                         Icons.store,
-                        color: _shippingMethod == 'Pickup' ? const Color(0xFF4A7C59) : Colors.grey,
+                        color:
+                            _shippingMethod == 'Pickup'
+                                ? const Color(0xFF4A7C59)
+                                : Colors.grey,
                         size: 32,
                       ),
                       const SizedBox(height: 8),
@@ -625,7 +702,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         labelText: 'Họ *',
                         border: OutlineInputBorder(),
                       ),
-                      validator: (value) => value?.trim().isEmpty ?? true ? 'Nhập họ' : null,
+                      validator:
+                          (value) =>
+                              value?.trim().isEmpty ?? true ? 'Nhập họ' : null,
                       onSaved: (value) => _lastName = value ?? '',
                     ),
                   ),
@@ -636,7 +715,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         labelText: 'Tên *',
                         border: OutlineInputBorder(),
                       ),
-                      validator: (value) => value?.trim().isEmpty ?? true ? 'Nhập tên' : null,
+                      validator:
+                          (value) =>
+                              value?.trim().isEmpty ?? true ? 'Nhập tên' : null,
                       onSaved: (value) => _firstName = value ?? '',
                     ),
                   ),
@@ -652,7 +733,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 keyboardType: TextInputType.phone,
                 validator: (value) {
                   if (value?.trim().isEmpty ?? true) return 'Nhập SĐT';
-                  if (!RegExp(r'^\d{9,11}$').hasMatch(value!)) return 'SĐT 9-11 số';
+                  if (!RegExp(r'^\d{9,11}$').hasMatch(value!))
+                    return 'SĐT 9-11 số';
                   return null;
                 },
                 onSaved: (value) => _phoneNumber = value ?? '',
@@ -661,7 +743,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               DropdownButtonFormField<Province>(
                 value: _selectedProvince,
                 hint: const Text('Tỉnh/Thành phố *'),
-                items: _provinces.map((p) => DropdownMenuItem(value: p, child: Text(p.name))).toList(),
+                items:
+                    _provinces
+                        .map(
+                          (p) =>
+                              DropdownMenuItem(value: p, child: Text(p.name)),
+                        )
+                        .toList(),
                 onChanged: (value) {
                   setState(() {
                     _selectedProvince = value;
@@ -671,14 +759,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     _selectedWard = null;
                   });
                 },
-                validator: (value) => value == null ? 'Vui lòng chọn tỉnh' : null,
+                validator:
+                    (value) => value == null ? 'Vui lòng chọn tỉnh' : null,
                 decoration: const InputDecoration(border: OutlineInputBorder()),
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<District>(
                 value: _selectedDistrict,
                 hint: const Text('Quận/Huyện *'),
-                items: _districts.map((d) => DropdownMenuItem(value: d, child: Text(d.name))).toList(),
+                items:
+                    _districts
+                        .map(
+                          (d) =>
+                              DropdownMenuItem(value: d, child: Text(d.name)),
+                        )
+                        .toList(),
                 onChanged: (value) {
                   setState(() {
                     _selectedDistrict = value;
@@ -686,18 +781,26 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     _selectedWard = null;
                   });
                 },
-                validator: (value) => value == null ? 'Vui lòng chọn quận' : null,
+                validator:
+                    (value) => value == null ? 'Vui lòng chọn quận' : null,
                 decoration: const InputDecoration(border: OutlineInputBorder()),
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<Ward>(
                 value: _selectedWard,
                 hint: const Text('Phường/Xã *'),
-                items: _wards.map((w) => DropdownMenuItem(value: w, child: Text(w.name))).toList(),
+                items:
+                    _wards
+                        .map(
+                          (w) =>
+                              DropdownMenuItem(value: w, child: Text(w.name)),
+                        )
+                        .toList(),
                 onChanged: (value) {
                   setState(() => _selectedWard = value);
                 },
-                validator: (value) => value == null ? 'Vui lòng chọn phường' : null,
+                validator:
+                    (value) => value == null ? 'Vui lòng chọn phường' : null,
                 decoration: const InputDecoration(border: OutlineInputBorder()),
               ),
               const SizedBox(height: 16),
@@ -707,8 +810,23 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   border: OutlineInputBorder(),
                 ),
                 maxLines: 2,
-                validator: (value) => value?.trim().isEmpty ?? true ? 'Nhập địa chỉ' : null,
-                onSaved: (value) => _addressDetail = value ?? '',
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Vui lòng nhập địa chỉ chi tiết';
+                  }
+                  final trimmed = value.trim();
+                  if (trimmed.length < 5) {
+                    return 'Địa chỉ phải có ít nhất 5 ký tự';
+                  }
+                  if (RegExp(r'^\d+$').hasMatch(trimmed)) {
+                    return 'Địa chỉ không thể chỉ là số';
+                  }
+                  if (trimmed.replaceAll(' ', '').length < 5) {
+                    return 'Địa chỉ không hợp lệ';
+                  }
+                  return null;
+                },
+                onSaved: (value) => _addressDetail = value?.trim() ?? '',
               ),
               const SizedBox(height: 16),
               _buildDatePicker(),
@@ -766,7 +884,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         labelText: 'Họ *',
                         border: OutlineInputBorder(),
                       ),
-                      validator: (value) => value?.trim().isEmpty ?? true ? 'Nhập họ' : null,
+                      validator:
+                          (value) =>
+                              value?.trim().isEmpty ?? true ? 'Nhập họ' : null,
                       onSaved: (value) => _lastName = value ?? '',
                     ),
                   ),
@@ -777,7 +897,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         labelText: 'Tên *',
                         border: OutlineInputBorder(),
                       ),
-                      validator: (value) => value?.trim().isEmpty ?? true ? 'Nhập tên' : null,
+                      validator:
+                          (value) =>
+                              value?.trim().isEmpty ?? true ? 'Nhập tên' : null,
                       onSaved: (value) => _firstName = value ?? '',
                     ),
                   ),
@@ -793,10 +915,100 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 keyboardType: TextInputType.phone,
                 validator: (value) {
                   if (value?.trim().isEmpty ?? true) return 'Nhập SĐT';
-                  if (!RegExp(r'^\d{9,11}$').hasMatch(value!)) return 'SĐT 9-11 số';
+                  if (!RegExp(r'^\d{9,11}$').hasMatch(value!))
+                    return 'SĐT 9-11 số';
                   return null;
                 },
                 onSaved: (value) => _phoneNumber = value ?? '',
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<Province>(
+                value: _selectedProvince,
+                hint: const Text('Tỉnh/Thành phố *'),
+                items:
+                    _provinces
+                        .map(
+                          (p) =>
+                              DropdownMenuItem(value: p, child: Text(p.name)),
+                        )
+                        .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedProvince = value;
+                    _districts = value?.districts ?? [];
+                    _selectedDistrict = null;
+                    _wards = [];
+                    _selectedWard = null;
+                  });
+                },
+                validator:
+                    (value) => value == null ? 'Vui lòng chọn tỉnh' : null,
+                decoration: const InputDecoration(border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<District>(
+                value: _selectedDistrict,
+                hint: const Text('Quận/Huyện *'),
+                items:
+                    _districts
+                        .map(
+                          (d) =>
+                              DropdownMenuItem(value: d, child: Text(d.name)),
+                        )
+                        .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedDistrict = value;
+                    _wards = value?.wards ?? [];
+                    _selectedWard = null;
+                  });
+                },
+                validator:
+                    (value) => value == null ? 'Vui lòng chọn quận' : null,
+                decoration: const InputDecoration(border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<Ward>(
+                value: _selectedWard,
+                hint: const Text('Phường/Xã *'),
+                items:
+                    _wards
+                        .map(
+                          (w) =>
+                              DropdownMenuItem(value: w, child: Text(w.name)),
+                        )
+                        .toList(),
+                onChanged: (value) {
+                  setState(() => _selectedWard = value);
+                },
+                validator:
+                    (value) => value == null ? 'Vui lòng chọn phường' : null,
+                decoration: const InputDecoration(border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Địa chỉ chi tiết *',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 2,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Vui lòng nhập địa chỉ chi tiết';
+                  }
+                  final trimmed = value.trim();
+                  if (trimmed.length < 5) {
+                    return 'Địa chỉ phải có ít nhất 5 ký tự';
+                  }
+                  if (RegExp(r'^\d+$').hasMatch(trimmed)) {
+                    return 'Địa chỉ không thể chỉ là số';
+                  }
+                  if (trimmed.replaceAll(' ', '').length < 5) {
+                    return 'Địa chỉ không hợp lệ';
+                  }
+                  return null;
+                },
+                onSaved: (value) => _addressDetail = value?.trim() ?? '',
               ),
               const SizedBox(height: 16),
               _buildDatePicker(),
@@ -857,8 +1069,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         border: OutlineInputBorder(),
       ),
       items: const [
-        DropdownMenuItem(value: 'Cash', child: Text('Thanh toán khi nhận hàng')),
-        DropdownMenuItem(value: 'BankTransfer', child: Text('Thanh toán VNPAY')),
+        DropdownMenuItem(
+          value: 'Cash',
+          child: Text('Thanh toán khi nhận hàng'),
+        ),
+        DropdownMenuItem(
+          value: 'BankTransfer',
+          child: Text('Thanh toán VNPAY'),
+        ),
       ],
       onChanged: (value) => setState(() => _paymentMethod = value!),
     );
@@ -907,10 +1125,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Giảm giá', style: TextStyle(color: Colors.green)),
+                    const Text(
+                      'Giảm giá',
+                      style: TextStyle(color: Colors.green),
+                    ),
                     Text(
                       '-${_formatCurrency(_couponDiscount)}',
-                      style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -941,7 +1165,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       decoration: const InputDecoration(
                         hintText: 'Mã giảm giá',
                         border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                       ),
                       onChanged: (value) => _couponCode = value,
                     ),
@@ -951,9 +1178,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     onPressed: _applyCoupon,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF4A7C59),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                     ),
-                    child: const Text('ÁP DỤNG', style: TextStyle(color: Colors.white)),
+                    child: const Text(
+                      'ÁP DỤNG',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),
@@ -961,12 +1194,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(Icons.check_circle, color: Colors.green, size: 16),
+                    const Icon(
+                      Icons.check_circle,
+                      color: Colors.green,
+                      size: 16,
+                    ),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
                         'Mã "$_couponCode" đã áp dụng',
-                        style: const TextStyle(color: Colors.green, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.green,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                     IconButton(

@@ -74,11 +74,11 @@ public class OrderController {
     public ResponseEntity<ResponseObject> getOrderByUserId(@Valid @PathVariable Integer id) throws Exception {
         User loginUser = securityUtils.getLoggedInUser();
         boolean isUserIdBlank = id <= 0;
-        List<Order> orders = orderService.getOrderByUserId(isUserIdBlank ? loginUser.getId() : id);
+        List<OrderResponse> orderResponses = orderService.getOrderByUserId(isUserIdBlank ? loginUser.getId() : id);
         return ResponseEntity.ok(ResponseObject.builder()
                 .message("Get list of orders successfully")
                 .status(HttpStatus.OK)
-                .data(orders)
+                .data(orderResponses)
                 .build());
     }
 

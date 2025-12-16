@@ -10,6 +10,8 @@ class OrderDto {
   final String note;
   final Decimal totalPrice;
   final String paymentMethod;
+  final String shippingMethod;
+  final DateTime shippingDate;
   final String status;
   String? vnpTxnRef;
   String? couponCode;
@@ -24,6 +26,8 @@ class OrderDto {
     required this.note,
     required this.totalPrice,
     required this.paymentMethod,
+    required this.shippingMethod,
+    required this.shippingDate,
     required this.status,
     this.vnpTxnRef,
     this.couponCode,
@@ -40,6 +44,8 @@ class OrderDto {
       'note': note,
       'totalPrice': totalPrice,
       'paymentMethod': paymentMethod,
+      'shippingMethod': shippingMethod,
+      'shippingDate': shippingDate.toIso8601String(),
       'status': status,
       'vnpTxnRef': vnpTxnRef,
       'couponCode': couponCode,

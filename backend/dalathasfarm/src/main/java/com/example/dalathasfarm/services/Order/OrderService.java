@@ -6,6 +6,8 @@ import com.example.dalathasfarm.dtos.OrderDto;
 import com.example.dalathasfarm.exceptions.DataNotFoundException;
 import com.example.dalathasfarm.models.*;
 import com.example.dalathasfarm.repositories.*;
+import com.example.dalathasfarm.responses.feedback.FeedbackResponse;
+import com.example.dalathasfarm.responses.order.OrderListResponse;
 import com.example.dalathasfarm.responses.order.OrderResponse;
 import com.example.dalathasfarm.responses.orderdetail.OrderDetailResponse;
 import com.example.dalathasfarm.services.InvoicePdfService;
@@ -166,10 +168,23 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public List<Order> getOrderByUserId(Integer userId) throws Exception {
+    public List<OrderResponse> getOrderByUserId(Integer userId) throws Exception {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Cannot find User"));
-        return orderRepository.findByUser(existingUser);
+
+        List<Order> existingOrders = orderRepository.findByUser(existingUser);
+        return existingOrders
+                .stream()
+                .map(order -> {
+                    List<OrderDetail> orderDetails = orderDetailRepository.findByOrder(order);
+
+                    List<OrderDetailResponse> orderDetailResponses = orderDetails
+                            .stream()
+                            .map(OrderDetailResponse::fromOrderDetail)
+                            .toList();
+
+                    return OrderResponse.fromOrder(order,orderDetailResponses);
+        }).collect(Collectors.toList());
     }
 
     @Override

@@ -47,8 +47,9 @@ export class PaymentCallbackComponent extends BaseComponent {
       const { orderId, invoiceFile } = JSON.parse(pendingOrder);
       sessionStorage.removeItem('pendingOrder');
       // Su dung this.orderService tu BaseComponent
-      this.orderService.updateOrderStatus(vnp_TxnRef, OrderStatus.Shipping).subscribe({
+      this.orderService.updateOrderStatus(vnp_TxnRef, OrderStatus.Processing).subscribe({
         next: (response: ApiResponse) => {
+          debugger
           this.loading = false;
           this.paymentSuccess = true;
           // Sử dụng this.toastService từ BaseComponent

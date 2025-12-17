@@ -60,6 +60,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     shippingMethod: 'Ship',
     shippingDate: new Date(),
     status: '',
+    platform:'Web',
     cartItems: []
   }
 
@@ -427,6 +428,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
         quantity: item.quantity
       })),
       status: '',
+      platform:'Web',
       email: ''
     };
 

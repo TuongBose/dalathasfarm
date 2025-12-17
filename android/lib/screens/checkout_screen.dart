@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:android/app_config.dart';
+import 'package:android/dtos/payment_dto.dart';
 import 'package:android/models/product.dart';
+import 'package:android/screens/payment_webview.dart';
 import 'package:android/services/product_service.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +16,8 @@ import '../dtos/order_dto.dart';
 import '../models/address.dart';
 import '../providers/cart_provider.dart';
 import '../services/order_service.dart';
+import '../services/payment_service.dart';
 import 'default_screen.dart';
-import 'home_screen.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -327,6 +329,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       totalPrice: Decimal.parse(_totalAmount.toString()),
       paymentMethod: _paymentMethod,
       status: '',
+      platform: 'Mobile',
       shippingMethod: _shippingMethod,
       shippingDate: _shippingDate!,
       couponCode: _couponApplied ? _couponCode : null,
@@ -336,22 +339,53 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     setState(() => _isLoading = true);
     try {
       final orderService = OrderService();
-      await orderService.placeOrder(order);
 
-      // Thành công
-      cart.clear(); // Xóa giỏ hàng
-      if (mounted) {
+      if (_paymentMethod == 'Cash') {
+        await orderService.placeOrder(order);
+        cart.clear();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Đặt hàng thành công!'), backgroundColor: Colors.green),
         );
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => const DefaultScreen(),
-          ),
-        );
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const DefaultScreen()), (route) => false);
+        return;
+      }else {
+        final paymentService = PaymentService();
+        final paymentUrl = await paymentService.createPaymentUrl(
+            PaymentDto(amount: _totalAmount, language: 'vn'));
+        final uri = Uri.parse(paymentUrl);
+        final vnpTxnRef = uri.queryParameters['vnp_TxnRef'];
+        order.vnpTxnRef = vnpTxnRef;
+        await orderService.placeOrder(order);
+
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) =>
+                  PaymentWebView(
+                    paymentUrl: paymentUrl,
+                    paymentMethod: _paymentMethod,
+                    totalPrice: _totalAmount.toInt(),
+                  ),
+            ),
+          );
+        }
       }
+
+      // Thành công
+      // cart.clear(); // Xóa giỏ hàng
+      // if (mounted) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(content: Text('Đặt hàng thành công!'), backgroundColor: Colors.green),
+      //   );
+      //   Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //       builder:
+      //           (context) => const DefaultScreen(),
+      //     ),
+      //   );
+      // }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -921,95 +955,95 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 },
                 onSaved: (value) => _phoneNumber = value ?? '',
               ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<Province>(
-                value: _selectedProvince,
-                hint: const Text('Tỉnh/Thành phố *'),
-                items:
-                    _provinces
-                        .map(
-                          (p) =>
-                              DropdownMenuItem(value: p, child: Text(p.name)),
-                        )
-                        .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedProvince = value;
-                    _districts = value?.districts ?? [];
-                    _selectedDistrict = null;
-                    _wards = [];
-                    _selectedWard = null;
-                  });
-                },
-                validator:
-                    (value) => value == null ? 'Vui lòng chọn tỉnh' : null,
-                decoration: const InputDecoration(border: OutlineInputBorder()),
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<District>(
-                value: _selectedDistrict,
-                hint: const Text('Quận/Huyện *'),
-                items:
-                    _districts
-                        .map(
-                          (d) =>
-                              DropdownMenuItem(value: d, child: Text(d.name)),
-                        )
-                        .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedDistrict = value;
-                    _wards = value?.wards ?? [];
-                    _selectedWard = null;
-                  });
-                },
-                validator:
-                    (value) => value == null ? 'Vui lòng chọn quận' : null,
-                decoration: const InputDecoration(border: OutlineInputBorder()),
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<Ward>(
-                value: _selectedWard,
-                hint: const Text('Phường/Xã *'),
-                items:
-                    _wards
-                        .map(
-                          (w) =>
-                              DropdownMenuItem(value: w, child: Text(w.name)),
-                        )
-                        .toList(),
-                onChanged: (value) {
-                  setState(() => _selectedWard = value);
-                },
-                validator:
-                    (value) => value == null ? 'Vui lòng chọn phường' : null,
-                decoration: const InputDecoration(border: OutlineInputBorder()),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Địa chỉ chi tiết *',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 2,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Vui lòng nhập địa chỉ chi tiết';
-                  }
-                  final trimmed = value.trim();
-                  if (trimmed.length < 5) {
-                    return 'Địa chỉ phải có ít nhất 5 ký tự';
-                  }
-                  if (RegExp(r'^\d+$').hasMatch(trimmed)) {
-                    return 'Địa chỉ không thể chỉ là số';
-                  }
-                  if (trimmed.replaceAll(' ', '').length < 5) {
-                    return 'Địa chỉ không hợp lệ';
-                  }
-                  return null;
-                },
-                onSaved: (value) => _addressDetail = value?.trim() ?? '',
-              ),
+              // const SizedBox(height: 16),
+              // DropdownButtonFormField<Province>(
+              //   value: _selectedProvince,
+              //   hint: const Text('Tỉnh/Thành phố *'),
+              //   items:
+              //       _provinces
+              //           .map(
+              //             (p) =>
+              //                 DropdownMenuItem(value: p, child: Text(p.name)),
+              //           )
+              //           .toList(),
+              //   onChanged: (value) {
+              //     setState(() {
+              //       _selectedProvince = value;
+              //       _districts = value?.districts ?? [];
+              //       _selectedDistrict = null;
+              //       _wards = [];
+              //       _selectedWard = null;
+              //     });
+              //   },
+              //   validator:
+              //       (value) => value == null ? 'Vui lòng chọn tỉnh' : null,
+              //   decoration: const InputDecoration(border: OutlineInputBorder()),
+              // ),
+              // const SizedBox(height: 16),
+              // DropdownButtonFormField<District>(
+              //   value: _selectedDistrict,
+              //   hint: const Text('Quận/Huyện *'),
+              //   items:
+              //       _districts
+              //           .map(
+              //             (d) =>
+              //                 DropdownMenuItem(value: d, child: Text(d.name)),
+              //           )
+              //           .toList(),
+              //   onChanged: (value) {
+              //     setState(() {
+              //       _selectedDistrict = value;
+              //       _wards = value?.wards ?? [];
+              //       _selectedWard = null;
+              //     });
+              //   },
+              //   validator:
+              //       (value) => value == null ? 'Vui lòng chọn quận' : null,
+              //   decoration: const InputDecoration(border: OutlineInputBorder()),
+              // ),
+              // const SizedBox(height: 16),
+              // DropdownButtonFormField<Ward>(
+              //   value: _selectedWard,
+              //   hint: const Text('Phường/Xã *'),
+              //   items:
+              //       _wards
+              //           .map(
+              //             (w) =>
+              //                 DropdownMenuItem(value: w, child: Text(w.name)),
+              //           )
+              //           .toList(),
+              //   onChanged: (value) {
+              //     setState(() => _selectedWard = value);
+              //   },
+              //   validator:
+              //       (value) => value == null ? 'Vui lòng chọn phường' : null,
+              //   decoration: const InputDecoration(border: OutlineInputBorder()),
+              // ),
+              // const SizedBox(height: 16),
+              // TextFormField(
+              //   decoration: const InputDecoration(
+              //     labelText: 'Địa chỉ chi tiết *',
+              //     border: OutlineInputBorder(),
+              //   ),
+              //   maxLines: 2,
+              //   validator: (value) {
+              //     if (value == null || value.trim().isEmpty) {
+              //       return 'Vui lòng nhập địa chỉ chi tiết';
+              //     }
+              //     final trimmed = value.trim();
+              //     if (trimmed.length < 5) {
+              //       return 'Địa chỉ phải có ít nhất 5 ký tự';
+              //     }
+              //     if (RegExp(r'^\d+$').hasMatch(trimmed)) {
+              //       return 'Địa chỉ không thể chỉ là số';
+              //     }
+              //     if (trimmed.replaceAll(' ', '').length < 5) {
+              //       return 'Địa chỉ không hợp lệ';
+              //     }
+              //     return null;
+              //   },
+              //   onSaved: (value) => _addressDetail = value?.trim() ?? '',
+              // ),
               const SizedBox(height: 16),
               _buildDatePicker(),
               const SizedBox(height: 16),

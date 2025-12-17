@@ -121,6 +121,7 @@ CREATE TABLE orders (
     shipping_method ENUM('Ship', 'Pickup') NOT NULL,
     shipping_date DATE,
     is_active BIT DEFAULT 1,
+    platform ENUM('Mobile', 'Web') NOT NULL,
     coupon_id INT,
     vnp_txn_ref VARCHAR(50),
     invoice_file VARCHAR(255) NOT NULL,

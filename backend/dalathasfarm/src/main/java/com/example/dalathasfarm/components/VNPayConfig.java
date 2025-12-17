@@ -11,12 +11,19 @@ import org.springframework.stereotype.Component;
 public class VNPayConfig {
     @Value("${vnpay.pay-url}")
     private String vnpPayUrl;
-    @Value("${vnpay.return-url}")
-    private String vnpReturnUrl;
+
+    @Value("${vnpay.return-web-url}")
+    private String vnpReturnWebUrl;
+
+    @Value("${vnpay.return-mobile-url}")
+    private String vnpReturnMobileUrl;
+
     @Value("${vnpay.tmn-code}")
     private String vnpTmnCode;
+
     @Value("${vnpay.secret-key}")
     private String secretKey;
+
     @Value("${vnpay.api-url}")
     private String vnpApiUrl;
 }

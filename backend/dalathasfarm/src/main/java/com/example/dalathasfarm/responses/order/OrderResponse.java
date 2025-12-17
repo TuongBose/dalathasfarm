@@ -2,6 +2,7 @@ package com.example.dalathasfarm.responses.order;
 
 import com.example.dalathasfarm.models.Order;
 import com.example.dalathasfarm.responses.orderdetail.OrderDetailResponse;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -27,6 +28,7 @@ public class OrderResponse {
     private BigDecimal totalMoney;
     private String paymentMethod;
     private String shippingMethod;
+    private String platform;
     private Boolean isActive;
     private String vnpTxnRef;
     private String invoiceFile;
@@ -47,6 +49,7 @@ public class OrderResponse {
                 .totalMoney(order.getTotalMoney())
                 .paymentMethod(order.getPaymentMethod().name())
                 .shippingMethod(order.getShippingMethod().name())
+                .platform(order.getPlatform().name())
                 .isActive(order.getIsActive())
                 .vnpTxnRef(order.getVnpTxnRef())
                 .invoiceFile(order.getInvoiceFile())

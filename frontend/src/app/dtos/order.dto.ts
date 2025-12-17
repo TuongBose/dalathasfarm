@@ -12,6 +12,7 @@ export class OrderDto{
     shippingMethod:string;
     shippingDate:Date;
     status:string;
+    platform:string;
     vnpTxnRef?:string;
     couponCode?:string;
     cartItems: CartItemDto[];
@@ -28,6 +29,7 @@ export class OrderDto{
     this.shippingMethod=data.shippingMethod;
     this.shippingDate=data.shippingDate;
     this.status=data.status;
+    this.platform=data.platform;
     this.vnpTxnRef = data.vnpTxnRef;
     this.couponCode=data.couponCode;
     this.cartItems=data.cartItems

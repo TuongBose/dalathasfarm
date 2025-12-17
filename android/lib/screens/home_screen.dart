@@ -693,15 +693,15 @@ class HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 12),
-                                  const Text(
-                                    'Xem thêm',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFF4A7C59),
-                                    ),
-                                  ),
+                                  // const Text(
+                                  //   'Xem thêm',
+                                  //   textAlign: TextAlign.center,
+                                  //   style: TextStyle(
+                                  //     fontSize: 13,
+                                  //     fontWeight: FontWeight.w600,
+                                  //     color: Color(0xFF4A7C59),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ),
@@ -786,16 +786,16 @@ class HomeScreenState extends State<HomeScreen> {
                         color: Color(0xFF4A7C59),
                       ),
                     ),
-                    TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        'Xem thêm',
-                        style: TextStyle(
-                          color: Color(0xFF4A7C59),
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
+                    // TextButton(
+                    //   onPressed: () {},
+                    //   child: const Text(
+                    //     'Xem thêm',
+                    //     style: TextStyle(
+                    //       color: Color(0xFF4A7C59),
+                    //       fontSize: 16,
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

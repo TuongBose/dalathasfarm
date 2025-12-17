@@ -3,25 +3,33 @@ package com.example.dalathasfarm.services.vnpay;
 import com.example.dalathasfarm.components.VNPayConfig;
 import com.example.dalathasfarm.components.VNPayUtils;
 import com.example.dalathasfarm.dtos.PaymentDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.dalathasfarm.exceptions.DataNotFoundException;
+import com.example.dalathasfarm.models.Order;
+import com.example.dalathasfarm.repositories.OrderRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.*;
-import java.math.BigDecimal;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class VNPayService implements IVNPayService {
     private final VNPayConfig vnPayConfig;
     private final VNPayUtils vnPayUtils;
+    private final OrderRepository orderRepository;
+
+    private boolean isMobileDevice(String userAgent) {
+        // Kiem tra User-Agent header de xac dinh thiet bi di dong
+        return userAgent.toLowerCase().contains("mobile");
+    }
 
     @Override
     public String createPaymentUrl(PaymentDto paymentDto, HttpServletRequest request) {
@@ -57,7 +65,12 @@ public class VNPayService implements IVNPayService {
             params.put("vnp_Locale", "vn");
         }
 
-        params.put("vnp_ReturnUrl", vnPayConfig.getVnpReturnUrl());
+        String userAgent = request.getHeader("User-Agent");
+        if (isMobileDevice(userAgent)) {
+            params.put("vnp_ReturnUrl", vnPayConfig.getVnpReturnMobileUrl());
+        }else {
+            params.put("vnp_ReturnUrl", vnPayConfig.getVnpReturnWebUrl());
+        }
         params.put("vnp_IpAddr", clientIpAddress);
 
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
@@ -96,6 +109,70 @@ public class VNPayService implements IVNPayService {
 
         return vnPayConfig.getVnpPayUrl() + "?" + queryData;
     }
+
+    @Override
+    public boolean verifyCallback(Map<String, String> params) {
+        String vnpSecureHash = params.remove("vnp_SecureHash");
+        params.remove("vnp_SecureHashType");
+
+        Map<String, String> sortedParams = new TreeMap<>(params);
+
+        String hashData = sortedParams.entrySet().stream()
+                .map(e -> e.getKey() + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
+                .collect(Collectors.joining("&"));
+
+        String calculatedHash = hmacSHA512(vnPayConfig.getSecretKey(), hashData);
+
+        return calculatedHash.equalsIgnoreCase(vnpSecureHash);
+    }
+
+    @Override
+    @Transactional
+    public void handleFailed(String txnRef, Map<String, String> params) throws Exception {
+        Optional<Order> existingOrder = orderRepository.findByVnpTxnRef(txnRef);
+        Order order = new Order();
+
+        if (existingOrder.isPresent()) {
+            order = existingOrder.get();
+        } else throw new DataNotFoundException("Order not found");
+
+        order.setStatus(Order.OrderStatus.Cancelled);
+        orderRepository.save(order);
+    }
+
+    @Override
+    @Transactional
+    public void handleSuccess(String txnRef, Map<String, String> params) throws Exception {
+        Optional<Order> existingOrder = orderRepository.findByVnpTxnRef(txnRef);
+        Order order = new Order();
+
+        if (existingOrder.isPresent()) {
+            order = existingOrder.get();
+        } else throw new DataNotFoundException("Order not found");
+
+        if (order.getStatus() == Order.OrderStatus.Processing) return;
+
+        order.setStatus(Order.OrderStatus.Processing);
+        orderRepository.save(order);
+    }
+
+    private String hmacSHA512(String key, String data) {
+    try {
+        Mac mac = Mac.getInstance("HmacSHA512");
+        SecretKeySpec secretKeySpec =
+                new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA512");
+        mac.init(secretKeySpec);
+        byte[] rawHmac = mac.doFinal(data.getBytes(StandardCharsets.UTF_8));
+
+        StringBuilder sb = new StringBuilder(2 * rawHmac.length);
+        for (byte b : rawHmac) {
+            sb.append(String.format("%02x", b & 0xff));
+        }
+        return sb.toString();
+    } catch (Exception e) {
+        throw new RuntimeException("Error while hashing", e);
+    }
+}
 
 //    @Override
 //    public String queryTransaction(PaymentQueryDTO paymentQueryDTO, HttpServletRequest request) throws IOException {

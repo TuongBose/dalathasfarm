@@ -1,4 +1,3 @@
-
 import 'package:android/models/user.dart';
 
 class AppConfig{

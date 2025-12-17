@@ -1,5 +1,6 @@
 package com.example.dalathasfarm.dtos;
 
+import com.example.dalathasfarm.models.Order;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -26,8 +27,10 @@ public class OrderDto {
     private String phoneNumber;
 
     private String address;
-
     private String note;
+
+    @NotNull(message = "Nền tảng đặt đơn hàng không được bỏ trống")
+    private String platform;
 
     @NotNull(message = "Tổng số tiền hóa đơn không được bỏ trống")
     private BigDecimal totalPrice;

@@ -61,6 +61,9 @@ public class Order {
     @Column(name = "is_active")
     private Boolean isActive;
 
+    @Enumerated(EnumType.STRING)
+    private Platform platform;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
@@ -81,5 +84,9 @@ public class Order {
 
     public enum ShippingMethod {
         Ship, Pickup
+    }
+
+    public enum Platform {
+        Web, Mobile
     }
 }

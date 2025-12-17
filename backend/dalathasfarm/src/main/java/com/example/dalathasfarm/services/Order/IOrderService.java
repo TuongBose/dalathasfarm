@@ -12,6 +12,7 @@ import java.util.List;
 public interface IOrderService {
     OrderResponse createOrder(OrderDto orderDto) throws Exception;
     OrderResponse getOrderById(Integer id) throws Exception;
+    Order getOrderByTxnRef(String txnRef) throws Exception;
     List<OrderResponse> getOrderByUserId(Integer userId) throws Exception;
     Order updateOrder(Integer id, OrderDto orderDto) throws Exception;
     void deleteOrder(Integer id) throws Exception;

@@ -1,8 +1,9 @@
 package com.example.dalathasfarm.controllers;
 
-import com.example.dalathasfarm.components.LocalizationUtils;
 import com.example.dalathasfarm.dtos.PaymentDto;
+import com.example.dalathasfarm.models.Order;
 import com.example.dalathasfarm.responses.ResponseObject;
+import com.example.dalathasfarm.services.Order.OrderService;
 import com.example.dalathasfarm.services.vnpay.VNPayService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -10,10 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("${api.prefix}/payments")
@@ -21,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentController {
     private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
     private final VNPayService vnPayService;
-    private final LocalizationUtils localizationUtils;
+    private final OrderService orderService;
 
     @PostMapping("/create-payment-url")
     public ResponseEntity<ResponseObject> createPayment(@RequestBody PaymentDto paymentDto, HttpServletRequest request) {
@@ -42,6 +44,53 @@ public class PaymentController {
                             .build());
         }
     }
+
+    @GetMapping("/payment-callback")
+    public ResponseEntity<Void> vnpayCallback(HttpServletRequest request) throws Exception {
+        Map<String, String> params = extractVNPayParams(request);
+
+        boolean isValid = vnPayService.verifyCallback(params);
+        String txnRef = params.get("vnp_TxnRef");
+        String responseCode = params.get("vnp_ResponseCode");
+
+        Order existingOrder = orderService.getOrderByTxnRef(txnRef);
+
+        if (!isValid) {
+            logger.error("VNPay callback signature invalid");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        if ("00".equals(responseCode)) {
+            // Thanh toán thành công
+            vnPayService.handleSuccess(txnRef, params);
+        } else {
+            // Thanh toán thất bại
+            vnPayService.handleFailed(txnRef, params);
+        }
+
+        URI redirectUri = URI.create(buildRedirectUrl(responseCode, existingOrder));
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(redirectUri)
+                .build();
+    }
+
+    private Map<String, String> extractVNPayParams(HttpServletRequest request) {
+        Map<String, String> params = new HashMap<>();
+        request.getParameterMap().forEach((key, value) -> {
+            if (value != null && value.length > 0) {
+                params.put(key, value[0]);
+            }
+        });
+        return params;
+    }
+
+    private String buildRedirectUrl(String responseCode, Order order) {
+        if (order.getPlatform() == Order.Platform.Mobile) {
+            return "android://vnpay_return?vnp_ResponseCode=" + responseCode + "&vnp_TxnRef=" + order.getVnpTxnRef();
+        }
+        return "http://localhost:4200/payments/payment-callback?vnp_ResponseCode=" + responseCode + "&vnp_TxnRef=" + order.getVnpTxnRef();
+    }
+
 
 //    @PutMapping("/update-status")
 //    public ResponseEntity<ResponseObject> updatePaymentStatus(@RequestBody UpdatePaymentStatusDTO statusDto,

@@ -13,6 +13,7 @@ class OrderDto {
   final String shippingMethod;
   final DateTime shippingDate;
   final String status;
+  final String platform;
   String? vnpTxnRef;
   String? couponCode;
   final List<CartItemDto> cartItems;
@@ -29,6 +30,7 @@ class OrderDto {
     required this.shippingMethod,
     required this.shippingDate,
     required this.status,
+    required this.platform,
     this.vnpTxnRef,
     this.couponCode,
     required this.cartItems,
@@ -47,6 +49,7 @@ class OrderDto {
       'shippingMethod': shippingMethod,
       'shippingDate': shippingDate.toIso8601String(),
       'status': status,
+      'platform': platform,
       'vnpTxnRef': vnpTxnRef,
       'couponCode': couponCode,
       'cartItems': cartItems.map((item) => item.toJson()).toList(),

@@ -168,6 +168,15 @@ public class OrderService implements IOrderService {
     }
 
     @Override
+    public Order getOrderByTxnRef(String txnRef) throws Exception {
+        Optional<Order> existingOrder = orderRepository.findByVnpTxnRef(txnRef);
+
+        if (existingOrder.isPresent()) {
+            return existingOrder.get();
+        } else throw new DataNotFoundException("Order not found");
+    }
+
+    @Override
     public List<OrderResponse> getOrderByUserId(Integer userId) throws Exception {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Cannot find User"));

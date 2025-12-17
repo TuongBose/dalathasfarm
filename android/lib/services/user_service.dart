@@ -1,14 +1,19 @@
 import 'dart:convert';
 import 'package:android/dtos/login_dto.dart';
 import 'package:android/dtos/register_dto.dart';
+import 'package:android/responses/login_response.dart';
+import 'package:android/responses/user_response.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../app_config.dart';
-import '../models/user.dart';
 
 class UserService {
+  static const _userKey = 'user';
+  static const _tokenKey = 'token';
+
   Future<void> createUser(RegisterDto registerDto) async {
     try {
       final url = Uri.parse('${AppConfig.baseUrl}/users/register');
@@ -21,36 +26,18 @@ class UserService {
         body: jsonEncode(registerDto.toJson()),
       );
 
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        // Đọc thông báo lỗi từ body của response
-        final errorData = jsonDecode(response.body);
-        String errorMessage;
-
-        if (errorData is List) {
-          // Nếu body trả về là danh sách lỗi (như ["So dien thoai khong duoc bo trong"])
-          errorMessage = errorData.isNotEmpty ? errorData[0] : 'Unknown error';
-        } else if (errorData is Map && errorData.containsKey('message')) {
-          // Nếu body trả về là JSON với trường "message"
-          errorMessage = errorData['message'];
-        } else {
-          errorMessage = 'Failed to create user: ${response.statusCode}';
-        }
-
-        throw Exception(errorMessage);
+      if (response.statusCode != 200) {
+        throw Exception('Failed to register: ${response.statusCode}');
       }
     } catch (e) {
-      throw ('Tạo tài khoản không thành công: $e');
+      throw Exception('Failed to register: $e');
     }
   }
 
-  Future<User> login(LoginDto loginDto) async {
-    String error = '';
+  Future<LoginResponse> login(LoginDto loginDto) async {
     try {
       final url = Uri.parse('${AppConfig.baseUrl}/users/login');
       final response = await http.post(
-        // Sửa thành http.post
         url,
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
@@ -60,27 +47,44 @@ class UserService {
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        // Kiểm tra dữ liệu trả về có phải là một đối tượng JSON không
-        if (data is Map<String, dynamic>) {
-          return User.fromJson(data); // Chuyển đổi trực tiếp thành User
-        } else {
-          throw Exception(
-            'Invalid response format: Expected a single user object',
-          );
-        }
+        final Map<String, dynamic> json = jsonDecode(response.body);
+        final Map<String, dynamic> data = json['data'];
+        return LoginResponse.fromJson(data);
       } else {
-        error = response.body;
-        throw Exception('');
+        throw Exception('Failed to login: ${response.statusCode}');
       }
     } catch (e) {
-      throw error;
+      throw Exception('Failed to login: $e');
+    }
+  }
+
+  Future<UserResponse> getUserDetails(String token) async {
+    try {
+      final url = Uri.parse('${AppConfig.baseUrl}/users/details');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> json = jsonDecode(response.body);
+        final Map<String, dynamic> data = json['data'];
+        return UserResponse.fromJson(data);
+      } else {
+        throw Exception('Failed to get user details: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to get user details: $e');
     }
   }
 
   Future<void> uploadUserImage(int userId, XFile imageFile) async {
     try {
-      final url = Uri.parse('${AppConfig.baseUrl}/users/$userId/image');
+      final url = Uri.parse('${AppConfig.baseUrl}/api/v1/users/$userId/image');
 
       String? mimeType = lookupMimeType(imageFile.path);
       if (mimeType == null || !mimeType.startsWith('image/')) {
@@ -114,52 +118,44 @@ class UserService {
     }
   }
 
-  Future<bool> checkExistingPhoneNumber(String phoneNumber) async {
-    try {
-      final url = Uri.parse('${AppConfig.baseUrl}/users/checkexistphonenumber/$phoneNumber');
-      final response = await http.get(url);
+  /// Lưu user
+  static Future<void> saveUser({
+    required UserResponse user,
+    required String token,
+    required bool rememberMe,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return data['status'] == 'exists';
-      } else {
-        throw Exception('Lỗi kiểm tra số điện thoại: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw Exception('Lỗi khi kiểm tra số điện thoại: $e');
+    final userJson = jsonEncode(user.toJson());
+
+    if (rememberMe) {
+      await prefs.setString(_userKey, userJson);
+      await prefs.setString(_tokenKey, token);
+    } else {
+      AppConfig.currentUser = user;
+      AppConfig.accessToken = token;
     }
   }
 
-  Future<bool> checkDoesNotExistingPhoneNumber(String phoneNumber) async {
-    try {
-      final url = Uri.parse('${AppConfig.baseUrl}/users/checkdoesnotexistphonenumber/$phoneNumber');
-      final response = await http.get(url);
+  static Future<void> loadUser() async {
+    final prefs = await SharedPreferences.getInstance();
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return data['status'] == 'exists';
-      } else {
-        throw Exception('Lỗi kiểm tra số điện thoại: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw Exception('Lỗi khi kiểm tra số điện thoại: $e');
+    final userJson = prefs.getString(_userKey);
+    final token = prefs.getString(_tokenKey);
+
+    if (userJson != null && token != null) {
+      AppConfig.currentUser = UserResponse.fromJson(jsonDecode(userJson));
+      AppConfig.accessToken = token;
+      AppConfig.isLogin = true;
     }
   }
 
-  Future<void> resetPassword(LoginDto loginDto) async {
-    try {
-      final url = Uri.parse('${AppConfig.baseUrl}/users/resetpassword');
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json; charset=UTF-8'},
-        body: jsonEncode(loginDto.toJson()),
-      );
+  static Future<void> clear() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
 
-      if (response.statusCode != 200) {
-        throw Exception('Lỗi reset mật khẩu: ${response.body}');
-      }
-    } catch (e) {
-      throw Exception('Lỗi khi reset mật khẩu: $e');
-    }
+    AppConfig.currentUser = null;
+    AppConfig.accessToken = '';
+    AppConfig.isLogin = false;
   }
 }

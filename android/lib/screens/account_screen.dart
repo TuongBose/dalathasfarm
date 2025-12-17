@@ -59,21 +59,21 @@ class _AccountScreenState extends State<AccountScreen> {
               children: const [
                 Column(
                   children: [
-                    Icon(Icons.stars, color: Colors.orange),
+                    Icon(Icons.stars, color: Color(0xFF4A7C59)),
                     SizedBox(height: 4),
                     Text('Stars'),
                   ],
                 ),
                 Column(
                   children: [
-                    Icon(Icons.card_giftcard, color: Colors.orange),
+                    Icon(Icons.card_giftcard, color: Color(0xFF4A7C59)),
                     SizedBox(height: 4),
                     Text('Quà tặng'),
                   ],
                 ),
                 Column(
                   children: [
-                    Icon(Icons.emoji_events, color: Colors.orange),
+                    Icon(Icons.emoji_events, color: Color(0xFF4A7C59)),
                     SizedBox(height: 4),
                     Text('Ưu đãi đặc biệt'),
                   ],
@@ -87,7 +87,7 @@ class _AccountScreenState extends State<AccountScreen> {
               children: [
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
+                    backgroundColor: Color(0xFF4A7C59),
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                   ),
                   onPressed: () {
@@ -102,7 +102,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 OutlinedButton(
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
-                    side: const BorderSide(color: Colors.orange),
+                    side: const BorderSide(color: Color(0xFF4A7C59)),
                   ),
                   onPressed: () {
                     Navigator.push(
@@ -112,7 +112,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   },
                   child: const Text(
                     'Đăng nhập',
-                    style: TextStyle(color: Colors.orange),
+                    style: TextStyle(color: Color(0xFF4A7C59)),
                   ),
                 ),
               ],

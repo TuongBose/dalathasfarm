@@ -33,4 +33,17 @@ class UserResponse{
       isActive: json['isActive'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'fullName': fullName,
+      'email': email,
+      'phoneNumber': phoneNumber,
+      'address': address,
+      'dateOfBirth': dateOfBirth.toIso8601String(),
+      'role': role.toJson(),
+      'isActive': isActive,
+    };
+  }
 }

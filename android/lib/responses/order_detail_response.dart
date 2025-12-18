@@ -6,8 +6,8 @@ class OrderDetailResponse{
   final int orderId;
   final Product productResponse;
   final int quantity;
-  final Decimal price;
-  final Decimal totalMoney;
+  final double price;
+  final double totalMoney;
 
   OrderDetailResponse({
     required this.orderId,
@@ -22,8 +22,8 @@ class OrderDetailResponse{
       orderId: json['orderId'],
       productResponse: Product.fromJson(json['productResponse']),
       quantity: json['quantity'],
-      price: Decimal.parse(json['price'].toString()),
-      totalMoney: Decimal.parse(json['totalMoney'].toString()),
+      price: (json['price'] as num).toDouble(),
+      totalMoney: (json['totalMoney'] as num).toDouble(),
     );
   }
 }

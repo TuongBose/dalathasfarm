@@ -317,7 +317,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     setState(() => _isLoading = true);
 
     final order = OrderDto(
-      userId: 1,
+      userId: AppConfig.currentUser?.id ?? 1,
       fullName: '$_lastName $_firstName'.trim(),
       email: '',
       phoneNumber: _phoneNumber,

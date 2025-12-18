@@ -86,14 +86,13 @@ class NewsScreenState extends State<NewsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back_ios,
-                            color: Color(0xFF4A7C59),
-                          ),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                        const Spacer(),
+                        // IconButton(
+                        //   icon: const Icon(
+                        //     Icons.arrow_back_ios,
+                        //     color: Color(0xFF4A7C59),
+                        //   ),
+                        //   onPressed: () => Navigator.pop(context),
+                        // ),
                         Text(
                           'Tin tức & Blog',
                           style: TextStyle(

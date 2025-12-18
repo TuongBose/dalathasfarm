@@ -535,6 +535,7 @@ import 'package:flutter/material.dart';
 
 import '../dtos/register_dto.dart';
 import '../services/user_service.dart';
+import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -589,7 +590,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           context,
           '/default',
               (route) => false,
-          arguments: 4, // Tab Tài khoản
+          arguments: 4,
         );
       }
     }catch (e) {
@@ -917,7 +918,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             height: 50,
                             child: OutlinedButton(
                               onPressed: () {
-                                Navigator.pop(context);
+                                Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  '/default',
+                                      (route) => false,
+                                  arguments: 4,
+                                );
                               },
                               style: OutlinedButton.styleFrom(
                                 side: const BorderSide(
@@ -955,7 +961,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                                 const Text(' ? '),
                                 GestureDetector(
-                                  onTap: () => Navigator.pop(context),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const LoginScreen(),
+                                      ),
+                                    );
+                                  },
                                   child: const Text(
                                     'Đăng nhập',
                                     style: TextStyle(

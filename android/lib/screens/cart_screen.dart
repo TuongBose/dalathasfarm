@@ -106,18 +106,18 @@ class _CartScreenState extends State<CartScreen> {
                             ),
                             onPressed: () => Navigator.pop(context),
                           ),
-                          const Expanded(child:
-                          Center(child:
-                          Text(
-                            'Giỏ hàng của bạn',
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF4A7C59),
-                              fontFamily: 'Cursive',
+                          const Expanded(
+                            child: Center(
+                              child: Text(
+                                'Giỏ hàng của bạn',
+                                style: TextStyle(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF4A7C59),
+                                  fontFamily: 'Cursive',
+                                ),
+                              ),
                             ),
-                          ),
-                          ),
                           ),
                         ],
                       ),
@@ -129,7 +129,7 @@ class _CartScreenState extends State<CartScreen> {
               SliverFillRemaining(
                 hasScrollBody: false,
                 child: _buildEmptyCart(),
-              )
+              ),
             ],
           ),
         ),
@@ -241,7 +241,8 @@ class _CartScreenState extends State<CartScreen> {
                             showDialog(
                               context: context,
                               builder:
-                                  (ctx) => AlertDialog(
+                                  (ctx) =>
+                                  AlertDialog(
                                     title: const Text('Xóa toàn bộ?'),
                                     content: const Text(
                                       'Bạn có chắc muốn xóa tất cả sản phẩm?',
@@ -296,157 +297,147 @@ class _CartScreenState extends State<CartScreen> {
               ),
             ),
 
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 200,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: _products.length,
-                      itemBuilder: (context, index) {
-                        final product = _products[index];
-                        final quantity = cart.getQuantity(product.id);
 
-                        return Dismissible(
-                          key: Key(product.id.toString()),
-                          direction: DismissDirection.endToStart,
-                          background: Container(
-                            alignment: Alignment.centerRight,
-                            padding: const EdgeInsets.only(right: 20),
-                            margin: const EdgeInsets.only(bottom: 16),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                              size: 32,
-                            ),
-                          ),
-                          onDismissed: (_) {
-                            cart.removeItem(product.id);
-                            _loadCartProducts(); // Reload để cập nhật danh sách
-                          },
-                          child: Card(
-                            color: Colors.white,
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            margin: const EdgeInsets.only(bottom: 16),
-                            child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(16),
-                                    child: Image.network(
-                                      _getImageUrl(product.thumbnail),
+            SliverList(
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final product = _products[index];
+                final quantity = cart.getQuantity(product.id);
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Dismissible(
+                    key: Key(product.id.toString()),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.only(right: 20),
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Icon(
+                        Icons.delete,
+                        color: Colors.white,
+                        size: 32,
+                      ),
+                    ),
+                    onDismissed: (_) {
+                      cart.removeItem(product.id);
+                      _loadCartProducts(); // Reload để cập nhật danh sách
+                    },
+                    child: Card(
+                      color: Colors.white,
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      margin: const EdgeInsets.only(bottom: 16),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: Image.network(
+                                _getImageUrl(product.thumbnail),
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                                errorBuilder:
+                                    (_, __, ___) =>
+                                    Container(
                                       width: 100,
                                       height: 100,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (_, __, ___) => Container(
-                                            width: 100,
-                                            height: 100,
-                                            color: Colors.grey[200],
-                                            child: const Icon(
-                                              Icons.local_florist,
-                                              size: 50,
-                                            ),
-                                          ),
+                                      color: Colors.grey[200],
+                                      child: const Icon(
+                                        Icons.local_florist,
+                                        size: 50,
+                                      ),
+                                    ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    product.name,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    NumberFormat.currency(
+                                      locale: 'vi_VN',
+                                      symbol: 'đ',
+                                    ).format(product.price),
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF4A7C59),
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          product.name,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    children: [
+                                      _buildQuantityButton(
+                                            () =>
+                                            cart.decreaseQuantity(
+                                              product.id,
+                                            ),
+                                        Icons.remove,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
                                         ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          NumberFormat.currency(
-                                            locale: 'vi_VN',
-                                            symbol: 'đ',
-                                          ).format(product.price),
+                                        child: Text(
+                                          '$quantity',
                                           style: const TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
-                                            color: Color(0xFF4A7C59),
                                           ),
                                         ),
-                                        const SizedBox(height: 12),
-                                        Row(
-                                          children: [
-                                            _buildQuantityButton(
-                                              () => cart.decreaseQuantity(
-                                                product.id,
-                                              ),
-                                              Icons.remove,
+                                      ),
+                                      _buildQuantityButton(
+                                            () =>
+                                            cart.increaseQuantity(
+                                              product.id,
                                             ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 16,
-                                                  ),
-                                              child: Text(
-                                                '$quantity',
-                                                style: const TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                            _buildQuantityButton(
-                                              () => cart.increaseQuantity(
-                                                product.id,
-                                              ),
-                                              Icons.add,
-                                              isAdd: true,
-                                            ),
-                                            const Spacer(),
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.delete_outline,
-                                                color: Colors.red,
-                                              ),
-                                              onPressed: () {
-                                                cart.removeItem(product.id);
-                                                _loadCartProducts();
-                                              },
-                                            ),
-                                          ],
+                                        Icons.add,
+                                        isAdd: true,
+                                      ),
+                                      const Spacer(),
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.delete_outline,
+                                          color: Colors.red,
                                         ),
-                                      ],
-                                    ),
+                                        onPressed: () {
+                                          cart.removeItem(product.id);
+                                          _loadCartProducts();
+                                        },
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
                             ),
-                          ),
-                        );
-                      },
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ],
-              ),
+                );
+              },
+                childCount: _products.length,),
             ),
           ],
         ),
@@ -455,11 +446,10 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget _buildQuantityButton(
-    VoidCallback onPressed,
-    IconData icon, {
-    bool isAdd = false,
-  }) {
+  Widget _buildQuantityButton(VoidCallback onPressed,
+      IconData icon, {
+        bool isAdd = false,
+      }) {
     return Container(
       decoration: BoxDecoration(
         color: isAdd ? const Color(0xFF4A7C59) : Colors.grey[200],
@@ -501,8 +491,11 @@ class _CartScreenState extends State<CartScreen> {
           const SizedBox(height: 32),
           ElevatedButton.icon(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back, color: Colors.white,),
-            label: const Text('Quay lại mua sắm', style: TextStyle(color: Colors.white,)),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            label: const Text(
+              'Quay lại mua sắm',
+              style: TextStyle(color: Colors.white),
+            ),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF4A7C59),
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
@@ -561,7 +554,8 @@ class _CartScreenState extends State<CartScreen> {
               height: 56,
               child: ElevatedButton(
                 onPressed:
-                    () => Navigator.push(
+                    () =>
+                    Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const CheckoutScreen()),
                     ),

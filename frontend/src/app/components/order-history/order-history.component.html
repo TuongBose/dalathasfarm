@@ -72,7 +72,7 @@
                     <div>
                         <h5 class="order-id">Mã đơn hàng {{ order.id }}</h5>
                         <p class="order-date text-muted small">Ngày đặt hàng:
-                            {{ order.orderDate | date:'dd MMMM yyyy, HH:mm' }}
+                            {{ order.orderDate | date:'dd-MM-yyyy' }}
                         </p>
                     </div>
                     <div class="text-end">
@@ -122,7 +122,7 @@
                             </div>
                             <div class="info-item">
                                 <span class="label">Ngày nhận hàng:</span>
-                                <span class="value">{{ order.shippingDate }}</span>
+                                <span class="value">{{ order.shippingDate | date:'dd-MM-yyyy' }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Phương thức thanh toán:</span>

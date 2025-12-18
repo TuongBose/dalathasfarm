@@ -7,6 +7,8 @@ import 'package:android/screens/user_screen.dart';
 import 'package:android/screens/account_screen.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import 'order_screen.dart';
+
 class DefaultScreen extends StatelessWidget {
   final int initialIndex;
 
@@ -52,7 +54,7 @@ class MyDefaultScreenState extends State<MyDefaultScreen> {
     final List<Widget> widgetOptions = <Widget>[
       const HomeScreen(),
       NewsScreen(),
-      const Center(child: Text('Đơn hàng')),
+      const OrderScreen(),
       const Center(child: Text('Chatbot AI')),
       AppConfig.isLogin ? const UserScreen() : const AccountScreen(),
     ];

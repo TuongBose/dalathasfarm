@@ -326,7 +326,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             height: 50,
                             child: OutlinedButton(
                               onPressed: () {
-                                Navigator.pop(context);
+                                Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  '/default',
+                                      (route) => false,
+                                  arguments: 4,
+                                );
                               },
                               style: OutlinedButton.styleFrom(
                                 side: const BorderSide(

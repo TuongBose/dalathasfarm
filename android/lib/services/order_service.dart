@@ -10,12 +10,19 @@ class OrderService{
   Future<void> placeOrder(OrderDto orderDto) async {
     try {
       final url = Uri.parse('${AppConfig.baseUrl}/orders');
+
+      final headers = <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json; charset=UTF-8',
+      };
+
+      if (AppConfig.currentUser != null && AppConfig.accessToken.isNotEmpty) {
+        headers['Authorization'] = 'Bearer ${AppConfig.accessToken}';
+      }
+
       final response = await http.post(
         url,
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Accept': 'application/json; charset=UTF-8',
-        },
+        headers: headers,
         body: jsonEncode(orderDto.toJson()),
       );
 
@@ -82,6 +89,7 @@ class OrderService{
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'Accept': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ${AppConfig.accessToken}',
         },
       );
 

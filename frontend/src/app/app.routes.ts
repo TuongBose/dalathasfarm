@@ -20,6 +20,7 @@ import { PaymentSuccessComponent } from './components/payment-success/payment-su
 import { OrderSearchComponent } from './components/order-search/order-search.component';
 import { ProductSearchComponent } from './components/product-search/product-search.component';
 import { OrderHistoryComponent } from './components/order-history/order-history.component';
+import { ChatbotComponent } from './components/chatbot/chatbot.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -42,4 +43,5 @@ export const routes: Routes = [
     { path: 'occasions', component: OccasionsComponent },
     { path: 'occasion/:id', component: OccasionComponent },
     { path: 'product-search', component: ProductSearchComponent },
+    { path: 'chatbot', component: ChatbotComponent },
 ];

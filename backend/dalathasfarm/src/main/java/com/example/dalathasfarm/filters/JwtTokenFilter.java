@@ -128,7 +128,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of(String.format("%s/policies**", apiPrefix), "GET"),
 
                 // payment
-                Pair.of(String.format("%s/payments/payment-callback", apiPrefix), "GET")
+                Pair.of(String.format("%s/payments/payment-callback", apiPrefix), "GET"),
+
+                // Chatbot
+                Pair.of(String.format("%s/chatbot**", apiPrefix), "POST")
         );
 
         String requestPath = request.getServletPath();

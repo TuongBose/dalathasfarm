@@ -38,9 +38,12 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/dalathasfarm
       MYSQL_ROOT_PASSWORD: root
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_MODEL: qwen2.5:7b
       # VNPAY_RETURN_URI: https://vps.luxuryshop.x10.mx/payments/payment-callback
     depends_on:
       - mysql-container
+      - ollama
     networks:
       - dalathasfarm-network
     healthcheck:
@@ -66,6 +69,17 @@ services:
       timeout: 10s
       retries: 3
       
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    networks:
+      - dalathasfarm-network
+
 networks:
   dalathasfarm-network:
     name: dalathasfarm-network
@@ -73,3 +87,4 @@ networks:
 
 volumes:
   mysql_data:
+  ollama:

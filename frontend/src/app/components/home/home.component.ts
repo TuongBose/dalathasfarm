@@ -11,6 +11,7 @@ import { Product } from '../../models/product';
 import { Category } from '../../models/category';
 import { environment } from '../../environments/environment';
 import { Occasion } from '../../models/occasion';
+import { ChatBubbleComponent } from '../chat-bubble/chat-bubble.component';
 
 @Component({
   selector: 'app-home',
@@ -18,6 +19,7 @@ import { Occasion } from '../../models/occasion';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   imports: [
+    ChatBubbleComponent,
     HeaderComponent,
     FooterComponent,
     CommonModule,

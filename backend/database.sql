@@ -261,6 +261,14 @@ CREATE TABLE product_discount_items (
     CONSTRAINT fk_product_discount_items_product_discounts FOREIGN KEY (product_discount_id) REFERENCES product_discounts(id)
 );
 
+CREATE TABLE chatbot_knowledges (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    content TEXT,
+    type VARCHAR(50)
+);
+
+
 -- BẢNG DỮ LIỆU CATEGORIES
 INSERT INTO categories (name, thumbnail, description) VALUES
 ('Hoa cưới', 'hoa-cuoi.jpg','Những mẫu hoa cưới sang trọng, tinh tế với tông màu nhã nhặn, giúp tôn lên vẻ đẹp và ý nghĩa thiêng liêng của ngày trọng đại.'),
@@ -636,6 +644,13 @@ INSERT INTO product_images(id,product_id,name) VALUES
 (178, 36, '82e12078-9fd0-40a9-a758-2541df6bfb02_5.jpg'),
 (179, 36, 'd7c4a8a6-f896-4f5d-aeb3-7458b9f40b2b_3.jpg'),
 (180, 36, '96b979a9-007b-4aa3-8598-ec6f0c3b2662_2.jpg');
+
+-- BẢNG DỮ LIỆU CHATBOT_KNOWLEDGE
+INSERT INTO chatbot_knowledges (title, content, type) VALUES
+('Giới thiệu shop', 'Dalat Hasfarm là cửa hàng hoa tươi, chuyên hoa cưới, hoa sự kiện', 'info'),
+('Hoa cưới', 'Shop có cung cấp hoa cưới, hoa cầm tay cô dâu, hoa trang trí tiệc cưới', 'product'),
+('Giao hàng', 'Shop giao hoa trong nội thành trong vòng 2 giờ', 'policy');
+
 
 INSERT INTO users(password,fullname,phone_number,is_active,role_id) VALUES
 ('123456','Khách lẻ','0000000000',1,3),

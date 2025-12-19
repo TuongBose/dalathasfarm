@@ -7,6 +7,7 @@ import 'package:android/screens/user_screen.dart';
 import 'package:android/screens/account_screen.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import 'chatbot_screen.dart';
 import 'order_screen.dart';
 
 class DefaultScreen extends StatelessWidget {
@@ -55,7 +56,7 @@ class MyDefaultScreenState extends State<MyDefaultScreen> {
       const HomeScreen(),
       NewsScreen(),
       const OrderScreen(),
-      const Center(child: Text('Chatbot AI')),
+      const ChatbotScreen(),
       AppConfig.isLogin ? const UserScreen() : const AccountScreen(),
     ];
     return Scaffold(

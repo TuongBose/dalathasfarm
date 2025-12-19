@@ -1,0 +1,61 @@
+<div class="chatbot-wrapper">
+  <app-header> </app-header>
+  <!-- Chat Container -->
+  <div class="chat-container">
+    <!-- Welcome Section - Only show when no messages -->
+    <div class="chat-welcome" *ngIf="messages.length === 0">
+      <h2>Tôi có thể giúp gì cho bạn?</h2>
+    </div>
+
+    <!-- Messages Area -->
+    <div class="messages-area" *ngIf="messages.length > 0">
+      <div *ngFor="let message of messages" 
+           [class.message]="true" 
+           [class.user]="message.role === 'user'"
+           [class.bot]="message.role === 'bot'">
+        <div class="message-avatar">
+          {{ message.role === 'user' ? 'TÔI' : 'AI' }}
+        </div>
+        <div class="message-content">
+          <p>{{ message.text }}</p>
+          <span class="message-time">{{ message.timestamp | date:'HH:mm' }}</span>
+        </div>
+      </div>
+
+      <!-- Loading indicator -->
+      <div class="message bot" *ngIf="isLoading">
+        <div class="message-avatar">AI</div>
+        <div class="message-content">
+          <div class="loading">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Container -->
+    <div class="input-container">
+      <button class="add-button" type="button">
+        <span>+</span>
+      </button>
+      <input 
+        type="text" 
+        class="chat-input" 
+        [(ngModel)]="userInput"
+        (keyup.enter)="sendMessage()"
+        placeholder="Nhập câu hỏi của bạn..."
+        [disabled]="isLoading"
+      >
+      <button class="send-button" 
+              type="button"
+              (click)="sendMessage()"
+              [disabled]="isLoading || !userInput.trim()">
+        <svg viewBox="0 0 24 24">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,19 +1,20 @@
 package com.example.dalathasfarm.services;
 
-import com.example.dalathasfarm.models.Order;
-import com.example.dalathasfarm.models.OrderDetail;
+import com.example.dalathasfarm.models.*;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
@@ -22,7 +23,7 @@ public class InvoicePdfService {
 
     private static final NumberFormat VN_CURRENCY = NumberFormat.getInstance(new Locale("vi", "VN"));
 
-    public static byte[] generateInvoicePdf(Order order, List<OrderDetail> orderDetails) throws IOException {
+    public static byte[] generateInvoicePdfOrder(Order order, List<OrderDetail> orderDetails) throws IOException {
 
         // 1. Load template HTML
         ClassPathResource resource = new ClassPathResource("templates/invoice-order.html");
@@ -205,5 +206,220 @@ public class InvoicePdfService {
         }
 
         return sb.toString();
+    }
+
+    public static byte[] generateSupplierOrderPdf(SupplierOrder order, List<SupplierOrderDetail> orderDetails) throws IOException {
+
+        // Load template
+        ClassPathResource resource = new ClassPathResource("templates/invoice-supplier-order.html");
+        String html = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+
+        // Logo
+        String logoBase64 = Base64.getEncoder().encodeToString(
+                Files.readAllBytes(Paths.get("uploads/images/logo.png"))
+        );
+        html = html.replace("{{logoImage}}", "data:image/png;base64," + logoBase64);
+
+        // Ngày đặt hàng
+        LocalDateTime orderDate = order.getOrderDate();
+        html = html.replace("{{orderDay}}", String.format("%02d", orderDate.getDayOfMonth()));
+        html = html.replace("{{orderMonth}}", String.format("%02d", orderDate.getMonthValue()));
+        html = html.replace("{{orderYear}}", String.valueOf(orderDate.getYear()));
+        html = html.replace("{{orderYear}}", String.valueOf(orderDate.getYear()));
+
+        // Mã đơn
+        html = html.replace("{{orderId}}", String.valueOf(order.getId()));
+
+        // Tên người đặt
+        html = html.replace("{{orderUserName}}", order.getUser().getFullName());
+
+        // Thông tin nhà cung cấp
+        html = html.replace("{{supplierName}}", order.getSupplier().getName());
+        html = html.replace("{{supplierAddress}}", order.getSupplier().getAddress() != null ? order.getSupplier().getAddress() : "");
+        html = html.replace("{{supplierPhone}}", order.getSupplier().getPhoneNumber() != null ? order.getSupplier().getPhoneNumber() : "");
+
+        // Chi tiết sản phẩm
+        StringBuilder items = new StringBuilder();
+        int index = 1;
+        for (SupplierOrderDetail d : orderDetails) {
+            items.append(String.format("""
+                            <tr>
+                              <td class="text-center">%d</td>
+                              <td>%d</td>
+                              <td>%s</td>
+                              <td class="text-center">Cái</td>
+                              <td class="text-center">%d</td>
+                              <td class="text-right">%s</td>
+                              <td class="text-right">%s</td>
+                            </tr>
+                            """,
+                    index++,
+                    d.getProduct().getId(),
+                    d.getProduct().getName(),
+                    d.getQuantity(),
+                    formatCurrency(d.getPrice()),
+                    formatCurrency(d.getTotalMoney())
+            ));
+        }
+        html = html.replace("{{items}}", items.toString());
+
+        // Tổng tiền
+        html = html.replace("{{totalAmount}}", formatCurrency(order.getTotalMoney()));
+        html = html.replace("{{totalAmountInWords}}", convertNumberToWords(order.getTotalMoney()));
+
+        // Footer
+        html = html.replace("{{lookupUrl}}", "http://yourdomain.com/supplier-order");
+        html = html.replace("{{lookupCode}}", order.getId().toString());
+
+        // Generate PDF
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfRendererBuilder builder = new PdfRendererBuilder();
+        builder.withHtmlContent(html, "/");
+
+        try {
+            builder.useFont(() -> InvoicePdfService.class.getResourceAsStream("/fonts/DejaVuSans.ttf"),
+                    "DejaVu Sans");
+        } catch (Exception e) {
+            System.err.println("Warning: Font not loaded for Vietnamese support");
+        }
+
+        builder.toStream(outputStream);
+        builder.run();
+
+        return outputStream.toByteArray();
+    }
+
+    public static byte[] generateSupplierInvoicePdf(SupplierInvoice order, List<SupplierInvoiceDetail> orderDetails) throws IOException {
+        ClassPathResource resource = new ClassPathResource("templates/invoice-supplier.html");
+        String html = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+
+        // Ngày hóa đơn
+        LocalDateTime now = LocalDateTime.now();
+        html = html.replace("{{invoiceDay}}", String.format("%02d", now.getDayOfMonth()));
+        html = html.replace("{{invoiceMonth}}", String.format("%02d", now.getMonthValue()));
+        html = html.replace("{{invoiceYear}}", String.valueOf(now.getYear()));
+        html = html.replace("{{invoiceNumber}}", String.valueOf(order.getInvoiceNumber()));
+
+        // Nhà cung cấp
+        Supplier supplier = order.getSupplier();
+        html = html.replace("{{supplierName}}", supplier.getName());
+        html = html.replace("{{supplierAddress}}", supplier.getAddress() != null ? supplier.getAddress() : "");
+        html = html.replace("{{supplierPhone}}", supplier.getPhoneNumber() != null ? supplier.getPhoneNumber() : "");
+
+        // Chi tiết sản phẩm
+        StringBuilder items = new StringBuilder();
+        int index = 1;
+        BigDecimal subTotal = BigDecimal.ZERO;
+        for (SupplierInvoiceDetail d : orderDetails) {
+            BigDecimal lineTotal = d.getTotalMoney();
+            subTotal = subTotal.add(lineTotal);
+            items.append(String.format("""
+                            <tr>
+                              <td>%d</td>
+                              <td>%d</td>
+                              <td class="text-left">%s</td>
+                              <td>Cái</td>
+                              <td>%d</td>
+                              <td class="text-right">%s</td>
+                              <td class="text-right">%s</td>
+                            </tr>
+                            """,
+                    index++,
+                    d.getProduct().getId(),
+                    d.getProduct().getName(),
+                    d.getQuantity(),
+                    formatCurrency(d.getPrice()),
+                    formatCurrency(lineTotal)
+            ));
+        }
+        html = html.replace("{{items}}", items.toString());
+
+        html = html.replace("{{subTotal}}", formatCurrency(subTotal));
+
+        // Tổng tiền
+        html = html.replace("{{totalAmount}}", formatCurrency(order.getTotalMoney()));
+        html = html.replace("{{totalAmountInWords}}", convertNumberToWords(order.getTotalMoney()));
+
+        // Generate PDF
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfRendererBuilder builder = new PdfRendererBuilder();
+        builder.withHtmlContent(html, "/");
+        try {
+            builder.useFont(() -> InvoicePdfService.class.getResourceAsStream("/fonts/DejaVuSans.ttf"), "DejaVu Sans");
+        } catch (Exception e) {
+            System.err.println("Font warning");
+        }
+        builder.toStream(outputStream);
+        builder.run();
+
+        return outputStream.toByteArray();
+    }
+
+    public static byte[] generatePurchaseOrderPdf(PurchaseOrder order, List<PurchaseOrderDetail> orderDetails) throws IOException {
+
+        // Load template
+        ClassPathResource resource = new ClassPathResource("templates/purchase-order.html");
+        String html = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+
+        // Logo
+        String logoBase64 = Base64.getEncoder().encodeToString(
+                Files.readAllBytes(Paths.get("uploads/images/logo.png"))
+        );
+        html = html.replace("{{logoImage}}", "data:image/png;base64," + logoBase64);
+
+        // Ngày đặt hàng
+        LocalDateTime orderDate = order.getImportDate();
+        html = html.replace("{{orderDay}}", String.format("%02d", orderDate.getDayOfMonth()));
+        html = html.replace("{{orderMonth}}", String.format("%02d", orderDate.getMonthValue()));
+        html = html.replace("{{orderYear}}", String.valueOf(orderDate.getYear()));
+        html = html.replace("{{orderYear}}", String.valueOf(orderDate.getYear()));
+
+        // Mã đơn
+        html = html.replace("{{orderId}}", String.valueOf(order.getId()));
+
+        // Tên người đặt
+        html = html.replace("{{orderUserName}}", order.getUser().getFullName());
+
+        // Chi tiết sản phẩm
+        StringBuilder items = new StringBuilder();
+        int index = 1;
+        for (PurchaseOrderDetail d : orderDetails) {
+            items.append(String.format("""
+                            <tr>
+                              <td class="text-center">%d</td>
+                              <td>%d</td>
+                              <td>%s</td>
+                              <td class="text-center">Cái</td>
+                              <td class="text-center">%d</td>
+                            </tr>
+                            """,
+                    index++,
+                    d.getProduct().getId(),
+                    d.getProduct().getName(),
+                    d.getQuantity()
+            ));
+        }
+        html = html.replace("{{items}}", items.toString());
+
+        // Footer
+        html = html.replace("{{lookupUrl}}", "http://yourdomain.com/supplier-order");
+        html = html.replace("{{lookupCode}}", order.getId().toString());
+
+        // Generate PDF
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfRendererBuilder builder = new PdfRendererBuilder();
+        builder.withHtmlContent(html, "/");
+
+        try {
+            builder.useFont(() -> InvoicePdfService.class.getResourceAsStream("/fonts/DejaVuSans.ttf"),
+                    "DejaVu Sans");
+        } catch (Exception e) {
+            System.err.println("Warning: Font not loaded for Vietnamese support");
+        }
+
+        builder.toStream(outputStream);
+        builder.run();
+
+        return outputStream.toByteArray();
     }
 }

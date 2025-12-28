@@ -19,11 +19,11 @@ public class OrderDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
@@ -39,7 +39,7 @@ public class OrderDetail {
     @DecimalMin(value = "0.0", inclusive = true)
     private BigDecimal totalMoney;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 }

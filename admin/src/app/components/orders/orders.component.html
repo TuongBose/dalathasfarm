@@ -83,15 +83,38 @@
                 </span>
               </td>
               <td>
-                <span class="badge px-3 py-2 fs-6" [ngClass]="getStatusClass(order.status)">
-                  {{ getStatusText(order.status) }}
-                </span>
+                <div class="d-flex align-items-center gap-2">
+                  <!-- Hiện trạng thái hiện tại -->
+                  <span class="badge px-3 py-2 fs-6 me-2" [ngClass]="getStatusClass(order.status)">
+                    {{ getStatusText(order.status) }}
+                  </span>
+
+                  <!-- Select để chọn trạng thái mới -->
+                  <select class="form-select form-select-sm" [(ngModel)]="selectedStatuses[order.id]"
+                    style="width: 180px;">
+                    <option value="Pending">Chờ xác nhận</option>
+                    <option value="Processing">Đang xử lý</option>
+                    <option value="Shipping">Đang giao</option>
+                    <option value="Delivered">Đã giao</option>
+                    <option value="Cancelled" disabled>Đã hủy</option>
+                  </select>
+                </div>
               </td>
               <td class="text-center">
-                <!-- <button class="btn btn-outline-info btn-sm rounded-pill"
-                          (click)="viewOrderDetail(order.id)">
-                    <i class="fas fa-eye"></i> Xem chi tiết
-                  </button> -->
+                <!-- Nút cập nhật - chỉ hiện khi trạng thái thay đổi -->
+                @if (hasStatusChanged(order.id, selectedStatuses[order.id])) {
+                <button class="btn btn-primary btn-sm" (click)="updateOrderStatus(order.id)">
+                  <i class="fas fa-save me-1"></i>
+                  Cập nhật
+                </button>
+                } @else {
+                <span class="text-muted small">Không thay đổi</span>
+                }
+                @if (order.status.toLowerCase() !== 'cancelled' && order.status.toLowerCase() !== 'delivered') {
+                <button class="btn btn-danger btn-sm px-4 mt-2" style="margin: 5px;" (click)="cancelOrderByAdmin(order.id)">
+                  <i class="fas fa-times-circle me-1"></i> Hủy đơn
+                </button>
+                }
               </td>
             </tr>
             }

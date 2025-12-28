@@ -1,6 +1,7 @@
 package com.example.dalathasfarm.services.User;
 
 
+import com.example.dalathasfarm.dtos.ChangePasswordDto;
 import com.example.dalathasfarm.dtos.UpdateUserDto;
 import com.example.dalathasfarm.dtos.UserDto;
 import com.example.dalathasfarm.dtos.UserLoginDto;
@@ -26,4 +27,5 @@ public interface IUserService {
     void blockOrEnable(int userId, boolean active) throws DataNotFoundException;
     void changeProfileImage(int userId, String imageName) throws Exception;
     User getUserByEmail(String email) throws Exception;
+    void changePassword(int userId, ChangePasswordDto changePasswordDto) throws Exception;
 }

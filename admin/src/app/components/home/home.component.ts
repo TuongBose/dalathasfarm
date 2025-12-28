@@ -16,10 +16,14 @@ import { UserResponse } from '../../responses/user/user.response';
 })
 export class HomeComponent extends BaseComponent implements OnInit {
   user?: number | null;
+  isAdmin?:boolean;
 
   ngOnInit(): void {
     debugger
     this.user = this.userService.getUserFromLocalStorage()?.id;
+    const getuser = this.userService.getUserFromLocalStorage();
+    this.isAdmin = getuser?.role.id===1;
+
     if (!this.user)
       this.router.navigate(['/login']);
   }
@@ -28,9 +32,6 @@ export class HomeComponent extends BaseComponent implements OnInit {
     this.userService.removeUserFromLocalStorage();
     this.tokenService.removeToken();
     this.user = null;
-
-    setTimeout(() => {
       this.router.navigate(['/login']);
-    }, 2000);
   }
 }

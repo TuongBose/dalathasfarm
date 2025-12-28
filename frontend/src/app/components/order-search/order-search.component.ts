@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   templateUrl: './order-search.component.html',
   styleUrl: './order-search.component.scss',
-  imports:[
+  imports: [
     HeaderComponent,
     FooterComponent,
     CommonModule,
@@ -24,8 +24,8 @@ import { FormsModule } from '@angular/forms';
   ]
 })
 export class OrderSearchComponent {
-  orderIdInput: string = '';           
-  orderId: number | null = null;       
+  orderIdInput: string = '';
+  orderId: number | null = null;
   invoiceUrl: string = '';
   loading: boolean = false;
   searching: boolean = false;
@@ -35,8 +35,8 @@ export class OrderSearchComponent {
     private orderService: OrderService,
     private toastService: ToastService
   ) { }
-  
-searchOrder() {
+
+  searchOrder() {
     const id = Number(this.orderIdInput.trim());
     if (!this.orderIdInput || isNaN(id) || id <= 0) {
       this.toastService.showToast({

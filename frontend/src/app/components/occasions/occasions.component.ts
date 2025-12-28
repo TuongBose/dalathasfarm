@@ -140,12 +140,35 @@ export class OccasionsComponent extends BaseComponent implements OnInit {
     this.router.navigate(['/products', productId]);
   }
 
-  addToCart(event: Event, productId: number): void {
+  addToCart(
+    event: Event,
+    productId: number,
+    productStockQuantity: number,
+    productName: string
+  ): void {
     event.stopPropagation();
     debugger
 
     this.isPressAddToCart = true;
-    if (productId) {
+    if (!productId) {
+      console.error("Sản phẩm không tồn tại");
+      return;
+    } else {
+      console.error("Không thể thêm sản phẩm vào giỏ hàng vì San Phẩm là Null.");
+    }
+
+    const currentQuantityInCart = this.cartService.getQuantityInCart(productId);
+    const totalQuantity = currentQuantityInCart + 1;
+
+    if (totalQuantity > productStockQuantity) {
+      this.toastService.showToast({
+        defaultMsg: `Sản phẩm "${productName}" không đủ hàng trong kho (Còn ${productStockQuantity} sản phẩm). Hiện tại bạn đã có ${currentQuantityInCart} trong giỏ.`,
+        title: 'Thông báo',
+        delay: 5000,
+        type: 'danger'
+      });
+      return;
+    } else {
       this.cartService.addToCart(productId, 1);
       this.toastService.showToast({
         defaultMsg: 'Thêm vào giỏ hàng thành công',
@@ -153,9 +176,6 @@ export class OccasionsComponent extends BaseComponent implements OnInit {
         delay: 3000,
         type: 'success'
       });
-    }
-    else {
-      console.error("Không thể thêm sản phẩm vào giỏ hàng vì San Phẩm là Null.");
     }
   }
 

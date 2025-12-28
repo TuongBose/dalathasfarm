@@ -1,22 +1,25 @@
 import { inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, CanActivateFn } from '@angular/router';
 import { TokenService } from '../services/token.service';
+import { UserService } from '../services/user.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthGuard {
-    constructor(private router: Router, private tokenService: TokenService) { }
+    constructor(private router: Router, private tokenService: TokenService, private userService:UserService) { }
 
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         const isTokenExpired = this.tokenService.isTokenExpired();
         const isUserIdValid = this.tokenService.getUserId() > 0;
+        const user = this.userService.getUserFromLocalStorage();
+        const isAdmin = user?.role.name === 'Admin';
+
         debugger
-        if (!isTokenExpired && isUserIdValid) {
+        if (!isTokenExpired && isUserIdValid && isAdmin) {
             return true;
         } else {
-            // Nếu không authenticated, trả về trang login
-            this.router.navigate(['/login']);
+            alert("Bạn không có quyền truy cập");
             return false;
         }
     }

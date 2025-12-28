@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:android/dtos/change_password_dto.dart';
 import 'package:android/dtos/login_dto.dart';
 import 'package:android/dtos/register_dto.dart';
 import 'package:android/responses/login_response.dart';
@@ -157,5 +158,32 @@ class UserService {
     AppConfig.currentUser = null;
     AppConfig.accessToken = '';
     AppConfig.isLogin = false;
+  }
+
+  Future<void> changePassword(ChangePasswordDto changePasswordDto) async {
+    final userId = AppConfig.currentUser?.id;
+    if (userId == null) {
+      throw Exception('Không tìm thấy thông tin người dùng');
+    }
+
+    final url = Uri.parse('${AppConfig.baseUrl}/users/change-password/$userId');
+
+    final response = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ${AppConfig.accessToken}',
+      },
+      body: jsonEncode(changePasswordDto.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      return; // Thành công
+    } else {
+      final errorBody = jsonDecode(response.body);
+      final message = errorBody['message'] ?? 'Đổi mật khẩu thất bại';
+      throw Exception(message);
+    }
   }
 }

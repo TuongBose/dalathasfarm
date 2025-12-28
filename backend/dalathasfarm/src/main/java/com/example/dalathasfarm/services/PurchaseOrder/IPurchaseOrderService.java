@@ -1,8 +1,13 @@
 package com.example.dalathasfarm.services.PurchaseOrder;
 
+import com.example.dalathasfarm.dtos.PurchaseOrderDto;
+import com.example.dalathasfarm.responses.purchaseorder.PurchaseOrderResponse;
+
+import java.util.List;
+
 public interface IPurchaseOrderService {
-    void getAllPurchaseOrder();
+    List<PurchaseOrderResponse> getAllPurchaseOrder();
     void deletePurchaseOrder();
     void updatePurchaseOrder();
-    void createPurchaseOrder();
+    void createPurchaseOrder(PurchaseOrderDto purchaseOrderDto);
 }

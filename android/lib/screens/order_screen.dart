@@ -2,12 +2,17 @@
 import 'package:android/app_config.dart';
 import 'package:android/models/order_status.dart';
 import 'package:android/responses/order_response.dart';
+import 'package:android/screens/product_screen.dart';
 import 'package:android/services/order_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../models/category.dart';
+import '../models/occasion.dart';
 import '../providers/cart_provider.dart';
+import '../services/category_service.dart';
+import '../services/occasion_service.dart';
 import 'cart_screen.dart';
 import 'login_screen.dart';
 
@@ -41,6 +46,321 @@ class _OrderScreenState extends State<OrderScreen>
     'Đã giao',
     'Đã hủy',
   ];
+
+  String _currentKeyword = '';
+  int _currentCategoryId = 0;
+  int _currentOccasionId = 0;
+
+  int get _activeFilterCount {
+    int count = 0;
+    if (_currentCategoryId != 0) count++;
+    if (_currentOccasionId != 0) count++;
+    return count;
+  }
+
+  void _performSearch() {
+    final keyword = _searchController.text.trim();
+    final hasFilter = keyword.isNotEmpty || _activeFilterCount > 0;
+
+    if (hasFilter) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ProductScreen(
+            keyword: keyword,
+            categoryId: _currentCategoryId,
+            occasionId: _currentOccasionId,
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _showFilterBottomSheet() async {
+    final CategoryService categoryService = CategoryService();
+    final OccasionService occasionService = OccasionService();
+
+    List<Category> categories = [];
+    List<Occasion> occasions = [];
+
+    bool isLoading = true;
+    String? error;
+
+    try {
+      final results = await Future.wait([
+        categoryService.getAllCategory(0, 50),
+        occasionService.getAllOccasion(0, 50),
+      ]);
+      categories = results[0] as List<Category>;
+      occasions = results[1] as List<Occasion>;
+      isLoading = false;
+    } catch (e) {
+      error = 'Không thể tải bộ lọc';
+      isLoading = false;
+    }
+
+    if (!mounted) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder:
+          (context) => StatefulBuilder(
+        builder:
+            (context, setSheetState) => DraggableScrollableSheet(
+          initialChildSize: 0.9,
+          maxChildSize: 0.9,
+          minChildSize: 0.5,
+          expand: false,
+          builder:
+              (context, scrollController) => Container(
+            padding: const EdgeInsets.all(20),
+            child:
+            isLoading
+                ? const Center(
+              child: CircularProgressIndicator(),
+            )
+                : error != null
+                ? Center(
+              child: Text(
+                error,
+                style: const TextStyle(color: Colors.red),
+              ),
+            )
+                : Column(
+              children: [
+                // Tiêu đề
+                Row(
+                  children: [
+                    const Text(
+                      'Lọc sản phẩm',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF4A7C59),
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed:
+                          () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+                const Divider(height: 30),
+
+                // Danh mục
+                Expanded(
+                  child: ListView(
+                    controller: scrollController,
+                    children: [
+                      const Text(
+                        'Danh mục',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children:
+                        categories
+                            .map(
+                              (cat) => FilterChip(
+                            label: Text(cat.name),
+                            selected:
+                            _currentCategoryId ==
+                                cat.id,
+                            onSelected: (selected) {
+                              setSheetState(() {
+                                _currentCategoryId =
+                                selected
+                                    ? cat.id
+                                    : 0;
+                              });
+                              setSheetState(() {});
+                              // Navigator.pop(context);
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder:
+                              //         (_) => ProductScreen(
+                              //           keyword: _searchController.text.trim(),
+                              //           categoryId: _currentCategoryId,
+                              //           occasionId: _currentOccasionId,
+                              //         ),
+                              //   ),
+                              // );
+                            },
+                            backgroundColor:
+                            Colors.grey[100],
+                            selectedColor:
+                            const Color(
+                              0xFF4A7C59,
+                            ),
+                            labelStyle: TextStyle(
+                              color:
+                              _currentCategoryId ==
+                                  cat.id
+                                  ? Colors.white
+                                  : Colors
+                                  .black87,
+                            ),
+                            checkmarkColor:
+                            Colors.white,
+                          ),
+                        )
+                            .toList(),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Dịp lễ
+                      const Text(
+                        'Dịp lễ / Sự kiện',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children:
+                        occasions
+                            .map(
+                              (occ) => FilterChip(
+                            label: Text(occ.name),
+                            selected:
+                            _currentOccasionId ==
+                                occ.id,
+                            onSelected: (selected) {
+                              setSheetState(() {
+                                _currentOccasionId =
+                                selected
+                                    ? occ.id
+                                    : 0;
+                              });
+                              setSheetState(() {});
+                              // Navigator.pop(context);
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder:
+                              //         (_) => ProductScreen(
+                              //           keyword: _searchController.text.trim(),
+                              //           categoryId: _currentCategoryId,
+                              //           occasionId: _currentOccasionId,
+                              //         ),
+                              //   ),
+                              // );
+                            },
+                            backgroundColor:
+                            Colors.grey[100],
+                            selectedColor:
+                            const Color(
+                              0xFF4A7C59,
+                            ),
+                            labelStyle: TextStyle(
+                              color:
+                              _currentOccasionId ==
+                                  occ.id
+                                  ? Colors.white
+                                  : Colors
+                                  .black87,
+                            ),
+                            checkmarkColor:
+                            Colors.white,
+                          ),
+                        )
+                            .toList(),
+                      ),
+                      const SizedBox(height: 80),
+                    ],
+                  ),
+                ),
+                // Nút Áp dụng (cố định dưới cùng)
+                // Container(
+                //   width: double.infinity,
+                //   height: 56,
+                //   decoration: BoxDecoration(
+                //     color: const Color(0xFF4A7C59),
+                //     borderRadius: BorderRadius.circular(30),
+                //     boxShadow: [
+                //       BoxShadow(
+                //         color: Colors.black.withOpacity(
+                //           0.1,
+                //         ),
+                //         blurRadius: 10,
+                //       ),
+                //     ],
+                //   ),
+                //   child: ElevatedButton(
+                //     onPressed: () {
+                //       // Cập nhật giá trị chính thức
+                //       setState(() {
+                //         _currentCategoryId = tempCategoryId;
+                //         _currentOccasionId = tempOccasionId;
+                //       });
+                //       Navigator.pop(context);
+                //
+                //       // Chỉ chuyển trang nếu có ít nhất 1 filter (hoặc có keyword)
+                //       final hasFilter =
+                //           _currentCategoryId != 0 ||
+                //           _currentOccasionId != 0 ||
+                //           _searchController.text
+                //               .trim()
+                //               .isNotEmpty;
+                //       if (hasFilter) {
+                //         Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //             builder:
+                //                 (_) => ProductScreen(
+                //                   keyword:
+                //                       _searchController.text
+                //                           .trim(),
+                //                   categoryId:
+                //                       _currentCategoryId,
+                //                   occasionId:
+                //                       _currentOccasionId,
+                //                 ),
+                //           ),
+                //         );
+                //       }
+                //     },
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: Colors.transparent,
+                //       shadowColor: Colors.transparent,
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(
+                //           30,
+                //         ),
+                //       ),
+                //     ),
+                //     child: const Text(
+                //       'Áp dụng bộ lọc',
+                //       style: TextStyle(
+                //         fontSize: 18,
+                //         fontWeight: FontWeight.bold,
+                //         color: Colors.white,
+                //       ),
+                //     ),
+                //   ),
+                // ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -204,46 +524,99 @@ class _OrderScreenState extends State<OrderScreen>
                           ),
                           child: TextField(
                             controller: _searchController,
+                            textInputAction: TextInputAction.search,
+                            onSubmitted: (value) {
+                              final keyword = value.trim();
+                              if (keyword.isNotEmpty ||
+                                  _activeFilterCount > 0) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (_) => ProductScreen(
+                                      keyword: keyword,
+                                      categoryId: _currentCategoryId,
+                                      occasionId: _currentOccasionId,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
                             decoration: InputDecoration(
                               hintText: 'Tìm kiếm sản phẩm',
                               hintStyle: TextStyle(color: Colors.grey[400]),
-                              prefixIcon: Icon(
-                                Icons.search,
-                                color: Colors.grey[400],
+                              prefixIcon: IconButton(
+                                icon: Icon(Icons.search,color: Colors.grey[400],),
+                                onPressed: _performSearch,
                               ),
                               // suffixIcon: Icon(
                               //   Icons.mic_none,
                               //   color: Colors.grey[400],
                               // ),
+                              suffixIcon:
+                              _searchController.text.isNotEmpty
+                                  ? IconButton(
+                                icon: const Icon(Icons.clear),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  setState(() {});
+                                },
+                              )
+                                  : null,
                               border: InputBorder.none,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                                 vertical: 14,
                               ),
                             ),
+                            onChanged: (value) => setState(() {}),
                           ),
                         ),
                       ),
                       const SizedBox(width: 12),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 10,
-                              offset: const Offset(0, 2),
+                      Stack(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.tune,
-                            color: Color(0xFF4A7C59),
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.tune,
+                                color: Color(0xFF4A7C59),
+                              ),
+                              onPressed: _showFilterBottomSheet,
+                            ),
                           ),
-                          onPressed: () {},
-                        ),
+                          if (_activeFilterCount > 0)
+                            Positioned(
+                              right: 6,
+                              top: 6,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Text(
+                                  '$_activeFilterCount',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ],
                   ),
@@ -451,13 +824,17 @@ class _OrderScreenState extends State<OrderScreen>
         borderRadius: BorderRadius.circular(16),
       ),
       child: InkWell(
-        onTap: () {
-          Navigator.push(
+        onTap: () async {
+          final result = await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => OrderDetailScreen(order: order),
             ),
           );
+
+          if (result == true) {
+            _loadOrders(); // Refresh lại danh sách đơn hàng
+          }
         },
         borderRadius: BorderRadius.circular(16),
         child: Padding(
@@ -604,13 +981,21 @@ class _OrderScreenState extends State<OrderScreen>
   }
 }
 
-class OrderDetailScreen extends StatelessWidget {
+class OrderDetailScreen extends StatefulWidget {
   final OrderResponse order;
 
   const OrderDetailScreen({
     super.key,
     required this.order,
   });
+
+  @override
+  State<OrderDetailScreen> createState() => _OrderDetailScreenState();
+}
+
+class _OrderDetailScreenState extends State<OrderDetailScreen> {
+  final OrderService _orderService = OrderService();
+  bool _isCancelling = false;
 
   String _getImageUrl(String? fileName) {
     if (fileName == null || fileName.isEmpty) {
@@ -627,9 +1012,56 @@ class OrderDetailScreen extends StatelessWidget {
     ).format(amount);
   }
 
+  Future<void> _cancelOrder() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Hủy đơn hàng?', style: TextStyle(color: Colors.red)),
+        content: const Text('Bạn có chắc chắn muốn hủy đơn hàng này?\nHành động này không thể hoàn tác.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Không')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Hủy đơn', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    setState(() => _isCancelling = true);
+
+    try {
+      await _orderService.cancelOrder(widget.order.id);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Đã hủy đơn hàng thành công'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Hủy đơn hàng thất bại: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isCancelling = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('dd MMMM yyyy, HH:mm', 'vi_VN');
+    final bool canCancel = widget.order.status.toLowerCase() == 'pending';
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -641,7 +1073,7 @@ class OrderDetailScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Mã đơn hàng ${order.id}',
+          'Mã đơn hàng ${widget.order.id}',
           style: const TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
@@ -658,7 +1090,7 @@ class OrderDetailScreen extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                OrderStatus.getDisplayName(order.status).toUpperCase(),
+                OrderStatus.getDisplayName(widget.order.status).toUpperCase(),
                 style: const TextStyle(
                   color: Color(0xFFFF8F00),
                   fontWeight: FontWeight.bold,
@@ -681,7 +1113,7 @@ class OrderDetailScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Ngày đặt hàng: ${DateFormat('dd-MM-yyyy').format(order.orderDate)}',
+                    'Ngày đặt hàng: ${DateFormat('dd-MM-yyyy').format(widget.order.orderDate)}',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[600],
@@ -720,7 +1152,7 @@ class OrderDetailScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  ...order.orderDetailResponses.map((detail) {
+                  ...widget.order.orderDetailResponses.map((detail) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16),
                       child: Row(
@@ -811,27 +1243,27 @@ class OrderDetailScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  _buildDetailRow('Người nhận:', order.fullName),
+                  _buildDetailRow('Người nhận:', widget.order.fullName),
                   const SizedBox(height: 12),
-                  _buildDetailRow('Số điện thoại:', order.phoneNumber),
+                  _buildDetailRow('Số điện thoại:', widget.order.phoneNumber),
                   const SizedBox(height: 12),
-                  _buildDetailRow('Địa chỉ:', order.address),
+                  _buildDetailRow('Địa chỉ:', widget.order.address),
                   const SizedBox(height: 12),
                   _buildDetailRow(
                     'Ngày nhận hàng:',
-                    DateFormat('dd-MM-yyyy').format(order.shippingDate),
+                    DateFormat('dd-MM-yyyy').format(widget.order.shippingDate),
                   ),
                   const SizedBox(height: 12),
                   _buildDetailRow(
                     'Phương thức thanh toán:',
-                    order.paymentMethod == 'Cash'
+                    widget.order.paymentMethod == 'Cash'
                         ? 'Tiền mặt khi nhận hàng'
                         : 'Chuyển khoản ngân hàng',
                   ),
                   const SizedBox(height: 12),
                   _buildDetailRow(
                     'Phương thức giao hàng:',
-                    order.shippingMethod == 'Ship' ? 'Giao hàng tận nơi' : 'Pickup',
+                    widget.order.shippingMethod == 'Ship' ? 'Giao hàng tận nơi' : 'Pickup',
                   ),
                 ],
               ),
@@ -858,7 +1290,7 @@ class OrderDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        _formatCurrency(order.totalMoney),
+                        _formatCurrency(widget.order.totalMoney),
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -870,6 +1302,37 @@ class OrderDetailScreen extends StatelessWidget {
                 ],
               ),
             ),
+
+            const SizedBox(height: 16),
+
+            if (canCancel)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                color: Colors.white,
+                child: SizedBox(
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _isCancelling ? null : _cancelOrder,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    ),
+                    child: _isCancelling
+                        ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                    )
+                        : const Text(
+                      'HỦY ĐƠN HÀNG',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+
+            const SizedBox(height: 32),
           ],
         ),
       ),

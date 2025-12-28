@@ -1,0 +1,26 @@
+.card {
+  border-radius: 12px;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.list-group-item {
+  border: none;
+}
+
+.badge {
+  font-size: 0.9rem;
+}
+
+.table th {
+  font-weight: 600;
+  color: #495057;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}

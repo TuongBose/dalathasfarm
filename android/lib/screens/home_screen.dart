@@ -6,6 +6,7 @@ import 'package:android/models/product.dart';
 import 'package:android/screens/cart_screen.dart';
 import 'package:android/screens/categories_screen.dart';
 import 'package:android/screens/product_detail_screen.dart';
+import 'package:android/screens/product_screen.dart';
 import 'package:android/services/category_service.dart';
 import 'package:android/services/occasion_service.dart';
 import 'package:android/services/product_service.dart';
@@ -16,7 +17,9 @@ import 'package:shimmer/shimmer.dart';
 
 import '../models/occasion.dart';
 import '../providers/cart_provider.dart';
+import '../services/notification_service.dart';
 import 'category_screen.dart';
+import 'notification_screen.dart';
 import 'occasion_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -36,6 +39,11 @@ class HomeScreenState extends State<HomeScreen> {
   bool _isLoading = true;
   bool _isLoadingMore = false;
 
+  String _currentKeyword = '';
+  int _currentCategoryId = 0;
+  int _currentOccasionId = 0;
+  int _unreadNotificationCount = 0;
+
   final PageController _pageController = PageController(viewportFraction: 0.95);
   Timer? _timer;
   int _currentBannerIndex = 0;
@@ -45,6 +53,45 @@ class HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadData(page: 1);
+    if (AppConfig.isLogin) _loadUnreadCount();
+  }
+
+  Future<void> _loadUnreadCount() async {
+    try {
+      final notifications =
+          await NotificationService().getUnreadNotifications();
+      setState(() {
+        _unreadNotificationCount = notifications.length;
+      });
+    } catch (e) {
+      // Silent fail
+    }
+  }
+
+  int get _activeFilterCount {
+    int count = 0;
+    if (_currentCategoryId != 0) count++;
+    if (_currentOccasionId != 0) count++;
+    return count;
+  }
+
+  void _performSearch() {
+    final keyword = _searchController.text.trim();
+    final hasFilter = keyword.isNotEmpty || _activeFilterCount > 0;
+
+    if (hasFilter) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (_) => ProductScreen(
+                keyword: keyword,
+                categoryId: _currentCategoryId,
+                occasionId: _currentOccasionId,
+              ),
+        ),
+      );
+    }
   }
 
   Future<void> _loadData({required int page}) async {
@@ -93,6 +140,292 @@ class HomeScreenState extends State<HomeScreen> {
         ).showSnackBar(SnackBar(content: Text('Lỗi tải dữ liệu: $e')));
       }
     }
+  }
+
+  Future<void> _showFilterBottomSheet() async {
+    final CategoryService categoryService = CategoryService();
+    final OccasionService occasionService = OccasionService();
+
+    List<Category> categories = [];
+    List<Occasion> occasions = [];
+
+    bool isLoading = true;
+    String? error;
+
+    try {
+      final results = await Future.wait([
+        categoryService.getAllCategory(0, 50),
+        occasionService.getAllOccasion(0, 50),
+      ]);
+      categories = results[0] as List<Category>;
+      occasions = results[1] as List<Occasion>;
+      isLoading = false;
+    } catch (e) {
+      error = 'Không thể tải bộ lọc';
+      isLoading = false;
+    }
+
+    if (!mounted) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder:
+          (context) => StatefulBuilder(
+            builder:
+                (context, setSheetState) => DraggableScrollableSheet(
+                  initialChildSize: 0.9,
+                  maxChildSize: 0.9,
+                  minChildSize: 0.5,
+                  expand: false,
+                  builder:
+                      (context, scrollController) => Container(
+                        padding: const EdgeInsets.all(20),
+                        child:
+                            isLoading
+                                ? const Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                                : error != null
+                                ? Center(
+                                  child: Text(
+                                    error,
+                                    style: const TextStyle(color: Colors.red),
+                                  ),
+                                )
+                                : Column(
+                                  children: [
+                                    // Tiêu đề
+                                    Row(
+                                      children: [
+                                        const Text(
+                                          'Lọc sản phẩm',
+                                          style: TextStyle(
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF4A7C59),
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        IconButton(
+                                          icon: const Icon(Icons.close),
+                                          onPressed:
+                                              () => Navigator.pop(context),
+                                        ),
+                                      ],
+                                    ),
+                                    const Divider(height: 30),
+
+                                    // Danh mục
+                                    Expanded(
+                                      child: ListView(
+                                        controller: scrollController,
+                                        children: [
+                                          const Text(
+                                            'Danh mục',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 12),
+                                          Wrap(
+                                            spacing: 12,
+                                            runSpacing: 12,
+                                            children:
+                                                categories
+                                                    .map(
+                                                      (cat) => FilterChip(
+                                                        label: Text(cat.name),
+                                                        selected:
+                                                            _currentCategoryId ==
+                                                            cat.id,
+                                                        onSelected: (selected) {
+                                                          setSheetState(() {
+                                                            _currentCategoryId =
+                                                                selected
+                                                                    ? cat.id
+                                                                    : 0;
+                                                          });
+                                                          setSheetState(() {});
+                                                          // Navigator.pop(context);
+                                                          // Navigator.push(
+                                                          //   context,
+                                                          //   MaterialPageRoute(
+                                                          //     builder:
+                                                          //         (_) => ProductScreen(
+                                                          //           keyword: _searchController.text.trim(),
+                                                          //           categoryId: _currentCategoryId,
+                                                          //           occasionId: _currentOccasionId,
+                                                          //         ),
+                                                          //   ),
+                                                          // );
+                                                        },
+                                                        backgroundColor:
+                                                            Colors.grey[100],
+                                                        selectedColor:
+                                                            const Color(
+                                                              0xFF4A7C59,
+                                                            ),
+                                                        labelStyle: TextStyle(
+                                                          color:
+                                                              _currentCategoryId ==
+                                                                      cat.id
+                                                                  ? Colors.white
+                                                                  : Colors
+                                                                      .black87,
+                                                        ),
+                                                        checkmarkColor:
+                                                            Colors.white,
+                                                      ),
+                                                    )
+                                                    .toList(),
+                                          ),
+                                          const SizedBox(height: 24),
+
+                                          // Dịp lễ
+                                          const Text(
+                                            'Dịp lễ / Sự kiện',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 12),
+                                          Wrap(
+                                            spacing: 12,
+                                            runSpacing: 12,
+                                            children:
+                                                occasions
+                                                    .map(
+                                                      (occ) => FilterChip(
+                                                        label: Text(occ.name),
+                                                        selected:
+                                                            _currentOccasionId ==
+                                                            occ.id,
+                                                        onSelected: (selected) {
+                                                          setSheetState(() {
+                                                            _currentOccasionId =
+                                                                selected
+                                                                    ? occ.id
+                                                                    : 0;
+                                                          });
+                                                          setSheetState(() {});
+                                                          // Navigator.pop(context);
+                                                          // Navigator.push(
+                                                          //   context,
+                                                          //   MaterialPageRoute(
+                                                          //     builder:
+                                                          //         (_) => ProductScreen(
+                                                          //           keyword: _searchController.text.trim(),
+                                                          //           categoryId: _currentCategoryId,
+                                                          //           occasionId: _currentOccasionId,
+                                                          //         ),
+                                                          //   ),
+                                                          // );
+                                                        },
+                                                        backgroundColor:
+                                                            Colors.grey[100],
+                                                        selectedColor:
+                                                            const Color(
+                                                              0xFF4A7C59,
+                                                            ),
+                                                        labelStyle: TextStyle(
+                                                          color:
+                                                              _currentOccasionId ==
+                                                                      occ.id
+                                                                  ? Colors.white
+                                                                  : Colors
+                                                                      .black87,
+                                                        ),
+                                                        checkmarkColor:
+                                                            Colors.white,
+                                                      ),
+                                                    )
+                                                    .toList(),
+                                          ),
+                                          const SizedBox(height: 80),
+                                        ],
+                                      ),
+                                    ),
+                                    // Nút Áp dụng (cố định dưới cùng)
+                                    // Container(
+                                    //   width: double.infinity,
+                                    //   height: 56,
+                                    //   decoration: BoxDecoration(
+                                    //     color: const Color(0xFF4A7C59),
+                                    //     borderRadius: BorderRadius.circular(30),
+                                    //     boxShadow: [
+                                    //       BoxShadow(
+                                    //         color: Colors.black.withOpacity(
+                                    //           0.1,
+                                    //         ),
+                                    //         blurRadius: 10,
+                                    //       ),
+                                    //     ],
+                                    //   ),
+                                    //   child: ElevatedButton(
+                                    //     onPressed: () {
+                                    //       // Cập nhật giá trị chính thức
+                                    //       setState(() {
+                                    //         _currentCategoryId = tempCategoryId;
+                                    //         _currentOccasionId = tempOccasionId;
+                                    //       });
+                                    //       Navigator.pop(context);
+                                    //
+                                    //       // Chỉ chuyển trang nếu có ít nhất 1 filter (hoặc có keyword)
+                                    //       final hasFilter =
+                                    //           _currentCategoryId != 0 ||
+                                    //           _currentOccasionId != 0 ||
+                                    //           _searchController.text
+                                    //               .trim()
+                                    //               .isNotEmpty;
+                                    //       if (hasFilter) {
+                                    //         Navigator.push(
+                                    //           context,
+                                    //           MaterialPageRoute(
+                                    //             builder:
+                                    //                 (_) => ProductScreen(
+                                    //                   keyword:
+                                    //                       _searchController.text
+                                    //                           .trim(),
+                                    //                   categoryId:
+                                    //                       _currentCategoryId,
+                                    //                   occasionId:
+                                    //                       _currentOccasionId,
+                                    //                 ),
+                                    //           ),
+                                    //         );
+                                    //       }
+                                    //     },
+                                    //     style: ElevatedButton.styleFrom(
+                                    //       backgroundColor: Colors.transparent,
+                                    //       shadowColor: Colors.transparent,
+                                    //       shape: RoundedRectangleBorder(
+                                    //         borderRadius: BorderRadius.circular(
+                                    //           30,
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //     child: const Text(
+                                    //       'Áp dụng bộ lọc',
+                                    //       style: TextStyle(
+                                    //         fontSize: 18,
+                                    //         fontWeight: FontWeight.bold,
+                                    //         color: Colors.white,
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                  ],
+                                ),
+                      ),
+                ),
+          ),
+    );
   }
 
   void _goToPrevious() {
@@ -403,12 +736,48 @@ class HomeScreenState extends State<HomeScreen> {
                         //   fit: BoxFit.fill,
                         // ),
                         const Spacer(),
-                        IconButton(
-                          icon: const Icon(
-                            Icons.notifications_outlined,
-                            size: 28,
-                          ),
-                          onPressed: () {},
+                        Stack(
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.notifications_outlined,
+                                size: 28,
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const NotificationScreen(),
+                                  ),
+                                );
+                                if (AppConfig.isLogin && mounted) {
+                                  _loadUnreadCount();
+                                }
+                              },
+                            ),
+                            if (_unreadNotificationCount > 0)
+                              Positioned(
+                                right: 8,
+                                top: 2,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    _unreadNotificationCount > 99
+                                        ? '99+'
+                                        : '$_unreadNotificationCount',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                         Consumer<CartProvider>(
                           builder: (context, cart, child) {
@@ -474,46 +843,102 @@ class HomeScreenState extends State<HomeScreen> {
                             ),
                             child: TextField(
                               controller: _searchController,
+                              textInputAction: TextInputAction.search,
+                              onSubmitted: (value) {
+                                final keyword = value.trim();
+                                if (keyword.isNotEmpty ||
+                                    _activeFilterCount > 0) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (_) => ProductScreen(
+                                            keyword: keyword,
+                                            categoryId: _currentCategoryId,
+                                            occasionId: _currentOccasionId,
+                                          ),
+                                    ),
+                                  );
+                                }
+                              },
                               decoration: InputDecoration(
                                 hintText: 'Tìm kiếm sản phẩm',
                                 hintStyle: TextStyle(color: Colors.grey[400]),
-                                prefixIcon: Icon(
-                                  Icons.search,
-                                  color: Colors.grey[400],
+                                prefixIcon: IconButton(
+                                  icon: Icon(
+                                    Icons.search,
+                                    color: Colors.grey[400],
+                                  ),
+                                  onPressed: _performSearch,
                                 ),
                                 // suffixIcon: Icon(
                                 //   Icons.mic_none,
                                 //   color: Colors.grey[400],
                                 // ),
+                                suffixIcon:
+                                    _searchController.text.isNotEmpty
+                                        ? IconButton(
+                                          icon: const Icon(Icons.clear),
+                                          onPressed: () {
+                                            _searchController.clear();
+                                            setState(() {});
+                                          },
+                                        )
+                                        : null,
                                 border: InputBorder.none,
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 16,
                                   vertical: 14,
                                 ),
                               ),
+                              onChanged: (value) => setState(() {}),
                             ),
                           ),
                         ),
                         const SizedBox(width: 12),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 10,
-                                offset: const Offset(0, 2),
+                        Stack(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.tune,
-                              color: Color(0xFF4A7C59),
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.tune,
+                                  color: Color(0xFF4A7C59),
+                                ),
+                                onPressed: _showFilterBottomSheet,
+                              ),
                             ),
-                            onPressed: () {},
-                          ),
+                            if (_activeFilterCount > 0)
+                              Positioned(
+                                right: 6,
+                                top: 6,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    '$_activeFilterCount',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ],
                     ),
@@ -552,48 +977,51 @@ class HomeScreenState extends State<HomeScreen> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) => OccasionScreen(occasionId: occasion.id),
+                                        builder:
+                                            (_) => OccasionScreen(
+                                              occasionId: occasion.id,
+                                            ),
                                       ),
                                     );
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(16),
-                                    child: Stack(
-                                      fit: StackFit.expand,
-                                      children: [
-                                        Image.network(
-                                          getImageUrl(occasion.bannerImage),
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (
-                                            context,
-                                            error,
-                                            stackTrace,
-                                          ) {
-                                            return Container(
-                                              color: Colors.grey[300],
-                                              child: const Icon(
-                                                Icons.image,
-                                                size: 50,
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                        Positioned(
-                                          right: 20,
-                                          top: 20,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
+                                      horizontal: 8,
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(16),
+                                      child: Stack(
+                                        fit: StackFit.expand,
+                                        children: [
+                                          Image.network(
+                                            getImageUrl(occasion.bannerImage),
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (
+                                              context,
+                                              error,
+                                              stackTrace,
+                                            ) {
+                                              return Container(
+                                                color: Colors.grey[300],
+                                                child: const Icon(
+                                                  Icons.image,
+                                                  size: 50,
+                                                ),
+                                              );
+                                            },
                                           ),
-                                        ),
-                                      ],
+                                          Positioned(
+                                            right: 20,
+                                            top: 20,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
                                 );
                               },
                             ),
@@ -676,17 +1104,18 @@ class HomeScreenState extends State<HomeScreen> {
                                       shape: BoxShape.circle,
                                     ),
                                     child: IconButton(
-                                      icon:const Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: Colors.white,
-                                      size: 32,
-                                    ),
+                                      icon: const Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: Colors.white,
+                                        size: 32,
+                                      ),
                                       onPressed: () {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder:
-                                                (context) => const CategoriesScreen(),
+                                                (context) =>
+                                                    const CategoriesScreen(),
                                           ),
                                         );
                                       },

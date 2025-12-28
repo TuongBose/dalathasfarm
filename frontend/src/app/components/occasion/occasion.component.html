@@ -46,7 +46,7 @@
               <div class="product-actions d-flex gap-1 mt-2">
                 @if(product.stockQuantity>0){
               <button class=" btn-sm btn-outline-light-product flex-fill"
-                (click)="$event.stopPropagation(); addToCart($event, product.id)">
+                (click)="$event.stopPropagation(); addToCart($event, product.id, product.stockQuantity, product.name)">
                 Thêm vào giỏ
               </button>
               }@else{

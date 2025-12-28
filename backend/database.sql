@@ -102,7 +102,7 @@ CREATE TABLE coupon_conditions (
     attribute VARCHAR(255) NOT NULL,
     operator VARCHAR(10) NOT NULL,
     value VARCHAR(255) NOT NULL,
-    discount_amount DECIMAL(5,2) NOT NULL CHECK (discount_amount >= 0),
+    discount_amount DECIMAL(10,2) NOT NULL CHECK (discount_amount >= 0),
     CONSTRAINT fk_coupon_conditions FOREIGN KEY (coupon_id) REFERENCES coupons(id)
 );
 
@@ -179,10 +179,11 @@ CREATE TABLE supplier_invoices (
     invoice_date DATETIME NOT NULL,
     total_money DECIMAL(10,2) NOT NULL CHECK (total_money >= 0),
     tax_amount DECIMAL(10,2) DEFAULT 0 CHECK (tax_amount >= 0),
-    payment_method ENUM('Bank Transfer', 'Cash'),
+    payment_method ENUM('BankTransfer', 'Cash'),
     payment_status ENUM('Unpaid', 'Paid') DEFAULT 'Unpaid',
     note VARCHAR(255),
     invoice_file VARCHAR(255) NOT NULL,
+    is_used BIT DEFAULT 0,
     CONSTRAINT fk_supplier_invoices_suppliers FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
 );
 
@@ -382,7 +383,11 @@ INSERT INTO coupons (code, is_active) VALUES
 ('SPRING20', 1),           -- Giảm 20% mùa xuân
 ('WINTER25', 1),           -- Giảm 25% mùa đông
 ('FIRSTORDER30', 1),       -- Giảm 30% cho đơn hàng đầu tiên
-('HASFARMANNI20', 1);      -- Giảm 20% dịp kỷ niệm thành lập Hasfarm
+('HASFARMANNI20', 1),      -- Giảm 20% dịp kỷ niệm thành lập Hasfarm
+('CHRISTMAS30OFF', 1),     -- Giảm 30% mùa lễ giáng sinh
+('BLACKFRIDAY20OFF', 1),   -- Giảm 20% mùa lễ Black Friday
+('NEWYEAR10OFF', 1),       -- Giảm 10% mùa lễ năm mới
+('1000SALE200', 1);       -- Giảm 200k cho đơn 1000k trở lên
 
 -- BẢNG DỮ LIỆU COUPON_CONDITIONS
 INSERT INTO coupon_conditions (coupon_id, attribute, operator, value, discount_amount) VALUES
@@ -405,7 +410,11 @@ INSERT INTO coupon_conditions (coupon_id, attribute, operator, value, discount_a
 (8,  'application_date', 'BETWEEN', '2025-06-01,2025-08-31', 15.00),
 (9,  'application_date', 'BETWEEN', '2025-09-01,2025-11-30', 20.00),
 (17, 'application_date', 'BETWEEN', '2025-03-20,2025-05-31', 20.00),
-(18, 'application_date', 'BETWEEN', '2025-12-21,2026-02-28', 25.00);
+(18, 'application_date', 'BETWEEN', '2025-12-21,2026-02-28', 25.00),
+(21,  'minimum_amount',   '>=', '0',           30.00),
+(22,  'minimum_amount',   '>=', '0',           20.00),
+(23,  'minimum_amount',   '>=', '0',           10.00),
+(24,  'minimum_amount_fixed',   '>=', '1000000',           200000.00);
 
 
 -- BẢNG DỮ LIỆU PRODUCT_DISCOUNTS
@@ -647,11 +656,58 @@ INSERT INTO product_images(id,product_id,name) VALUES
 
 -- BẢNG DỮ LIỆU CHATBOT_KNOWLEDGE
 INSERT INTO chatbot_knowledges (title, content, type) VALUES
-('Giới thiệu shop', 'Dalat Hasfarm là cửa hàng hoa tươi, chuyên hoa cưới, hoa sự kiện', 'info'),
-('Hoa cưới', 'Shop có cung cấp hoa cưới, hoa cầm tay cô dâu, hoa trang trí tiệc cưới', 'product'),
-('Giao hàng', 'Shop giao hoa trong nội thành trong vòng 2 giờ', 'policy');
-
+('Giới thiệu về Dalat Hasfarm', 'Dalat Hasfarm là một trong những nhà cung cấp hoa tươi lớn nhất Việt Nam, chuyên cung cấp hoa cưới, hoa sinh nhật, hoa chúc mừng, hoa chia buồn, hoa khai trương và các sản phẩm hoa cao cấp nhập khẩu từ Ecuador, Hà Lan. Chúng tôi cam kết mang đến những bó hoa tươi nhất, đẹp nhất với dịch vụ tận tâm.', 'info'),
+('Giờ làm việc', 'Shop hoạt động từ 7:00 đến 21:00 tất cả các ngày trong tuần, kể cả lễ Tết. Đơn hàng đặt trước 18:00 sẽ được giao trong ngày.', 'info'),
+('Phạm vi giao hoa', 'Chúng tôi giao hoa tận nơi tại TP.HCM, Hà Nội, Đà Nẵng, Cần Thơ và các tỉnh thành lớn khác. Giao nhanh nội thành TP.HCM trong 2-3 giờ. Miễn phí giao với đơn từ 800.000đ trở lên (tùy khu vực).', 'policy'),
+('Chính sách đổi trả', 'Sản phẩm hoa tươi là hàng dễ hỏng nên không áp dụng đổi trả. Nếu có lỗi từ phía shop (hoa héo, sai mẫu), chúng tôi sẽ hoàn tiền 100% hoặc giao lại bó hoa mới miễn phí.', 'policy'),
+('Chính sách bảo mật', 'Chúng tôi cam kết bảo mật thông tin khách hàng. Thông tin chỉ dùng để xử lý đơn hàng và chăm sóc khách hàng, không chia sẻ cho bên thứ ba.', 'policy'),
+('Thanh toán khi nhận hàng', 'Chúng tôi hỗ trợ thanh toán khi nhận hàng (COD) toàn quốc. Quý khách kiểm tra hoa trước khi thanh toán.', 'policy'),
+('Thanh toán chuyển khoản', 'Chuyển khoản qua ngân hàng Vietcombank, Techcombank, Momo, ZaloPay. Sau khi chuyển khoản vui lòng gửi biên lai để chúng tôi xác nhận.', 'policy'),
+('Hoa nhập khẩu Ecuador', 'Hoa hồng Ecuador nổi tiếng với bông to, màu sắc rực rỡ, cánh dày và độ bền cao (tươi trên 10 ngày). Đây là dòng hoa cao cấp nhất hiện nay.', 'product'),
+('Hoa cưới cầm tay', 'Chúng tôi chuyên thiết kế hoa cưới cầm tay theo yêu cầu cô dâu: phong cách cổ điển, hiện đại, boho, minimal. Có thể kết hợp hoa tươi và hoa lụa.', 'product'),
+('Hoa khai trương', 'Kệ hoa khai trương, lẵng hoa chúc mừng với tông màu đỏ - vàng chủ đạo, mang ý nghĩa may mắn, phát tài phát lộc.', 'product'),
+('Hoa sinh nhật', 'Bó hoa sinh nhật đa dạng phong cách: dễ thương, sang trọng, lãng mạn. Có thể thêm thiệp chúc mừng, bánh kem, gấu bông.', 'product'),
+('Hoa chia buồn', 'Kệ hoa, vòng hoa chia buồn tông trắng - tím trang trọng, thể hiện sự tưởng nhớ và chia sẻ sâu sắc.', 'product'),
+('Hoa tặng mẹ', 'Những bó hoa ấm áp, nhẹ nhàng với tông màu pastel, hồng, trắng – gửi gắm tình yêu thương đến mẹ.', 'product'),
+('Cách bảo quản hoa tươi', 'Cắt chéo gốc hoa, thay nước mỗi ngày, để nơi thoáng mát tránh ánh nắng trực tiếp, dùng gói dưỡng hoa đi kèm để hoa tươi lâu hơn.', 'tip'),
+('Làm sao để hoa tươi lâu', 'Tránh để hoa gần trái cây chín (tỏa khí ethylene làm hoa mau tàn), không để gần điều hòa phả trực tiếp, cắt gốc mỗi 2 ngày.', 'tip'),
+('Có giao hoa ngày lễ không', 'Có! Chúng tôi giao hoa tất cả các ngày lễ: Valentine, 8/3, 20/10, Giáng sinh, Tết... Đơn lễ thường rất đông, quý khách nên đặt sớm để giữ mẫu đẹp.', 'policy'),
+('Đặt hoa gấp có được không', 'Có! Giao nhanh trong 2-3 giờ nội thành TP.HCM với phụ phí nhỏ. Vui lòng gọi hotline để được hỗ trợ nhanh nhất.', 'policy'),
+('Có thể đặt hoa theo yêu cầu riêng', 'Hoàn toàn được! Quý khách gửi hình mẫu hoặc mô tả ý tưởng, chúng tôi sẽ thiết kế theo yêu cầu với mức giá phù hợp.', 'service'),
+('Có dịch vụ chụp ảnh hoa không', 'Có! Chúng tôi có đội ngũ chụp ảnh chuyên nghiệp để lưu giữ khoảnh khắc bó hoa đẹp nhất trước khi giao.', 'service'),
+('Có hỗ trợ gói quà không', 'Có! Miễn phí gói quà đẹp mắt với giấy gói cao cấp, nơ, thiệp chúc mừng viết tay.', 'service'),
+('Có bán hoa lẻ không', 'Có! Quý khách có thể mua hoa lẻ theo cành hoặc bó nhỏ tại cửa hàng hoặc đặt online.', 'product'),
+('Hoa có nguồn gốc rõ ràng không', 'Tất cả hoa tại Dalat Hasfarm đều có nguồn gốc rõ ràng, nhập khẩu chính ngạch hoặc trồng tại nông trại Đà Lạt đạt chuẩn.', 'info'),
+('Có chương trình khách hàng thân thiết không', 'Có! Khách hàng tích điểm với mỗi đơn hàng, đổi quà, nhận ưu đãi sinh nhật và mã giảm giá độc quyền.', 'promotion'),
+('Làm sao để nhận mã giảm giá', 'Theo dõi fanpage, đăng ký nhận tin hoặc đặt đơn thường xuyên để nhận mã giảm giá từ hệ thống.', 'promotion'),
+('Có hỗ trợ giao quốc tế không', 'Hiện tại chỉ giao trong nước Việt Nam. Chúng tôi sẽ cập nhật khi mở rộng dịch vụ quốc tế.', 'policy'),
+('Hoa tặng sinh nhật', 'Để tặng sinh nhật, bạn có thể chọn: bó hoa hồng pastel dịu dàng, bó hoa hướng dương rực rỡ (niềm vui, hạnh phúc), hoặc bó hoa baby kèm bóng bay. Nếu muốn sang trọng hơn thì bó hồng Ecuador 50-99 bông là lựa chọn hoàn hảo!', 'advice'),
+('Hoa tặng Valentine', 'Valentine nên chọn hoa hồng đỏ – biểu tượng tình yêu nồng nàn. Dalat Hasfarm có bó 99 hồng đỏ True Love, hộp hoa hồng Ecuador, hoặc bó hồng mix tulip rất lãng mạn. Đặt sớm để giữ được mẫu đẹp nhất nhé!', 'advice'),
+('Hoa tặng 8/3', 'Ngày 8/3 nên tặng hoa cẩm chướng (lòng biết ơn), tulip (tình yêu hoàn hảo), hoặc hoa hồng pastel. Các mẫu hot: bó tulip mix baby, giỏ hoa cẩm tú cầu, hộp hoa tone hồng nhẹ nhàng.', 'advice'),
+('Hoa tặng 20/10', '20/10 nên chọn hoa hồng, cẩm chướng, cúc họa mi hoặc hoa baby – thể hiện sự trân trọng và yêu thương. Các mẫu được ưa chuộng: bó hồng Ecuador, giỏ hoa pastel, bó cúc họa mi tinh khôi.', 'advice'),
+('Hoa khai trương', 'Khai trương nên chọn kệ hoa hoặc lẵng hoa tông đỏ - vàng (may mắn, phát tài): hoa đồng tiền, hướng dương, hồng đỏ, lan hồ điệp. Kệ hoa lớn từ 2-5 triệu rất ấn tượng và chuyên nghiệp.', 'advice'),
+('Hoa chúc mừng', 'Chúc mừng thành công, thăng chức, tốt nghiệp: nên chọn hoa hướng dương (thành công), đồng tiền (may mắn), hoặc lan hồ điệp (phú quý). Kệ hoa hoặc giỏ hoa lớn sẽ rất trang trọng.', 'advice'),
+('Hoa chia buồn', 'Hoa chia buồn nên chọn tông trắng - tím trang nghiêm: hoa cúc trắng, huệ trắng, lay ơn, lan trắng. Kệ hoa hoặc vòng hoa chia buồn được thiết kế tinh tế, thể hiện sự thành kính.', 'advice'),
+('Hoa tặng mẹ', 'Tặng mẹ nên chọn hoa cẩm chướng (lòng biết ơn), hoa hồng tone hồng/pastel, hoặc hoa lan hồ điệp (tình yêu bền vững). Các mẫu nhẹ nhàng, ấm áp sẽ rất ý nghĩa.', 'advice'),
+('Hoa tặng thầy cô', 'Tặng thầy cô ngày 20/11: nên chọn hoa cẩm chướng, hoa baby, hoặc bó hoa hỗn hợp tone pastel. Thêm thiệp viết tay sẽ tăng thêm phần trân trọng.', 'advice'),
+('Hoa thể hiện tình yêu', 'Để bày tỏ tình yêu: hoa hồng đỏ là số 1 (tình yêu nồng nàn), hồng Ecuador cao cấp (tình yêu sang trọng), hồng champagne (tình yêu tinh tế). Số bông ý nghĩa: 11 (mãi mãi), 99 (yêu mãi mãi), 100 (trăm năm hạnh phúc).', 'advice'),
+('Hoa xin lỗi', 'Để xin lỗi: nên chọn hoa hồng hồng (xin lỗi chân thành), hoa baby trắng (sự ngây thơ, trong sáng), hoặc bó tulip trắng. Kèm thiệp xin lỗi viết tay sẽ hiệu quả hơn.', 'advice'),
+('Hoa cảm ơn', 'Cảm ơn nên chọn hoa cẩm chướng (lòng biết ơn), hoa cẩm tú cầu (lòng thành kính), hoặc hoa hướng dương (niềm vui, lạc quan). Giỏ hoa hoặc bình hoa để bàn rất phù hợp.', 'advice'),
+('Hoa chúc sức khỏe', 'Chúc mau khỏe: chọn lan hồ điệp (phúc lộc), hoa đồng tiền (may mắn), hoặc chậu cây xanh (sức sống). Lan hồ điệp 3-5 cành rất được ưa chuộng.', 'advice'),
+('Hoa trang trí văn phòng', 'Trang trí văn phòng: chọn chậu lan hồ điệp, cây lan ý, cây kim tiền, cây ngọc ngân hoặc bình hoa để bàn tone xanh/trắng – tạo cảm giác thư giãn, thanh lịch.', 'advice'),
+('Hoa trang trí nhà', 'Trang trí nhà: chậu cây xanh (lan ý, kim tiền, thường xuân), bình hoa lily/cúc tana, hoặc tiểu cảnh mini. Dễ chăm sóc và mang lại năng lượng tích cực.', 'advice'),
+('Hoa cưới', 'Dalat Hasfarm chuyên hoa cưới cầm tay cô dâu, hoa trang trí tiệc cưới, hoa xe hoa. Có thể thiết kế theo phong cách cổ điển, hiện đại, boho hoặc tone màu riêng theo yêu cầu.', 'category'),
+('Hoa tình yêu', 'Danh mục hoa tình yêu gồm: hồng đỏ, hồng Ecuador, hồng champagne, tulip đỏ/hồng, hoa baby mix hồng. Phù hợp tặng người yêu, kỷ niệm ngày yêu.', 'category'),
+('Hoa sinh nhật', 'Hoa sinh nhật: bó hoa tone pastel, bó hướng dương, bó baby kèm bóng, hộp hoa kèm bánh/nến. Có thể thêm gấu bông hoặc chocolate.', 'category'),
+('Hoa chúc mừng', 'Hoa chúc mừng: kệ hoa lớn, giỏ hoa hướng dương/đồng tiền, lan hồ điệp. Thích hợp khai trương, thăng chức, tốt nghiệp.', 'category'),
+('Hoa chia buồn', 'Hoa chia buồn: kệ hoa trắng/tím, vòng hoa tang lễ, hoa huệ/cúc trắng. Thiết kế trang nghiêm, tinh tế.', 'category'),
+('Hoa cao cấp', 'Hoa cao cấp: hồng Ecuador size lớn, tulip Hà Lan, mẫu đơn châu Âu, cẩm tú cầu premium. Độ bền cao, bông to đẹp.', 'category'),
+('Giỏ và lẵng hoa', 'Giỏ hoa phù hợp tặng sinh nhật, thăm bệnh; lẵng hoa lớn phù hợp khai trương, sự kiện trang trọng.', 'category'),
+('Hoa để bàn', 'Hoa để bàn: bình hoa lily, cúc tana, tulip nhỏ – phù hợp trang trí bàn làm việc, bàn ăn, quầy lễ tân.', 'category'),
+('Hoa nhập khẩu', 'Hoa nhập khẩu: hồng Ecuador, tulip Hà Lan, mẫu đơn, ranunculus – chất lượng cao cấp, màu sắc nổi bật, tươi lâu.', 'category'),
+('Chậu cây xanh', 'Chậu cây trang trí: lan hồ điệp, lan ý, kim tiền, ngọc ngân, thường xuân – dễ chăm sóc, thanh lọc không khí.', 'category');
 
 INSERT INTO users(password,fullname,phone_number,is_active,role_id) VALUES
 ('123456','Khách lẻ','0000000000',1,3),
-('$2a$10$L4d814vtjp0WpqyGcZf0o.Wz8fD0xNv/tGZRfqvGlprU1oZedXbmS', 'LE MANH TUONG', '0000000001', 1, 1);
+('$2a$10$L4d814vtjp0WpqyGcZf0o.Wz8fD0xNv/tGZRfqvGlprU1oZedXbmS', 'LE MANH TUONG', '0000000001', 1, 1),
+('$2a$10$NWDEUoQoLwTGCuoBI5KhS.WOrRMuRohQdN7qvR3X0HZfIDEqHdtPO', 'Le Manh Tuong', '0000000002', 1, 2);

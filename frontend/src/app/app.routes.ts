@@ -21,6 +21,7 @@ import { OrderSearchComponent } from './components/order-search/order-search.com
 import { ProductSearchComponent } from './components/product-search/product-search.component';
 import { OrderHistoryComponent } from './components/order-history/order-history.component';
 import { ChatbotComponent } from './components/chatbot/chatbot.component';
+import { ChangePasswordComponent } from './components/change-password/change-password.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -44,4 +45,5 @@ export const routes: Routes = [
     { path: 'occasion/:id', component: OccasionComponent },
     { path: 'product-search', component: ProductSearchComponent },
     { path: 'chatbot', component: ChatbotComponent },
+    { path: 'change-password', component: ChangePasswordComponent, canActivate:[AuthGuardFn] },
 ];

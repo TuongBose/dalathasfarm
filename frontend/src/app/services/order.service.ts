@@ -37,4 +37,10 @@ export class OrderService {
     getOrdersByUserId(userId: number): Observable<ApiResponse> {
         return this.http.get<ApiResponse>(`${this.apiCreateOrder}/user/${userId}`);
     }
+
+    cancelOrder(id: number): Observable<ApiResponse> {
+        debugger
+        const url = `${this.apiCreateOrder}/cancel/${id}`;
+        return this.http.put<ApiResponse>(url, null);
+    }
 }

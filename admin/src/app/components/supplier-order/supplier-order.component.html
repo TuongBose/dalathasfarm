@@ -1,0 +1,282 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0 fw-bold text-primary">Quản lý đơn đặt hàng nhà cung cấp</h2>
+    <button class="btn btn-success btn-lg shadow-sm d-flex align-items-center gap-2" (click)="openAddSupplierModal()">
+      <i class="fas fa-plus"></i>
+      Tạo đơn đặt hàng mới
+    </button>
+  </div>
+
+  <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr class="text-secondary fw-semibold">
+              <th class="ps-4">ID Đơn</th>
+              <th>Nhà cung cấp</th>
+              <th>Người lập</th>
+              <th>Ngày lập</th>
+              <th class="text-end">Tổng tiền</th>
+              <th>Trạng thái</th>
+              <th>Ghi chú</th>
+              <th class="text-center">Hóa đơn</th>
+              <th class="text-center">Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of supplierOrders; track order.id) {
+            <tr class="border-bottom">
+              <td class="ps-4 fw-medium">#{{ order.id }}</td>
+              <td>
+                <div class="fw-bold">{{ order.supplier.name }}</div>
+                <small class="text-muted">{{ order.supplier.phoneNumber }}</small>
+              </td>
+              <td>
+                <div>{{ order.userResponse.fullName }}</div>
+                <small class="text-muted">{{ order.userResponse.phoneNumber }}</small>
+              </td>
+              <td>{{ order.orderDate | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td class="text-end fw-bold text-success">
+                {{ order.totalMoney | currency:'VND':'symbol':'1.0-0' }}
+              </td>
+              <td>@if (order.status === 'Confirmed') {
+                  <br>
+                <span class="text-success fw-bold" title="Đã xác nhận" style="margin:5px ;">
+                  <i class="fas fa-check-circle"></i> Đã xác nhận
+                </span>
+                }@else {
+                <span class="badge" [class.bg-warning]="order.status === 'Unconfirmed'">
+                  {{ order.status === 'Unconfirmed' ? 'Chưa xác nhận' : 'Đã xác nhận' }}
+                </span>
+              }
+              </td>
+              <td>
+                @if(order.note) {
+                <small>{{ order.note}}</small>
+                } @else {
+                <span class="text-danger">Không ghi chú</span>
+                }
+              </td>
+              <td class="text-center">
+                @if (order.orderFile) {
+                <button type="button" class="btn btn-download" (click)="downloadPdf(order.orderFile,order.id)">
+                  <i class="fas fa-download"></i>
+                  Tải xuống PDF
+                </button>
+
+                <!-- NÚT IN CHỈ IN PDF (bypass cross-origin) -->
+                <button type="button" class="btn btn-print" (click)="printPdfOnly(order.orderFile)">
+                  <i class="fas fa-print"></i>
+                  In hóa đơn
+                </button>
+                } @else {
+                <span class="text-muted small">Chưa có</span>
+                }
+              </td>
+              <td class="text-center">
+                <button class="btn btn-outline-info btn-sm" title="Xem chi tiết" (click)="toggleDetails(order.id)">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <!-- NÚT XÁC NHẬN ĐƠN - CHỈ HIỆN KHI: là admin + đơn Unconfirmed -->
+                @if (isAdmin && order.status === 'Unconfirmed') {
+                <button class="btn btn-success btn-sm" title="Xác nhận đơn đặt hàng" style="margin:5px ;"
+                  (click)="confirmSupplierOrder(order.id)">
+                  <i class="fas fa-check"></i>
+                  Xác nhận đơn
+                </button>
+                }
+              </td>
+            </tr>
+
+            <!-- Chi tiết sản phẩm (expand khi bấm xem) -->
+            @if (expandedOrderId === order.id) {
+            <tr>
+              <td colspan="9" class="p-0">
+                <div class="bg-light p-4">
+                  <h6 class="fw-bold mb-3 text-primary">Chi tiết sản phẩm trong đơn</h6>
+                  <div class="table-responsive">
+                    <table class="table table-sm table-bordered mb-0">
+                      <thead class="table-secondary">
+                        <tr>
+                          <th>STT</th>
+                          <th>Ảnh</th>
+                          <th>Tên sản phẩm</th>
+                          <th class="text-center">SL</th>
+                          <th class="text-end">Đơn giá</th>
+                          <th class="text-end">Thành tiền</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (detail of order.supplierOrderDetailResponses; track detail.productResponse.id; let i =
+                        $index) {
+                        <tr>
+                          <td>{{ i + 1 }}</td>
+                          <td>
+                            <img [src]="getImageUrl(detail.productResponse.thumbnail)" width="50" height="50"
+                              class="rounded" [alt]="detail.productResponse.name">
+                          </td>
+                          <td class="fw-medium">{{ detail.productResponse.name }}</td>
+                          <td class="text-center">{{ detail.quantity }}</td>
+                          <td class="text-end">{{ detail.price | currency:'VND':'symbol':'1.0-0' }}</td>
+                          <td class="text-end fw-bold">{{ detail.totalMoney | currency:'VND':'symbol':'1.0-0' }}</td>
+                        </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            }
+            } @empty {
+            <tr>
+              <td colspan="9" class="text-center py-5 text-muted">
+                <i class="fas fa-clipboard-list fa-3x mb-3 opacity-50"></i><br>
+                Chưa có đơn đặt hàng nào từ nhà cung cấp
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (showCreateModal) {
+<div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fw-bold">
+          <i class="fas fa-plus me-2"></i>
+          Tạo đơn đặt hàng mới
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- CHỌN NHÀ CUNG CẤP + GHI CHÚ -->
+        <div class="row g-4 mb-4">
+          <div class="col-md-6">
+            <label class="form-label fw-bold">Nhà cung cấp <span class="text-danger">*</span></label>
+            <select class="form-select form-select-lg" [(ngModel)]="selectedSupplierId">
+              <option [ngValue]="null">-- Chọn nhà cung cấp --</option>
+              @for (s of suppliers; track s.id) {
+              <option [ngValue]="s.id">{{ s.name }} - {{ s.phoneNumber }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-bold">Ghi chú</label>
+            <textarea class="form-control" rows="3" [(ngModel)]="note" placeholder="Ghi chú cho đơn hàng..."></textarea>
+          </div>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- CHỌN SẢN PHẨM -->
+        <h5 class="mb-3 fw-bold text-primary">Thêm sản phẩm vào đơn</h5>
+        <div class="row g-3 align-items-end mb-4">
+          <div class="col-md-8">
+            <label class="form-label">Chọn sản phẩm</label>
+            <select class="form-select" #productSelect>
+              <option [ngValue]="null">-- Chọn sản phẩm --</option>
+              @for (p of products; track p.id) {
+              <option [value]="p.id">
+                {{ p.name }} (Kho: {{ p.stockQuantity }} | Giá: {{ p.price | currency:'VND':'symbol':'1.0-0' }})
+              </option>
+              }
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Số lượng</label>
+            <input type="number" class="form-control text-center" min="1" [max]="getMaxQuantity(productSelect.value)"
+              #quantityInput value="1">
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-success w-100" (click)="addProductToCart(productSelect.value, quantityInput.value)">
+              <i class="fas fa-plus"></i> Thêm
+            </button>
+          </div>
+        </div>
+
+        <!-- BẢNG SẢN PHẨM ĐÃ CHỌN -->
+        @if (cartItems.length > 0) {
+        <div class="table-responsive">
+          <table class="table table-bordered align-middle">
+            <thead class="table-primary">
+              <tr>
+                <th>STT</th>
+                <th>Sản phẩm</th>
+                <th class="text-center">Kho còn</th>
+                <th class="text-center">Số lượng</th>
+                <th class="text-end">Đơn giá</th>
+                <th class="text-end">Thành tiền</th>
+                <th class="text-center">Xóa</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of cartItems; track item.productId; let i = $index) {
+              <tr>
+                <td>{{ i + 1 }}</td>
+                <td>
+                  <div class="fw-medium">
+                    {{ getProductName(item.productId) }}
+                  </div>
+                </td>
+                <td class="text-center">{{ getProductStock(item.productId) }}</td>
+                <td class="text-center">
+                  <div class="d-flex align-items-center justify-content-center gap-2">
+                    <button class="btn btn-sm btn-outline-secondary"
+                      (click)="decreaseQuantity(item.productId)">-</button>
+                    <span class="fw-bold">{{ item.quantity }}</span>
+                    <button class="btn btn-sm btn-outline-secondary"
+                      (click)="increaseQuantityFromCart(item.productId)">+</button>
+                  </div>
+                </td>
+                <td class="text-end">{{ getProductPrice(item.productId) | currency:'VND':'symbol':'1.0-0' }}</td>
+                <td class="text-end fw-bold text-success">
+                  {{ getItemTotal(item) | currency:'VND':'symbol':'1.0-0' }}
+                </td>
+                <td class="text-center">
+                  <button class="btn btn-sm btn-outline-danger" (click)="removeFromCart(item.productId)">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr class="table-info">
+                <td colspan="5" class="text-end fw-bold fs-5">TỔNG TIỀN</td>
+                <td class="text-end fw-bold fs-5 text-success">
+                  {{ getTotalMoney() | currency:'VND':'symbol':'1.0-0' }}
+                </td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        } @else {
+        <div class="text-center py-5 text-muted">
+          <i class="fas fa-shopping-cart fa-3x mb-3 opacity-50"></i>
+          <p>Chưa chọn sản phẩm nào</p>
+        </div>
+        }
+      </div>
+
+      <div class="modal-footer border-0 bg-light">
+        <button type="button" class="btn btn-secondary btn-lg px-4" (click)="closeModal()">Hủy</button>
+        <button type="button" class="btn btn-success btn-lg px-5"
+          [disabled]="cartItems.length === 0 || !selectedSupplierId" (click)="createOrder()">
+          <i class="fas fa-paper-plane me-2"></i>
+          Tạo đơn đặt hàng
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+}

@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -31,6 +32,6 @@ public class UserDto {
     private String phoneNumber;
 
     private String email;
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
     private String profileImage;
 }

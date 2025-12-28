@@ -111,7 +111,11 @@ export class CartService {
     }
 
     public forceRefreshCart(): void {
-    this.refreshCart();
-    this.cartChanged.emit();
-  }
+        this.refreshCart();
+        this.cartChanged.emit();
+    }
+
+    getQuantityInCart(productId: number): number {
+        return this.cart.get(productId) || 0;
+    }
 }

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: "DejaVu Sans", sans-serif; margin: 0; padding: 30px; color: #000; font-size: 13px; }
+        .container { max-width: 900px; margin: auto; }
+        .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+        .title { font-size: 24px; font-weight: bold; text-transform: uppercase; }
+        .invoice-no { font-size: 18px; font-weight: bold; margin: 10px 0; }
+        .info-table { width: 100%; margin: 20px 0; border-collapse: collapse; }
+        .info-table td { padding: 8px; vertical-align: top; }
+        .label { font-weight: bold; width: 180px; }
+        table.items { width: 100%; border-collapse: collapse; margin: 30px 0; }
+        table.items th, table.items td { border: 1px solid #000; padding: 10px; text-align: center; }
+        table.items th { background: #f0f0f0; font-weight: bold; }
+        .text-left { text-align: left !important; }
+        .text-right { text-align: right !important; }
+        .total-row { background: #f5f5f5; font-weight: bold; font-size: 14px; }
+        .tax-info { margin: 30px 0; }
+        .signature { margin-top: 80px; display: flex; justify-content: space-between; text-align: center; }
+        .sig-box { width: 250px; }
+        .sig-title { font-weight: bold; font-size: 14px; margin-bottom: 50px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="title">HÓA ĐƠN GIÁ TRỊ GIA TĂNG</div>
+        <div class="invoice-no">Mã hóa đơn: {{invoiceNumber}}</div>
+        <div>Ngày {{invoiceDay}} tháng {{invoiceMonth}} năm {{invoiceYear}}</div>
+    </div>
+
+    <table class="info-table">
+        <tr>
+            <td class="label">Đơn vị bán hàng:</td>
+            <td><strong>{{supplierName}}</strong></td>
+        </tr>
+        <tr>
+            <td class="label">Địa chỉ:</td>
+            <td>{{supplierAddress}}</td>
+        </tr>
+        <tr>
+            <td class="label">Điện thoại:</td>
+            <td>{{supplierPhone}}</td>
+        </tr>
+        <tr><td colspan="2"><br></br></td></tr>
+        <tr>
+            <td class="label">Đơn vị mua hàng:</td>
+            <td><strong>CÔNG TY TNHH DALAT HASFARM</strong></td>
+        </tr>
+        <tr>
+            <td class="label">Mã số thuế:</td>
+            <td>5800000167-001</td>
+        </tr>
+        <tr>
+            <td class="label">Địa chỉ:</td>
+            <td>56 Nơ Trang Long, Phường 14, Quận Bình Thạnh, TP. Hồ Chí Minh</td>
+        </tr>
+        <tr>
+            <td class="label">Hình thức thanh toán:</td>
+            <td>Chuyển khoản</td>
+        </tr>
+    </table>
+
+    <table class="items">
+        <thead>
+        <tr>
+            <th>STT</th>
+            <th>Mã hàng</th>
+            <th>Tên hàng hóa, dịch vụ</th>
+            <th>ĐVT</th>
+            <th>Số lượng</th>
+            <th>Đơn giá</th>
+            <th>Thành tiền</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{items}}
+        </tbody>
+        <tfoot>
+        <tr class="total-row">
+            <td colspan="6" class="text-right"><strong>Tổng tiền thanh toán:</strong></td>
+            <td class="text-right"><strong>{{totalAmount}}</strong></td>
+        </tr>
+        </tfoot>
+    </table>
+
+    <div class="tax-info">
+        <p><strong>Số tiền viết bằng chữ:</strong> {{totalAmountInWords}}</p>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; text-align: center; margin-top: 50px;">
+        <tr>
+            <td style="width: 50%; vertical-align: top; border: none">
+                <div class="sig-title">Nhà cung cấp xác nhận</div>
+                <div class="sig-note">(Ký, ghi rõ họ tên)</div>
+                <div style="height: 60px;"></div>
+            </td>
+
+            <td style="width: 50%; vertical-align: top; border: none">
+                <div class="sig-title">Quản lý</div>
+                <div class="sig-note">(Ký, ghi rõ họ tên)</div>
+                <div style="height: 60px;"></div>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

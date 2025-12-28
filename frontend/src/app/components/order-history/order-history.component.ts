@@ -90,6 +90,34 @@ export class OrderHistoryComponent extends BaseComponent implements OnInit {
     })
   }
 
+  async cancelOrder(orderId: number) {
+    const result = await this.toastService.showConfirmToast({
+      message: 'Bạn có chắc muốn hủy đơn hàng này?',
+      title: 'Xác nhận hủy',
+      type: 'warning',
+      okText: 'Hủy',
+      cancelText: 'Hủy'
+    });
+    if (result) {
+      this.orderService.cancelOrder(orderId).subscribe({
+        next: () => {
+          this.toastService.showToast({
+            defaultMsg: 'Đơn hàng đã được hủy thành công!',
+            type: 'success',
+            delay: 4000
+          });
+          this.loadOrders(); // Refresh danh sách để cập nhật trạng thái
+        },
+        error: (err) => {
+          this.toastService.showToast({
+            defaultMsg: 'Hủy đơn thất bại: ' + (err.error?.message || 'Lỗi server'),
+            type: 'danger'
+          });
+        }
+      });
+    }
+  }
+
   loadOrderDetails(orderId: number) {
     this.orderDetailService.getOrderDetailsByOrderId(orderId).subscribe({
       next: (apiResponse: ApiResponse) => {

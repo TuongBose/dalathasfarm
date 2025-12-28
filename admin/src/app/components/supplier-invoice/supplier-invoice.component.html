@@ -1,0 +1,136 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0 fw-bold text-primary">Quản lý hóa đơn từ nhà cung cấp</h2>
+  </div>
+
+  <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr class="text-secondary fw-semibold">
+              <th class="ps-4">ID Đơn</th>
+              <th class="ps-4">Số hóa đơn</th>
+              <th>Nhà cung cấp</th>
+              <th>Ngày lập</th>
+              <th class="text-end">Tổng tiền</th>
+              <th>Đã sử dụng</th>
+              <th>Ghi chú</th>
+              <th class="text-center">Hóa đơn</th>
+              <th class="text-center">Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of supplierInvoices; track order.id) {
+            <tr class="border-bottom">
+              <td class="ps-4 fw-medium">#{{ order.id }}</td>
+              <td class="ps-4 fw-medium">#{{ order.invoiceNumber }}</td>
+              <td>
+                <div class="fw-bold">{{ order.supplier.name }}</div>
+                <small class="text-muted">{{ order.supplier.phoneNumber }}</small>
+              </td>
+              <td>{{ order.invoiceDate | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td class="text-end fw-bold text-success">
+                {{ order.totalMoney | currency:'VND':'symbol':'1.0-0' }}
+              </td>
+              <td>@if (order.isUsed) {
+                <br>
+                <span class="text-success fw-bold" title="Đã xác nhận" style="margin:5px ;">
+                  <i class="fas fa-check-circle"></i> Đã sử dụng
+                </span>
+                }@else {
+                <span class="badge" [class.bg-warning]="order.isUsed === false">
+                  {{ order.isUsed === false ? 'Chưa xử dụng' : 'Đã sử dụng' }}
+                </span>
+                }
+              </td>
+              <td>
+                @if(order.note) {
+                <small>{{ order.note}}</small>
+                } @else {
+                <span class="text-danger">Không ghi chú</span>
+                }
+              </td>
+              <td class="text-center">
+                @if (order.invoiceFile) {
+                <button type="button" class="btn btn-download" (click)="downloadPdf(order.invoiceFile,order.id)">
+                  <i class="fas fa-download"></i>
+                  Tải xuống PDF
+                </button>
+
+                <!-- NÚT IN CHỈ IN PDF (bypass cross-origin) -->
+                <button type="button" class="btn btn-print" (click)="printPdfOnly(order.invoiceFile)">
+                  <i class="fas fa-print"></i>
+                  In hóa đơn
+                </button>
+                } @else {
+                <span class="text-muted small">Chưa có</span>
+                }
+              </td>
+              <td class="text-center">
+                <button class="btn btn-outline-info btn-sm" title="Xem chi tiết" (click)="toggleDetails(order.id)">
+                  <i class="fas fa-eye"></i>
+                </button>
+                @if (!order.isUsed) {
+                <button class="btn btn-success btn-sm" title="Đánh dấu đã nhập hàng" (click)="markAsUsed(order.id)" style="margin:5px">
+                  <i class="fas fa-truck-loading me-1"></i>
+                  Nhập hàng
+                </button>
+                }
+              </td>
+            </tr>
+
+            <!-- Chi tiết sản phẩm (expand khi bấm xem) -->
+            @if (expandedOrderId === order.id) {
+            <tr>
+              <td colspan="9" class="p-0">
+                <div class="bg-light p-4">
+                  <h6 class="fw-bold mb-3 text-primary">Chi tiết sản phẩm trong đơn</h6>
+                  <div class="table-responsive">
+                    <table class="table table-sm table-bordered mb-0">
+                      <thead class="table-secondary">
+                        <tr>
+                          <th>STT</th>
+                          <th>Ảnh</th>
+                          <th>Tên sản phẩm</th>
+                          <th class="text-center">SL</th>
+                          <th class="text-end">Đơn giá</th>
+                          <th class="text-end">Thành tiền</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (detail of order.supplierInvoiceDetailResponses; track detail.productResponse.id; let i =
+                        $index) {
+                        <tr>
+                          <td>{{ i + 1 }}</td>
+                          <td>
+                            <img [src]="getImageUrl(detail.productResponse.thumbnail)" width="50" height="50"
+                              class="rounded" [alt]="detail.productResponse.name">
+                          </td>
+                          <td class="fw-medium">{{ detail.productResponse.name }}</td>
+                          <td class="text-center">{{ detail.quantity }}</td>
+                          <td class="text-end">{{ detail.price | currency:'VND':'symbol':'1.0-0' }}</td>
+                          <td class="text-end fw-bold">{{ detail.totalMoney | currency:'VND':'symbol':'1.0-0' }}</td>
+                        </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            }
+            } @empty {
+            <tr>
+              <td colspan="9" class="text-center py-5 text-muted">
+                <i class="fas fa-clipboard-list fa-3x mb-3 opacity-50"></i><br>
+                Chưa có đơn đặt hàng nào từ nhà cung cấp
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

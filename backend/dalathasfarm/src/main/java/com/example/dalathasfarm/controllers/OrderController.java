@@ -139,6 +139,20 @@ public class OrderController {
                 .build());
     }
 
+    @PutMapping("/status-admin")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER') or hasRole('ROLE_EMPLOYEE')")
+    public ResponseEntity<ResponseObject> updateStatusOrderAdmin(
+            @RequestParam(name = "status") String status,
+            @RequestParam(name = "orderId") int orderId
+    ) throws Exception {
+        OrderResponse orderResponse = orderService.updateStatusAdmin(status, orderId);
+        return ResponseEntity.ok(ResponseObject.builder()
+                .message("Update status order successfully")
+                .status(HttpStatus.OK)
+                .data(orderResponse)
+                .build());
+    }
+
     @GetMapping("/get-all-order-by-keyword")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity<ResponseObject> getAllOrderByKeyword(
@@ -195,25 +209,12 @@ public class OrderController {
                     .build());
         }
 
-        OrderDto orderDto = OrderDto.builder()
-                .userId(orderResponse.getUserId())
-                /*
-                .email(order.getEmail())
-                .note(order.getNote())
-                .address(order.getAddress())
-                .fullName(order.getFullName())
-                .totalMoney(order.getTotalMoney())
-                .couponCode(order.getCoupon().getCode())
-                */
-                .status(Order.OrderStatus.Cancelled.name())
-                .build();
-
-        Order order = orderService.updateOrder(id, orderDto);
+        orderService.cancelOrder(id);
         return ResponseEntity.ok(
                 ResponseObject.builder()
                         .message("Cancel order successfully")
                         .status(HttpStatus.OK)
-                        .data(order)
+                        .data(null)
                         .build());
     }
 

@@ -1,4 +1,5 @@
 import 'package:android/app_config.dart';
+import 'package:android/dtos/feed_back_dto.dart';
 import 'package:android/models/product.dart';
 import 'package:android/responses/feedback_response.dart';
 import 'package:android/services/product_service.dart';
@@ -23,10 +24,146 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Product? _product;
   List<FeedbackResponse> _feedbacks = [];
   bool _isLoading = true;
-  bool _isFavorite = false;
+  // bool _isFavorite = false; // Thêm sản phẩm yêu thích, thay thế vào thêm vào giỏ hàng giống như 1 sản phẩm yêu thích
   int _quantity = 1;
   int _currentImageIndex = 0;
   final PageController _pageController = PageController();
+
+  int _selectedStars = 0;
+  final TextEditingController _feedbackController = TextEditingController();
+  bool _isSubmittingFeedback = false;
+
+  void _showFeedbackDialog() {
+    if (!AppConfig.isLogin || AppConfig.currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Vui lòng đăng nhập để viết đánh giá'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text(
+          'Viết đánh giá của bạn',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF4A7C59)),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Bạn đánh giá sản phẩm này bao nhiêu sao?'),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(5, (index) {
+                  return IconButton(
+                    onPressed: () {
+                      setState(() => _selectedStars = index + 1);
+                      Navigator.pop(ctx); // Đóng dialog cũ
+                      _showFeedbackDialog(); // Mở lại để cập nhật sao
+                    },
+                    icon: Icon(
+                      Icons.star,
+                      color: index < _selectedStars ? Colors.amber : Colors.grey[300],
+                      size: 36,
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _feedbackController,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  hintText: 'Chia sẻ trải nghiệm của bạn...',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Color(0xFF4A7C59)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Hủy'),
+          ),
+          ElevatedButton(
+            onPressed: _isSubmittingFeedback
+                ? null
+                : () async {
+              if (_selectedStars == 0) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Vui lòng chọn số sao')),
+                );
+                return;
+              }
+              if (_feedbackController.text.trim().isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Vui lòng nhập nội dung đánh giá')),
+                );
+                return;
+              }
+
+              setState(() => _isSubmittingFeedback = true);
+
+              try {
+                final feedbackDto = FeedbackDto(
+                  userId: AppConfig.currentUser!.id,
+                  content: _feedbackController.text.trim(),
+                  star: _selectedStars,
+                  productId: widget.productId,
+                );
+
+                await FeedbackService().createFeedback(feedbackDto);
+
+                _feedbackController.clear();
+                setState(() => _selectedStars = 0);
+
+                Navigator.pop(ctx); // Đóng dialog
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Gửi đánh giá thành công! Cảm ơn bạn'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+
+                // Reload lại đánh giá
+                _loadProductDetail();
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Gửi thất bại: $e'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              } finally {
+                if (mounted) setState(() => _isSubmittingFeedback = false);
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4A7C59)),
+            child: _isSubmittingFeedback
+                ? const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+            )
+                : const Text('Gửi đánh giá', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -60,6 +197,87 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     }
   }
 
+  void _addToCart() {
+    if (_product == null) return;
+    final cart = Provider.of<CartProvider>(context, listen: false);
+    final currentQuantityInCart = cart.getQuantity(widget.productId);
+    final totalQuantity = currentQuantityInCart + _quantity;
+
+    if (totalQuantity > _product!.stockQuantity) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Không thể thêm! Sản phẩm "${_product!.name}" không đủ hàng trong kho (Còn ${_product!.stockQuantity} sản phẩm). '
+                'Hiện tại bạn đã có $currentQuantityInCart trong giỏ.',
+          ),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5),
+        ),
+      );
+      return;
+    }
+
+    cart.addItem(widget.productId, quantity: _quantity);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Đã thêm $_quantity sản phẩm vào giỏ hàng'),
+        backgroundColor: const Color(0xFF4A7C59),
+      ),
+    );
+
+    setState(() => _quantity = 1);
+  }
+
+  void _incrementQuantity() {
+    if (_product == null) return;
+
+    final cart = Provider.of<CartProvider>(context, listen: false);
+    final currentInCart = cart.getQuantity(widget.productId);
+    final totalAfterIncrease = currentInCart + _quantity + 1;
+
+    if (totalAfterIncrease <= _product!.stockQuantity) {
+      setState(() => _quantity++);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Không thể tăng thêm! Tổng số lượng sẽ vượt quá tồn kho (${_product!.stockQuantity} sản phẩm).',
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  void _decrementQuantity() {
+    if (_quantity > 1) {
+      setState(() => _quantity--);
+    }
+  }
+
+  Widget _buildCouponItem(String code, String description) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: RichText(
+        text: TextSpan(
+          style: const TextStyle(fontSize: 17, color: Colors.black87, height: 1.5),
+          children: [
+            TextSpan(
+              text: '• $code: ',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.red,
+                fontSize: 18,
+              ),
+            ),
+            TextSpan(text: description),
+          ],
+        ),
+      ),
+    );
+  }
+
   String getImageUrl(String? fileName) {
     if (fileName == null || fileName.isEmpty) {
       return 'https://via.placeholder.com/400';
@@ -84,17 +302,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     return images;
   }
 
-  void _incrementQuantity() {
-    if (_product != null && _quantity < _product!.stockQuantity) {
-      setState(() => _quantity++);
-    }
-  }
-
-  void _decrementQuantity() {
-    if (_quantity > 1) {
-      setState(() => _quantity--);
-    }
-  }
+  // void _incrementQuantity() {
+  //   if (_product != null && _quantity < _product!.stockQuantity) {
+  //     setState(() => _quantity++);
+  //   }
+  // }
+  //
+  // void _decrementQuantity() {
+  //   if (_quantity > 1) {
+  //     setState(() => _quantity--);
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -496,27 +714,28 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 onPressed:
                                     _product!.stockQuantity == 0
                                         ? null // Disable nếu hết hàng
-                                        : () {
-                                          if (_product == null) return;
-                                          // Add to cart logic
-                                            cart.addItem(
-                                              widget.productId,
-                                              quantity: _quantity,
-                                            );
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Đã thêm $_quantity sản phẩm vào giỏ hàng',
-                                              ),
-                                              backgroundColor: const Color(
-                                                0xFF4A7C59,
-                                              ),
-                                            ),
-                                          );
-                                          setState(() => _quantity = 1);
-                                        },
+                                    :_addToCart,
+                                        // : () {
+                                        //   if (_product == null) return;
+                                        //   // Add to cart logic
+                                        //     cart.addItem(
+                                        //       widget.productId,
+                                        //       quantity: _quantity,
+                                        //     );
+                                        //   ScaffoldMessenger.of(
+                                        //     context,
+                                        //   ).showSnackBar(
+                                        //     SnackBar(
+                                        //       content: Text(
+                                        //         'Đã thêm $_quantity sản phẩm vào giỏ hàng',
+                                        //       ),
+                                        //       backgroundColor: const Color(
+                                        //         0xFF4A7C59,
+                                        //       ),
+                                        //     ),
+                                        //   );
+                                        //   setState(() => _quantity = 1);
+                                        // },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:
                                       _product!.stockQuantity == 0
@@ -575,10 +794,44 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 "li": Style(margin: Margins(bottom: Margin(4))),
                               },
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 32),
 
+                            // === PHẦN KHUYẾN MÃI MỚI ===
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(20),
+                              margin: const EdgeInsets.symmetric(horizontal: 0),
+                              decoration: BoxDecoration(
+                                color: Colors.red.withOpacity(0.05),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: Colors.red.withOpacity(0.3), width: 2),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Nhập mã để nhận khuyến mãi:',
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.red,
+                                      fontFamily: 'Sainte Colombe', // Nếu bạn có font này trong pubspec.yaml
+                                      height: 1.4,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  _buildCouponItem('BLACKFRIDAY20OFF', 'Giảm 20% Black Friday'),
+                                  _buildCouponItem('CHRISTMAS30OFF', 'Giảm 30% mùa lễ Giáng sinh'),
+                                  _buildCouponItem('NEWYEAR10OFF', 'Giảm 10% chúc mừng năm mới'),
+                                  _buildCouponItem('HAS10OFF', 'Giảm 10% cho đơn hàng từ 500.000đ trở lên'),
+                                  _buildCouponItem('1000SALE200', 'Giảm 200.000đ cho đơn hàng từ 1.000.000đ trở lên'),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 32),
                             const Text(
-                              'Thư viện ảnh sản phẩm',
+                              'Thư viện hình ảnh sản phẩm',
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -627,6 +880,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton.icon(
+                                onPressed: _showFeedbackDialog,
+                                icon: const Icon(Icons.rate_review_outlined, color: Color(0xFF4A7C59)),
+                                label: const Text(
+                                  'Viết đánh giá',
+                                  style: TextStyle(color: Color(0xFF4A7C59), fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                            ),
+
                             const Divider(height: 32),
 
                             if (_feedbacks.isEmpty)

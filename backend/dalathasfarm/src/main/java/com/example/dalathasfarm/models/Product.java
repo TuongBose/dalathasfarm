@@ -19,7 +19,7 @@ public class Product extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
 
@@ -37,11 +37,11 @@ public class Product extends BaseEntity{
     @Min(0)
     private Integer stockQuantity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "occasion_id")
     private Occasion occasion;
 

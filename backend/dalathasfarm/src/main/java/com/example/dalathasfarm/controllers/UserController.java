@@ -2,10 +2,7 @@ package com.example.dalathasfarm.controllers;
 
 import com.example.dalathasfarm.components.LocalizationUtils;
 import com.example.dalathasfarm.components.SecurityUtils;
-import com.example.dalathasfarm.dtos.RefreshTokenDTO;
-import com.example.dalathasfarm.dtos.UpdateUserDto;
-import com.example.dalathasfarm.dtos.UserDto;
-import com.example.dalathasfarm.dtos.UserLoginDto;
+import com.example.dalathasfarm.dtos.*;
 import com.example.dalathasfarm.exceptions.DataNotFoundException;
 import com.example.dalathasfarm.exceptions.InvalidPasswordException;
 import com.example.dalathasfarm.models.Token;
@@ -40,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @RestController
@@ -469,5 +467,27 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PutMapping("/change-password/{userId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER') or hasRole('ROLE_EMPLOYEE')")
+    public ResponseEntity<ResponseObject> changePassword(
+            @PathVariable int userId,
+            @Valid @RequestBody ChangePasswordDto changePasswordDto) throws Exception {
+
+        User loginUser = securityUtils.getLoggedInUser();
+        if (!Objects.equals(loginUser.getId(), userId)) {
+            return ResponseEntity.badRequest().body(ResponseObject.builder()
+                    .message("You do not have permission to change password")
+                    .status(HttpStatus.BAD_REQUEST)
+                    .data(null)
+                    .build());
+        }
+        userService.changePassword(userId, changePasswordDto);
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK)
+                .message("Đổi mật khẩu thành công. Vui lòng đăng nhập lại trên tất cả thiết bị.")
+                .data(null)
+                .build());
     }
 }

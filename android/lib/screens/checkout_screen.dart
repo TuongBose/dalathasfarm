@@ -15,6 +15,7 @@ import '../dtos/cart_item_dto.dart';
 import '../dtos/order_dto.dart';
 import '../models/address.dart';
 import '../providers/cart_provider.dart';
+import '../services/coupon_service.dart';
 import '../services/order_service.dart';
 import '../services/payment_service.dart';
 import 'default_screen.dart';
@@ -60,6 +61,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   double _couponDiscount = 0;
   bool _couponApplied = false;
 
+  final CouponService _couponService = CouponService();
+  bool _isApplyingCoupon = false;
+
   @override
   void initState() {
     super.initState();
@@ -79,7 +83,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Future<void> _loadAddressData() async {
     try {
-      final String response = await rootBundle.loadString(        'assets/openapi.json',      );
+      final String response = await rootBundle.loadString(
+        'assets/openapi.json',
+      );
       final List<dynamic> data = json.decode(response);
       _provinces = data.map((e) => Province.fromJson(e)).toList();
       if (mounted) setState(() {});
@@ -201,7 +207,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  void _applyCoupon() {
+  Future<void> _applyCoupon() async {
     final code = _couponController.text.trim();
     if (code.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -211,28 +217,56 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
 
     if (_couponApplied) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Đã áp dụng mã giảm giá')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Bạn đã áp dụng mã giảm giá rồi!')),
+      );
       return;
     }
 
-    // Simulate API call to validate coupon
-    setState(() {
-      _couponCode = code;
-      _couponDiscount = 50000; // Demo
-      _couponApplied = true;
-      _calculateTotal();
-    });
+    setState(() => _isApplyingCoupon = true);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Áp dụng mã "$code" thành công! Giảm ${_formatCurrency(_couponDiscount)}',
+    try {
+      final discount = await _couponService.calculateCouponValue(
+        code,
+        _totalAmount + _couponDiscount,
+      );
+
+      if (discount <= 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Mã giảm giá không hợp lệ hoặc không áp dụng được'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        setState(() => _isApplyingCoupon = false);
+        return;
+      }
+
+      setState(() {
+        _couponCode = code;
+        _couponDiscount = discount;
+        _couponApplied = true;
+        _calculateTotal();
+        _isApplyingCoupon = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Áp dụng mã "$code" thành công! Giảm ${_formatCurrency(discount)}',
+          ),
+          backgroundColor: Colors.green,
         ),
-        backgroundColor: Colors.green,
-      ),
-    );
+      );
+    } catch (e) {
+      setState(() => _isApplyingCoupon = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceAll('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void _removeCoupon() {
@@ -243,6 +277,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       _couponApplied = false;
       _calculateTotal();
     });
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Đã xóa mã giảm giá')));
   }
 
   Future<void> _placeOrder() async {
@@ -270,44 +307,67 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.grey[50],
-        title: const Text('Xác nhận đặt hàng', style: TextStyle(fontWeight: FontWeight.bold)),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Họ tên: ${'$_lastName $_firstName'.trim()}', style: const TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
-              Text('Số điện thoại: +84 $_phoneNumber'),
-              const SizedBox(height: 8),
-              Text('Địa chỉ: ${_shippingMethod == 'Ship'
-              ? '$_addressDetail, ${_selectedWard?.name}, ${_selectedDistrict?.name}, ${_selectedProvince?.name}'
-                  : 'Lấy tại cửa hàng'}'),
-              const SizedBox(height: 8),
-              Text('Ngày nhận: ${DateFormat('dd/MM/yyyy').format(_shippingDate!)}'),
-              const SizedBox(height: 8),
-              Text('Phương thức thanh toán: ${_paymentMethod == 'Cash' ? 'Thanh toán khi nhận hàng (COD)' : 'Thanh toán VNPAY'}'),
-              const SizedBox(height: 8),
-              Text('Ghi chú: ${_note.isEmpty ? 'Không có' : _note}'),
-              const Divider(height: 20),
-              Text('Tổng tiền: ${_formatCurrency(_totalAmount)}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF4A7C59))),
+      builder:
+          (ctx) => AlertDialog(
+            backgroundColor: Colors.grey[50],
+            title: const Text(
+              'Xác nhận đặt hàng',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Họ tên: ${'$_lastName $_firstName'.trim()}',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 8),
+                  Text('Số điện thoại: +84 $_phoneNumber'),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Địa chỉ: ${_shippingMethod == 'Ship' ? '$_addressDetail, ${_selectedWard?.name}, ${_selectedDistrict?.name}, ${_selectedProvince?.name}' : 'Lấy tại cửa hàng'}',
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Ngày nhận: ${DateFormat('dd/MM/yyyy').format(_shippingDate!)}',
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Phương thức thanh toán: ${_paymentMethod == 'Cash' ? 'Thanh toán khi nhận hàng (COD)' : 'Thanh toán VNPAY'}',
+                  ),
+                  const SizedBox(height: 8),
+                  Text('Ghi chú: ${_note.isEmpty ? 'Không có' : _note}'),
+                  const Divider(height: 20),
+                  Text(
+                    'Tổng tiền: ${_formatCurrency(_totalAmount)}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF4A7C59),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false), // Hủy
+                child: const Text('Hủy', style: TextStyle(color: Colors.red)),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(ctx, true), // Xác nhận
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4A7C59),
+                ),
+                child: const Text(
+                  'Xác nhận đặt hàng',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
             ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false), // Hủy
-            child: const Text('Hủy', style: TextStyle(color: Colors.red)),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true), // Xác nhận
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4A7C59)),
-            child: const Text('Xác nhận đặt hàng', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
     );
 
     // Nếu người dùng bấm Hủy → không làm gì
@@ -344,14 +404,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         await orderService.placeOrder(order);
         cart.clear();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Đặt hàng thành công!'), backgroundColor: Colors.green),
+          const SnackBar(
+            content: Text('Đặt hàng thành công!'),
+            backgroundColor: Colors.green,
+          ),
         );
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const DefaultScreen()), (route) => false);
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const DefaultScreen()),
+          (route) => false,
+        );
         return;
-      }else {
+      } else {
         final paymentService = PaymentService();
         final paymentUrl = await paymentService.createPaymentUrl(
-            PaymentDto(amount: _totalAmount, language: 'vn'));
+          PaymentDto(amount: _totalAmount, language: 'vn'),
+        );
         final uri = Uri.parse(paymentUrl);
         final vnpTxnRef = uri.queryParameters['vnp_TxnRef'];
         order.vnpTxnRef = vnpTxnRef;
@@ -361,8 +429,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) =>
-                  PaymentWebView(
+              builder:
+                  (_) => PaymentWebView(
                     paymentUrl: paymentUrl,
                     paymentMethod: _paymentMethod,
                     totalPrice: _totalAmount.toInt(),
@@ -389,7 +457,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Đặt hàng thất bại: $e'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('Đặt hàng thất bại: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {
@@ -1196,62 +1267,120 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 children: [
                   Expanded(
                     child: TextField(
-                      decoration: const InputDecoration(
-                        hintText: 'Mã giảm giá',
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
+                      controller: _couponController,
+                      enabled: !_couponApplied && !_isApplyingCoupon,
+                      decoration: InputDecoration(
+                        hintText: 'Nhập mã giảm giá',
+                        border: const OutlineInputBorder(),
+                        suffixIcon:
+                            _isApplyingCoupon
+                                ? const Padding(
+                                  padding: EdgeInsets.all(12),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                : null,
                       ),
-                      onChanged: (value) => _couponCode = value,
                     ),
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton(
-                    onPressed: _applyCoupon,
+                    onPressed: _isApplyingCoupon ? null : _applyCoupon,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF4A7C59),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
+                        horizontal: 20,
+                        vertical: 14,
                       ),
                     ),
-                    child: const Text(
-                      'ÁP DỤNG',
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    child:
+                        _isApplyingCoupon
+                            ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                            : Text(
+                              _couponApplied ? 'ĐÃ ÁP DỤNG' : 'ÁP DỤNG',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                   ),
                 ],
               ),
               if (_couponApplied) ...[
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.check_circle,
-                      color: Colors.green,
-                      size: 16,
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        'Mã "$_couponCode" đã áp dụng',
-                        style: const TextStyle(
-                          color: Colors.green,
-                          fontSize: 12,
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.green),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Đã áp dụng mã "$_couponCode" – Giảm ${_formatCurrency(_couponDiscount)}',
+                          style: const TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close, size: 16),
-                      onPressed: _removeCoupon,
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
-                  ],
+                      IconButton(
+                        icon: const Icon(Icons.close, size: 20),
+                        padding: EdgeInsets.zero,
+                        onPressed: _removeCoupon,
+                        color: Colors.green[700],
+                      ),
+                    ],
+                  ),
                 ),
               ],
+              // if (_couponApplied) ...[
+              //   const SizedBox(height: 8),
+              //   Row(
+              //     children: [
+              //       const Icon(
+              //         Icons.check_circle,
+              //         color: Colors.green,
+              //         size: 16,
+              //       ),
+              //       const SizedBox(width: 4),
+              //       Expanded(
+              //         child: Text(
+              //           'Mã "$_couponCode" đã áp dụng',
+              //           style: const TextStyle(
+              //             color: Colors.green,
+              //             fontSize: 12,
+              //           ),
+              //         ),
+              //       ),
+              //       IconButton(
+              //         icon: const Icon(Icons.close, size: 16),
+              //         onPressed: _removeCoupon,
+              //         padding: EdgeInsets.zero,
+              //         constraints: const BoxConstraints(),
+              //       ),
+              //     ],
+              //   ),
+              // ],
             ],
           ),
         ),

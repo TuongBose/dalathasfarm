@@ -1,8 +1,14 @@
 package com.example.dalathasfarm.services.SupplierOrder;
 
+import com.example.dalathasfarm.dtos.SupplierOrderDto;
+import com.example.dalathasfarm.responses.supplierorder.SupplierOrderResponse;
+
+import java.util.List;
+
 public interface ISupplierOrderService {
-    void getAllSupplierOrder();
+    List<SupplierOrderResponse> getAllSupplierOrder();
     void deleteSupplierOrder();
     void updateSupplierOrder();
-    void createSupplierOrder();
+    SupplierOrderResponse createSupplierOrder(SupplierOrderDto supplierOrderDto) throws Exception;
+    void updateStatusSupplierOrder(int id, String status) throws Exception;
 }

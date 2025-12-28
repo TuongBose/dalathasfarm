@@ -33,9 +33,83 @@ export class OrdersComponent extends BaseComponent implements OnInit {
   searchUserId: string = '';
   searchKeyword: string = '';
 
+  selectedStatuses: { [orderId: number]: string } = {};
+
   ngOnInit(): void {
     this.getAllOrder();
     this.currentPage = Number(localStorage.getItem('currentProductPage')) || 0;
+  }
+
+  hasStatusChanged(orderId: number, newStatus: string): boolean {
+    const currentOrder = this.orderResponses.find(o => o.id === orderId);
+    return currentOrder ? currentOrder.status !== newStatus : false;
+  }
+
+  async cancelOrderByAdmin(orderId: number) {
+    const result = await this.toastService.showConfirmToast({
+      message: 'Bạn có chắc muốn hủy đơn hàng này?',
+      title: 'Xác nhận hủy',
+      type: 'warning',
+      okText: 'Hủy',
+      cancelText: 'Hủy'
+    });
+    if (result) {
+
+      this.orderService.cancelOrder(orderId).subscribe({
+        next: () => {
+          this.toastService.showToast({
+            defaultMsg: `Đơn hàng #${orderId} đã được HỦY thành công!`,
+            type: 'success',
+            delay: 4000
+          });
+          this.getAllOrder(); // Refresh danh sách
+        },
+        error: (err) => {
+          this.toastService.showToast({
+            defaultMsg: 'Hủy đơn thất bại: ' + (err.error?.message || 'Lỗi server'),
+            type: 'danger'
+          });
+        }
+      });
+    }
+  }
+
+  async updateOrderStatus(orderId: number) {
+    const newStatus = this.selectedStatuses[orderId];
+    if (!newStatus || !this.hasStatusChanged(orderId, newStatus)) {
+      this.toastService.showToast({
+        defaultMsg: 'Vui lòng chọn trạng thái mới khác với hiện tại',
+        type: 'warning'
+      });
+      return;
+    }
+
+    const result = await this.toastService.showConfirmToast({
+      message: `Bạn có chắc muốn cập nhật trạng thái đơn hàng #${orderId} thành "${this.getStatusText(newStatus)}"?`,
+      title: 'Xác nhận cập nhật',
+      type: 'warning',
+      okText: 'OK',
+      cancelText: 'Hủy'
+    });
+    if (result) {
+
+      this.orderService.updateStatus(orderId, newStatus).subscribe({
+        next: () => {
+          this.toastService.showToast({
+            defaultMsg: `Cập nhật trạng thái đơn #${orderId} thành công!`,
+            type: 'success',
+            delay: 3000
+          });
+          this.getAllOrder(); // Refresh danh sách
+        },
+        error: (err) => {
+          this.toastService.showToast({
+            defaultMsg: 'Cập nhật thất bại: ' + (err.error?.message || 'Lỗi server'),
+            type: 'danger'
+          });
+        }
+      });
+    }
   }
 
   getImage(imageName: string): string {
@@ -48,6 +122,10 @@ export class OrdersComponent extends BaseComponent implements OnInit {
         debugger
         this.orderResponses = response.data.orderResponses;
         this.totalPages = response.data.totalPages;
+
+        this.orderResponses.forEach(order => {
+          this.selectedStatuses[order.id] = order.status;
+        });
       },
       complete: () => { debugger },
       error: (error: HttpErrorResponse) => {
@@ -200,7 +278,7 @@ export class OrdersComponent extends BaseComponent implements OnInit {
       this.searchUserId = '';
     }
   }
-  
+
   get isAnyFilterFilled(): boolean {
     return this.isOrderIdFilled || this.isUserIdFilled || this.isKeywordFilled;
   }

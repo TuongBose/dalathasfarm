@@ -16,11 +16,11 @@ public class PurchaseOrderDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "purchase_order_id", nullable = false)
     private PurchaseOrder purchaseOrder;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 

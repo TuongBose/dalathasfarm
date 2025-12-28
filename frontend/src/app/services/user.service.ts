@@ -7,6 +7,8 @@ import { UserResponse } from '../responses/user/user.response';
 import { RegisterDto } from '../dtos/user/register.dto';
 import { LoginDto } from '../dtos/user/login.dto';
 import { UpdateUserDto } from '../dtos/user/update.user.dto';
+import { ChangePasswordDto } from '../dtos/user/change-password.dto';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +22,7 @@ export class UserService {
   private apiConfig = {
     headers: this.createHeads(),
   }
-  constructor(private http: HttpClient,) { }
+  constructor(private http: HttpClient, private tokenService: TokenService) { }
 
   private createHeads(): HttpHeaders {
     return new HttpHeaders({
@@ -105,5 +107,13 @@ export class UserService {
         Authorization: `Bearer ${token}`
       })
     })
+  }
+
+  changePassword(changePasswordDto: ChangePasswordDto,): Observable<ApiResponse> {
+    const userId = this.tokenService.getUserId();
+    return this.http.put<ApiResponse>(
+      `${environment.apiBaseUrl}/users/change-password/${userId}`,
+      changePasswordDto
+    );
   }
 }

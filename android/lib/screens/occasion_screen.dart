@@ -5,6 +5,7 @@ import 'package:android/models/category.dart';
 import 'package:android/models/product.dart';
 import 'package:android/screens/cart_screen.dart';
 import 'package:android/screens/product_detail_screen.dart';
+import 'package:android/screens/product_screen.dart';
 import 'package:android/services/category_service.dart';
 import 'package:android/services/occasion_service.dart';
 import 'package:android/services/product_service.dart';
@@ -36,6 +37,321 @@ class OccasionScreenState extends State<OccasionScreen> {
   int _currentBannerIndex = 0;
 
   final TextEditingController _searchController = TextEditingController();
+
+  String _currentKeyword = '';
+  int _currentCategoryId = 0;
+  int _currentOccasionId = 0;
+
+  int get _activeFilterCount {
+    int count = 0;
+    if (_currentCategoryId != 0) count++;
+    if (_currentOccasionId != 0) count++;
+    return count;
+  }
+
+  void _performSearch() {
+    final keyword = _searchController.text.trim();
+    final hasFilter = keyword.isNotEmpty || _activeFilterCount > 0;
+
+    if (hasFilter) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ProductScreen(
+            keyword: keyword,
+            categoryId: _currentCategoryId,
+            occasionId: _currentOccasionId,
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _showFilterBottomSheet() async {
+    final CategoryService categoryService = CategoryService();
+    final OccasionService occasionService = OccasionService();
+
+    List<Category> categories = [];
+    List<Occasion> occasions = [];
+
+    bool isLoading = true;
+    String? error;
+
+    try {
+      final results = await Future.wait([
+        categoryService.getAllCategory(0, 50),
+        occasionService.getAllOccasion(0, 50),
+      ]);
+      categories = results[0] as List<Category>;
+      occasions = results[1] as List<Occasion>;
+      isLoading = false;
+    } catch (e) {
+      error = 'Không thể tải bộ lọc';
+      isLoading = false;
+    }
+
+    if (!mounted) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder:
+          (context) => StatefulBuilder(
+        builder:
+            (context, setSheetState) => DraggableScrollableSheet(
+          initialChildSize: 0.9,
+          maxChildSize: 0.9,
+          minChildSize: 0.5,
+          expand: false,
+          builder:
+              (context, scrollController) => Container(
+            padding: const EdgeInsets.all(20),
+            child:
+            isLoading
+                ? const Center(
+              child: CircularProgressIndicator(),
+            )
+                : error != null
+                ? Center(
+              child: Text(
+                error,
+                style: const TextStyle(color: Colors.red),
+              ),
+            )
+                : Column(
+              children: [
+                // Tiêu đề
+                Row(
+                  children: [
+                    const Text(
+                      'Lọc sản phẩm',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF4A7C59),
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed:
+                          () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+                const Divider(height: 30),
+
+                // Danh mục
+                Expanded(
+                  child: ListView(
+                    controller: scrollController,
+                    children: [
+                      const Text(
+                        'Danh mục',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children:
+                        categories
+                            .map(
+                              (cat) => FilterChip(
+                            label: Text(cat.name),
+                            selected:
+                            _currentCategoryId ==
+                                cat.id,
+                            onSelected: (selected) {
+                              setSheetState(() {
+                                _currentCategoryId =
+                                selected
+                                    ? cat.id
+                                    : 0;
+                              });
+                              setSheetState(() {});
+                              // Navigator.pop(context);
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder:
+                              //         (_) => ProductScreen(
+                              //           keyword: _searchController.text.trim(),
+                              //           categoryId: _currentCategoryId,
+                              //           occasionId: _currentOccasionId,
+                              //         ),
+                              //   ),
+                              // );
+                            },
+                            backgroundColor:
+                            Colors.grey[100],
+                            selectedColor:
+                            const Color(
+                              0xFF4A7C59,
+                            ),
+                            labelStyle: TextStyle(
+                              color:
+                              _currentCategoryId ==
+                                  cat.id
+                                  ? Colors.white
+                                  : Colors
+                                  .black87,
+                            ),
+                            checkmarkColor:
+                            Colors.white,
+                          ),
+                        )
+                            .toList(),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Dịp lễ
+                      const Text(
+                        'Dịp lễ / Sự kiện',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children:
+                        occasions
+                            .map(
+                              (occ) => FilterChip(
+                            label: Text(occ.name),
+                            selected:
+                            _currentOccasionId ==
+                                occ.id,
+                            onSelected: (selected) {
+                              setSheetState(() {
+                                _currentOccasionId =
+                                selected
+                                    ? occ.id
+                                    : 0;
+                              });
+                              setSheetState(() {});
+                              // Navigator.pop(context);
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder:
+                              //         (_) => ProductScreen(
+                              //           keyword: _searchController.text.trim(),
+                              //           categoryId: _currentCategoryId,
+                              //           occasionId: _currentOccasionId,
+                              //         ),
+                              //   ),
+                              // );
+                            },
+                            backgroundColor:
+                            Colors.grey[100],
+                            selectedColor:
+                            const Color(
+                              0xFF4A7C59,
+                            ),
+                            labelStyle: TextStyle(
+                              color:
+                              _currentOccasionId ==
+                                  occ.id
+                                  ? Colors.white
+                                  : Colors
+                                  .black87,
+                            ),
+                            checkmarkColor:
+                            Colors.white,
+                          ),
+                        )
+                            .toList(),
+                      ),
+                      const SizedBox(height: 80),
+                    ],
+                  ),
+                ),
+                // Nút Áp dụng (cố định dưới cùng)
+                // Container(
+                //   width: double.infinity,
+                //   height: 56,
+                //   decoration: BoxDecoration(
+                //     color: const Color(0xFF4A7C59),
+                //     borderRadius: BorderRadius.circular(30),
+                //     boxShadow: [
+                //       BoxShadow(
+                //         color: Colors.black.withOpacity(
+                //           0.1,
+                //         ),
+                //         blurRadius: 10,
+                //       ),
+                //     ],
+                //   ),
+                //   child: ElevatedButton(
+                //     onPressed: () {
+                //       // Cập nhật giá trị chính thức
+                //       setState(() {
+                //         _currentCategoryId = tempCategoryId;
+                //         _currentOccasionId = tempOccasionId;
+                //       });
+                //       Navigator.pop(context);
+                //
+                //       // Chỉ chuyển trang nếu có ít nhất 1 filter (hoặc có keyword)
+                //       final hasFilter =
+                //           _currentCategoryId != 0 ||
+                //           _currentOccasionId != 0 ||
+                //           _searchController.text
+                //               .trim()
+                //               .isNotEmpty;
+                //       if (hasFilter) {
+                //         Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //             builder:
+                //                 (_) => ProductScreen(
+                //                   keyword:
+                //                       _searchController.text
+                //                           .trim(),
+                //                   categoryId:
+                //                       _currentCategoryId,
+                //                   occasionId:
+                //                       _currentOccasionId,
+                //                 ),
+                //           ),
+                //         );
+                //       }
+                //     },
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: Colors.transparent,
+                //       shadowColor: Colors.transparent,
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(
+                //           30,
+                //         ),
+                //       ),
+                //     ),
+                //     child: const Text(
+                //       'Áp dụng bộ lọc',
+                //       style: TextStyle(
+                //         fontSize: 18,
+                //         fontWeight: FontWeight.bold,
+                //         color: Colors.white,
+                //       ),
+                //     ),
+                //   ),
+                // ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -135,18 +451,24 @@ class OccasionScreenState extends State<OccasionScreen> {
                 child: Column(
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
                           icon: const Icon(
                             Icons.arrow_back_ios,
                             color: Color(0xFF4A7C59),
                           ),
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              '/default',
+                                  (route) => false,
+                              arguments: 0,
+                            );
+                          },
                         ),
                         const Spacer(),
-                        Text(
-                          _occasion!.name,
+                        const Text(
+                          'DalatHasfarm',
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
@@ -154,6 +476,12 @@ class OccasionScreenState extends State<OccasionScreen> {
                             fontFamily: 'Cursive',
                           ),
                         ),
+                        // Image.asset(
+                        //   'assets/images/logo.png',
+                        //   height: 80,
+                        //   width: 200,
+                        //   fit: BoxFit.fill,
+                        // ),
                         const Spacer(),
                         IconButton(
                           icon: const Icon(
@@ -226,46 +554,99 @@ class OccasionScreenState extends State<OccasionScreen> {
                             ),
                             child: TextField(
                               controller: _searchController,
+                              textInputAction: TextInputAction.search,
+                              onSubmitted: (value) {
+                                final keyword = value.trim();
+                                if (keyword.isNotEmpty ||
+                                    _activeFilterCount > 0) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (_) => ProductScreen(
+                                        keyword: keyword,
+                                        categoryId: _currentCategoryId,
+                                        occasionId: _currentOccasionId,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
                               decoration: InputDecoration(
                                 hintText: 'Tìm kiếm sản phẩm',
                                 hintStyle: TextStyle(color: Colors.grey[400]),
-                                prefixIcon: Icon(
-                                  Icons.search,
-                                  color: Colors.grey[400],
+                                prefixIcon: IconButton(
+                                  icon: Icon(Icons.search,color: Colors.grey[400],),
+                                  onPressed: _performSearch,
                                 ),
                                 // suffixIcon: Icon(
                                 //   Icons.mic_none,
                                 //   color: Colors.grey[400],
                                 // ),
+                                suffixIcon:
+                                _searchController.text.isNotEmpty
+                                    ? IconButton(
+                                  icon: const Icon(Icons.clear),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    setState(() {});
+                                  },
+                                )
+                                    : null,
                                 border: InputBorder.none,
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 16,
                                   vertical: 14,
                                 ),
                               ),
+                              onChanged: (value) => setState(() {}),
                             ),
                           ),
                         ),
                         const SizedBox(width: 12),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 10,
-                                offset: const Offset(0, 2),
+                        Stack(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.tune,
-                              color: Color(0xFF4A7C59),
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.tune,
+                                  color: Color(0xFF4A7C59),
+                                ),
+                                onPressed: _showFilterBottomSheet,
+                              ),
                             ),
-                            onPressed: () {},
-                          ),
+                            if (_activeFilterCount > 0)
+                              Positioned(
+                                right: 6,
+                                top: 6,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    '$_activeFilterCount',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ],
                     ),

@@ -15,7 +15,9 @@ public interface IOrderService {
     Order getOrderByTxnRef(String txnRef) throws Exception;
     List<OrderResponse> getOrderByUserId(Integer userId) throws Exception;
     Order updateOrder(Integer id, OrderDto orderDto) throws Exception;
+    void cancelOrder(Integer id) throws Exception;
     void deleteOrder(Integer id) throws Exception;
     Page<OrderResponse> getAllOrderByKeyword(String keyword, Pageable pageable);
     OrderResponse updateStatus(String status, String vnpTxnRef) throws Exception;
+    OrderResponse updateStatusAdmin(String status, int orderId) throws Exception;
 }

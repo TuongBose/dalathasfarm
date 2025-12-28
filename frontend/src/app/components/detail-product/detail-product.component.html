@@ -75,12 +75,25 @@
         <div class="mt-5" style="font-family:'Sainte Colombe', serif ;font-size: 25px;" [innerHTML]="componentsHtml">
         </div>
 
+        <div class="mt-5 text-danger" style="font-family:'Sainte Colombe', serif ;font-size: 25px;">
+          Nhập mã để nhận khuyến mãi:
+          <ul>
+            <li>BLACKFRIDAY20OFF: giảm 20% Black Friday</li>
+            <li>CHRISTMAS30OFF: giảm 30% mùa lễ giáng sinh</li>
+            <li>NEWYEAR10OFF: giảm 10% chức mừng năm mới </li>
+            <li>HAS10OFF: giảm 10% cho đơn hàng từ 500.000 trở lên </li>
+            <li>1000SALE200: giảm 200.000đ cho đơn hàng từ 1.000.000 trở lên </li>
+          </ul>
+        </div>
+
         }@else {
         <span class="badge bg-danger">Hết hàng</span>
         }
       </div>
     </div>
   </div>
+
+
 
   <!-- Feedback Section -->
   <div class="feedback-summary row align-items-center mb-4 p-4 bg-light rounded">
@@ -94,7 +107,7 @@
         <i class="far fa-star text-warning fs-4"></i>
         }
       </div>
-      <p class="text-muted small">Based on {{ totalReviews }} Reviews</p>
+      <p class="text-muted small">Dựa trên {{ totalReviews }} lượt đánh giá</p>
     </div>
 
     <div class="col-md-5">
@@ -118,10 +131,10 @@
         }
       </div>
       <div class="recommend-badge bg-success text-white px-3 py-2 rounded">
-        <strong>{{ recommendPercent }}%</strong> reviewers would recommend this product
+        <strong>{{ recommendPercent }}%</strong> người đánh giá muốn gợi ý sản phẩm này
       </div>
       <button class="btn btn-outline-primary mt-3" (click)="openReviewModal()">
-        <i class="fas fa-pen"></i> Write a Review
+        <i class="fas fa-pen"></i> Viết đánh giá của bạn
       </button>
 
       <!-- MODAL ĐÁNH GIÁ -->
@@ -183,7 +196,7 @@
 
   <!-- SORT + REVIEWS -->
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="text-success">Reviews {{ totalReviews }}</h5>
+    <h5 class="text-success">Lượt đánh giá {{ totalReviews }}</h5>
   </div>
   <hr>
 

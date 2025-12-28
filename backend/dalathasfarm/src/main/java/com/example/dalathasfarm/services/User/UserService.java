@@ -2,6 +2,7 @@ package com.example.dalathasfarm.services.User;
 
 import com.example.dalathasfarm.components.JwtTokenUtils;
 import com.example.dalathasfarm.components.LocalizationUtils;
+import com.example.dalathasfarm.dtos.ChangePasswordDto;
 import com.example.dalathasfarm.dtos.UpdateUserDto;
 import com.example.dalathasfarm.dtos.UserDto;
 import com.example.dalathasfarm.dtos.UserLoginDto;
@@ -26,8 +27,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static org.apache.xmpbox.type.Types.Date;
 
 @RequiredArgsConstructor
 @Service
@@ -57,7 +62,7 @@ public class UserService implements IUserService {
                 .fullName(userDto.getFullName())
                 .password(userDto.getPassword())
                 .address(userDto.getAddress())
-                .dateOfBirth(userDto.getDateOfBirth())
+                .dateOfBirth(LocalDate.now())
                 .profileImage(userDto.getProfileImage())
                 .role(roleCustomer)
                 .isActive(true)
@@ -126,7 +131,7 @@ public class UserService implements IUserService {
                 .phoneNumber(userDto.getPhoneNumber())
                 .email(userDto.getEmail())
                 .address(userDto.getAddress())
-                .dateOfBirth(userDto.getDateOfBirth())
+                .dateOfBirth(LocalDate.now())
                 .role(roleAdmin)
                 .isActive(true)
                 .build();
@@ -304,5 +309,29 @@ public class UserService implements IUserService {
             throw new DataNotFoundException("User not found");
         }
         return optionalUser.get();
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(int userId, ChangePasswordDto changePasswordDto) throws Exception {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), existingUser.getPassword())) {
+            throw new InvalidPasswordException("Mật khẩu cũ không chính xác");
+        }
+        if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getRetypeNewPassword())) {
+            throw new InvalidPasswordException("Mật khẩu mới và nhập lại không khớp");
+        }
+        if (changePasswordDto.getOldPassword().equals(changePasswordDto.getNewPassword())) {
+            throw new InvalidPasswordException("Mật khẩu mới phải khác mật khẩu cũ");
+        }
+
+        String encodedNewPassword = passwordEncoder.encode(changePasswordDto.getNewPassword());
+        existingUser.setPassword(encodedNewPassword);
+        userRepository.save(existingUser);
+
+        List<Token> tokens = tokenRepository.findByUser(existingUser);
+        tokenRepository.deleteAll(tokens);
     }
 }

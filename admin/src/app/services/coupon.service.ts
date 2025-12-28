@@ -12,12 +12,12 @@ export class CouponService {
     private apiBaseUrl = environment.apiBaseUrl;
 
     constructor(private http: HttpClient) { }
-    calculateCouponValue(couponCode: string, totalAmount: number): Observable<ApiResponse> {
-        const url = `${this.apiBaseUrl}/coupons/calculate`;
-        const params = new HttpParams()
-            .set('couponCode', couponCode)
-            .set('totalAmount', totalAmount.toString());
 
-        return this.http.get<ApiResponse>(url, { params });
+    getAllCoupon(): Observable<ApiResponse> {
+        return this.http.get<ApiResponse>(`${this.apiBaseUrl}/coupons`)
+    }
+
+    updateStatusCoupon(id:number): Observable<ApiResponse> {
+        return this.http.put<ApiResponse>(`${this.apiBaseUrl}/coupons/${id}`,null)
     }
 }

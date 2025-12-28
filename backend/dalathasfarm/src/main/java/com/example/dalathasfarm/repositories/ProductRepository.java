@@ -37,4 +37,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
 //    @Query("SELECT p FROM Product p JOIN p.favorites f WHERE f.user.id = :userId")
 //    List<Product> findFavoriteProductsByUserId(@Param("userId") int userId);
+
+    List<Product> findByStockQuantityLessThanOrderByStockQuantityAsc(int threshold);
 }

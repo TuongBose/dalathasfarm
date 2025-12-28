@@ -45,4 +45,19 @@ export class OrderService {
             .set('limit', limit.toString());
         return this.http.get<ApiResponse>(`${this.apiCreateOrder}/get-all-order-by-keyword`, { params })
     }
+
+    updateStatus(orderId: number, status: string): Observable<ApiResponse> {
+        debugger
+        const params = new HttpParams()
+            .set('status', status.toString())
+            .set('orderId', orderId.toString());
+        const url = `${environment.apiBaseUrl}/orders/status-admin`;
+        return this.http.put<ApiResponse>(url, null, { params });
+    }
+
+    cancelOrder(id: number): Observable<ApiResponse> {
+        debugger
+        const url = `${this.apiCreateOrder}/cancel/${id}`;
+        return this.http.put<ApiResponse>(url, null);
+    }
 }

@@ -146,6 +146,19 @@
                                 </button>
                             </div>
                             }
+
+                            @if (order.status.toLowerCase() === 'pending') {
+                            <div class="mt-4">
+                                <button class="btn btn-danger w-100 py-3 rounded-pill shadow-sm"
+                                    (click)="$event.stopPropagation(); cancelOrder(order.id)">
+                                    <i class="fas fa-times-circle me-2"></i>
+                                    Hủy đơn hàng này
+                                </button>
+                                <small class="text-muted d-block text-center mt-2">
+                                    Bạn chỉ có thể hủy khi đơn hàng đang chờ xác nhận
+                                </small>
+                            </div>
+                            }
                         </div>
                     </div>
                 </div>

@@ -27,11 +27,11 @@ public class CouponCondition {
     @Column(nullable = false)
     private String value;
 
-    @Column(precision = 5, scale = 2)
+    @Column(precision = 10, scale = 2)
     @DecimalMin(value = "0.0", inclusive = true)
     private BigDecimal discountAmount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "coupon_id", nullable = false)
     private Coupon coupon;
 }

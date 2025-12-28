@@ -136,9 +136,26 @@ export class DetailProductComponent extends BaseComponent implements OnInit {
 
   addToCart(): void {
     debugger
-
     this.isPressAddToCart = true;
-    if (this.product) {
+    if (!this.product) {
+      console.error("Sản phẩm không tồn tại");
+      return;
+    } else {
+      console.error("Không thể thêm sản phẩm vào giỏ hàng vì San Phẩm là Null.");
+    }
+
+    const currentQuantityInCart = this.cartService.getQuantityInCart(this.product.id);
+    const totalQuantity = currentQuantityInCart + this.quantity
+
+    if (totalQuantity > this.product.stockQuantity) {
+      this.toastService.showToast({
+        defaultMsg: `Sản phẩm "${this.product.name}" không đủ hàng trong kho (Còn ${this.product.stockQuantity} sản phẩm). Hiện tại bạn đã có ${currentQuantityInCart} trong giỏ.`,
+        title: 'Thông báo',
+        delay: 5000,
+        type: 'danger'
+      });
+      return;
+    } else {
       this.cartService.addToCart(this.product.id, this.quantity);
       this.toastService.showToast({
         defaultMsg: 'Thêm vào giỏ hàng thành công',
@@ -146,9 +163,6 @@ export class DetailProductComponent extends BaseComponent implements OnInit {
         delay: 3000,
         type: 'success'
       });
-    }
-    else {
-      console.error("Không thể thêm sản phẩm vào giỏ hàng vì San Phẩm là Null.");
     }
   }
 
@@ -200,13 +214,23 @@ export class DetailProductComponent extends BaseComponent implements OnInit {
   submitFeedback(): void {
     this.user = this.userService.getUserFromLocalStorage();
     if (this.user == null) {
-      this.router.navigate(['/login']);
+      this.toastService.showToast({
+          defaultMsg: 'Đánh giá thất bại, bạn chưa đăng nhập',
+          title: 'Thông báo',
+          delay: 3000,
+          type: 'danger'
+        });
       return;
     }
 
     const token = this.tokenService.getToken();
     if (!token) {
-      this.router.navigate(['/login']);
+      this.toastService.showToast({
+          defaultMsg: 'Đánh giá thất bại, bạn chưa đăng nhập',
+          title: 'Thông báo',
+          delay: 3000,
+          type: 'danger'
+        });
       return;
     }
 

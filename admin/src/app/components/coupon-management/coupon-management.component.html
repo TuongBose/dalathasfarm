@@ -1,0 +1,133 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0 fw-bold text-primary">Quản lý mã giảm giá (Coupon)</h2>
+    <button class="btn btn-success btn-lg shadow-sm d-flex align-items-center gap-2">
+      <i class="fas fa-plus"></i>
+      Tạo coupon mới
+    </button>
+  </div>
+
+  <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+    <div class="card-header bg-light">
+      <h5 class="mb-0 fw-semibold">Danh sách coupon</h5>
+    </div>
+    <div class="card-body p-0">
+      @if (loading) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      } @else {
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr class="text-secondary fw-semibold">
+              <th class="ps-4">ID</th>
+              <th>Mã coupon</th>
+              <th>Trạng thái</th>
+              <th>Số điều kiện</th>
+              <th class="text-center">Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (coupon of coupons; track coupon.id) {
+            <tr class="border-bottom">
+              <td class="ps-4 fw-medium">#{{ coupon.id }}</td>
+              <td>
+                <span class="fw-bold text-primary fs-5">{{ coupon.code }}</span>
+              </td>
+              <td>
+                <span class="badge px-3 py-2" 
+                      [class.bg-success]="coupon.isActive"
+                      [class.bg-secondary]="!coupon.isActive">
+                  {{ coupon.isActive ? 'Hoạt động' : 'Ngừng hoạt động' }}
+                </span>
+              </td>
+              <td>
+                <span class="fw-medium">
+                  {{ couponConditions[coupon.id]?.length || 0 }} điều kiện
+                </span>
+              </td>
+              <td class="text-center">
+  <div class="d-flex gap-2 justify-content-center">
+    <!-- Nút xem điều kiện -->
+    <button class="btn btn-outline-info btn-sm" 
+            (click)="toggleDetails(coupon.id)"
+            title="Xem điều kiện áp dụng">
+      <i class="fas fa-eye"></i>
+    </button>
+
+    <!-- NÚT BẬT/TẮT COUPON -->
+    <button class="btn btn-sm px-3"
+            [class.btn-success]="!coupon.isActive"
+            [class.btn-secondary]="coupon.isActive"
+            (click)="toggleCouponStatus(coupon.id)"
+            title="{{ coupon.isActive ? 'Tắt coupon' : 'Bật coupon' }}">
+      <i class="fas me-1"
+         [class.fa-toggle-on]="coupon.isActive"
+         [class.fa-toggle-off]="!coupon.isActive"></i>
+      {{ coupon.isActive ? 'Bật' : 'Tắt' }}
+    </button>
+  </div>
+</td>
+            </tr>
+
+            <!-- CHI TIẾT ĐIỀU KIỆN (EXPAND) -->
+            @if (expandedCouponId === coupon.id) {
+            <tr>
+              <td colspan="5" class="p-0 bg-light">
+                <div class="p-4">
+                  <h6 class="fw-bold text-primary mb-3">
+                    <i class="fas fa-list-ul me-2"></i>
+                    Điều kiện áp dụng cho coupon: <strong>{{ coupon.code }}</strong>
+                  </h6>
+                  @if (couponConditions[coupon.id] && couponConditions[coupon.id].length > 0) {
+                  <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                      <thead class="bg-secondary text-white">
+                        <tr>
+                          <th>STT</th>
+                          <th>Điều kiện</th>
+                          <th>Toán tử</th>
+                          <th>Giá trị</th>
+                          <th>Giảm giá</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (condition of couponConditions[coupon.id]; track condition.id; let i = $index) {
+                        <tr>
+                          <td>{{ i + 1 }}</td>
+                          <td>{{ getAttributeText(condition.attribute) }}</td>
+                          <td class="text-center fw-bold">{{ getOperatorText(condition.operator) }}</td>
+                          <td class="text-end">{{ condition.value  }}</td>
+                          <td class="text-end text-success fw-bold">
+                            {{ condition.discountAmount  }}
+                          </td>
+                        </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                  } @else {
+                  <p class="text-muted">Không có điều kiện nào được thiết lập.</p>
+                  }
+                </div>
+              </td>
+            </tr>
+            }
+            } @empty {
+            <tr>
+              <td colspan="5" class="text-center py-5 text-muted">
+                <i class="fas fa-ticket-alt fa-3x mb-3 opacity-50"></i><br>
+                Chưa có coupon nào
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      }
+    </div>
+  </div>
+</div>

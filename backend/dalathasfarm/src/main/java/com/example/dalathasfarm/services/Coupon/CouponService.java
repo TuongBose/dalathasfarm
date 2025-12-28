@@ -1,5 +1,6 @@
 package com.example.dalathasfarm.services.Coupon;
 
+import com.example.dalathasfarm.exceptions.DataNotFoundException;
 import com.example.dalathasfarm.models.Coupon;
 import com.example.dalathasfarm.models.CouponCondition;
 import com.example.dalathasfarm.repositories.CouponConditionRepository;
@@ -28,6 +29,19 @@ public class CouponService implements ICouponService {
         return calculateDiscount(coupon, totalAmount);
     }
 
+    @Override
+    public List<Coupon> getAllCoupon() {
+        return couponRepository.findAll();
+    }
+
+    @Override
+    public void updateStatusCoupon(Integer id) throws Exception{
+        Coupon existingCoupon = couponRepository.findById(id)
+                .orElseThrow(()->new DataNotFoundException("Coupon does not exist"));
+        existingCoupon.setIsActive(!existingCoupon.getIsActive());
+        couponRepository.save(existingCoupon);
+    }
+
     private double calculateDiscount(Coupon coupon, double totalAmount) {
         List<CouponCondition> conditions = couponConditionRepository.findByCouponId(coupon.getId());
         double discount = 0.0;
@@ -41,6 +55,12 @@ public class CouponService implements ICouponService {
             double percentDiscount = Double.parseDouble(String.valueOf(condition.getDiscountAmount()));
 
             switch (attribute) {
+                case "minimum_amount_fixed":
+                    double amount = Double.parseDouble(value);
+                    if (compareNumber(updatedTotalAmount, amount, operator)) {
+                        discount = percentDiscount;
+                    }
+                    break;
                 case "minimum_amount":
                     double requiredAmount = Double.parseDouble(value);
                     if (compareNumber(updatedTotalAmount, requiredAmount, operator)) {

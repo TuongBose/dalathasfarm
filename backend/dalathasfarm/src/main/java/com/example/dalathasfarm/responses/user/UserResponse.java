@@ -4,6 +4,7 @@ import com.example.dalathasfarm.models.Role;
 import com.example.dalathasfarm.models.User;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -16,7 +17,7 @@ public class UserResponse {
     private String fullName;
     private String address;
     private String phoneNumber;
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
     private String email;
     private Boolean isActive;
     private String profileImage;

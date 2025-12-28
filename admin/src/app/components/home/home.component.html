@@ -8,12 +8,17 @@
     <a routerLink="/home/products">Quản lý sản phẩm</a>
     <a routerLink="/home/categories">Quản lý danh mục sản phẩm</a>
     <a routerLink="/home/occasions">Quản lý dịp, sự kiện</a>
-    <a routerLink="/home/showtimes">Quản lý khuyến mãi</a>
     <a routerLink="/home/orders">Quản lý đơn hàng</a>
+    <a routerLink="/home/coupons">Quản lý khuyến mãi</a>
     <a routerLink="/home/suppliers">Quản lý nhà cung cấp</a>
+    <a routerLink="/home/supplier-orders">Quản lý phiếu đặt hàng</a>
+    <a routerLink="/home/supplier-invoices">Quản lý hóa đơn từ nhà cung cấp</a>
+    <a routerLink="/home/purchase-orders">Quản lý đơn nhập kho</a>
+    @if(isAdmin){
     <a routerLink="/home/customers">Quản lý tài khoản khách hàng</a>
     <a routerLink="/home/admins">Quản lý tài khoản Admin</a>
     <a routerLink="/home/employees">Quản lý tài khoản nhân viên</a>
+    }
     <hr />
     <a (click)="logout()" class="text-danger" style="cursor: pointer;">Đăng xuất</a>
   </div>

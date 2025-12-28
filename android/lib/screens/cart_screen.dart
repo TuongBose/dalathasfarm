@@ -19,6 +19,9 @@ class _CartScreenState extends State<CartScreen> {
   bool _isLoading = true;
   final TextEditingController _searchController = TextEditingController();
 
+  bool _hasStockIssue = false;
+  List<int> _errorIndices = [];
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +49,9 @@ class _CartScreenState extends State<CartScreen> {
         loadedProducts.add(product);
       }
 
+      // Check stock quantity
+      _checkStockIssues(loadedProducts, cart);
+
       setState(() {
         _products = loadedProducts;
         _isLoading = false;
@@ -58,6 +64,54 @@ class _CartScreenState extends State<CartScreen> {
         ).showSnackBar(SnackBar(content: Text('Lỗi tải sản phẩm: $e')));
       }
     }
+  }
+
+  void _checkStockIssues(List<Product> products, CartProvider cart) {
+    _errorIndices.clear();
+    bool hasIssue = false;
+
+    for (int i = 0; i < products.length; i++) {
+      final qty = cart.getQuantity(products[i].id);
+      if (qty > products[i].stockQuantity) {
+        hasIssue = true;
+        _errorIndices.add(i);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Sản phẩm "${products[i].name}" không đủ hàng (Còn ${products[i].stockQuantity} sản phẩm)',
+            ),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    }
+
+    _hasStockIssue = hasIssue;
+  }
+
+  void _updateQuantity(int productId, int change) {
+    final cart = Provider.of<CartProvider>(context, listen: false);
+    final product = _products.firstWhere((p) => p.id == productId);
+
+    if (change > 0) {
+      if (cart.getQuantity(productId) >= product.stockQuantity) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Chỉ còn ${product.stockQuantity} sản phẩm trong kho'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        return;
+      }
+      cart.increaseQuantity(productId);
+    } else if (change < 0) {
+      cart.decreaseQuantity(productId);
+    }
+
+    _checkStockIssues(_products, cart);
+    setState(() {});
   }
 
   double _calculateTotal() {
@@ -302,6 +356,7 @@ class _CartScreenState extends State<CartScreen> {
               delegate: SliverChildBuilderDelegate((context, index) {
                 final product = _products[index];
                 final quantity = cart.getQuantity(product.id);
+                final hasError = _errorIndices.contains(index);
 
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -372,6 +427,21 @@ class _CartScreenState extends State<CartScreen> {
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
+                                  if (hasError) ...[
+                                    const SizedBox(height: 8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.red.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(color: Colors.red),
+                                      ),
+                                      child: Text(
+                                        'Không đủ hàng! Chỉ còn ${product.stockQuantity} sản phẩm',
+                                        style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 13),
+                                      ),
+                                    ),
+                                  ],
                                   const SizedBox(height: 8),
                                   Text(
                                     NumberFormat.currency(
@@ -388,10 +458,7 @@ class _CartScreenState extends State<CartScreen> {
                                   Row(
                                     children: [
                                       _buildQuantityButton(
-                                            () =>
-                                            cart.decreaseQuantity(
-                                              product.id,
-                                            ),
+                                            () =>                                                _updateQuantity(product.id, -1),
                                         Icons.remove,
                                       ),
                                       Padding(
@@ -407,10 +474,7 @@ class _CartScreenState extends State<CartScreen> {
                                         ),
                                       ),
                                       _buildQuantityButton(
-                                            () =>
-                                            cart.increaseQuantity(
-                                              product.id,
-                                            ),
+                                            () =>                                                _updateQuantity(product.id, 1),
                                         Icons.add,
                                         isAdd: true,
                                       ),
@@ -553,20 +617,20 @@ class _CartScreenState extends State<CartScreen> {
               width: double.infinity,
               height: 56,
               child: ElevatedButton(
-                onPressed:
+                onPressed: _hasStockIssue ? null:
                     () =>
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const CheckoutScreen()),
                     ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF3D6B4A),
+                  backgroundColor: _hasStockIssue ? Colors.grey[400] : const Color(0xFF3D6B4A),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                child: const Text(
-                  'TIẾN HÀNH THANH TOÁN',
+                child: Text(
+                  _hasStockIssue ? 'VUI LÒNG ĐIỀU CHỈNH SỐ LƯỢNG' : 'TIẾN HÀNH THANH TOÁN',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

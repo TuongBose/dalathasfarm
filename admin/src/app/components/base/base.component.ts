@@ -16,6 +16,11 @@ import { OrderService } from "../../services/order.service";
 import { ProvinceService } from "../../services/province.service";
 import { OrderDetailService } from "../../services/order-detail.service";
 import { SupplierService } from "../../services/supplier.service";
+import { DashboardService } from "../../services/dashboard.service";
+import { SupplierOrderService } from "../../services/supplier-order.service";
+import { SupplierInvoiceService } from "../../services/supplier-invoice.service";
+import { PurchaseOrderService } from "../../services/purchase-order.service";
+import { CouponConditionService } from "../../services/coupon-condition.service";
 
 @Component({
   selector: 'app-base',
@@ -42,9 +47,14 @@ export class BaseComponent {
   orderService: OrderService = inject(OrderService);
   orderDetailService: OrderDetailService = inject(OrderDetailService);
   paymentService: PaymentService = inject(PaymentService);
-  feedbackService:FeedbackService=inject(FeedbackService);
-  notificationService:NotificationService=inject(NotificationService);
-  provinceService:ProvinceService=inject(ProvinceService);
+  feedbackService: FeedbackService = inject(FeedbackService);
+  notificationService: NotificationService = inject(NotificationService);
+  provinceService: ProvinceService = inject(ProvinceService);
+  dashboardService: DashboardService = inject(DashboardService);
+  supplierOrderService: SupplierOrderService = inject(SupplierOrderService);
+  supplierInvoiceService: SupplierInvoiceService = inject(SupplierInvoiceService);
+  purchaseOrderService: PurchaseOrderService = inject(PurchaseOrderService);
+  couponConditionService: CouponConditionService = inject(CouponConditionService);
 
   generateVisiblePageArray(currentPage: number, totalPages: number): number[] {
     const maxVisiblePages = 5;

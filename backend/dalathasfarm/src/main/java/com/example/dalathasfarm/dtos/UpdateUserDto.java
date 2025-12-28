@@ -3,6 +3,7 @@ package com.example.dalathasfarm.dtos;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -22,5 +23,5 @@ public class UpdateUserDto {
     @NotBlank(message = "Số điện thoại không được bỏ trống")
     private String phoneNumber;
 
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 }

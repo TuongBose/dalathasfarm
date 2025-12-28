@@ -534,6 +534,10 @@ export class OrderComponent extends BaseComponent implements OnInit {
   decreaseQuantity(index: number): void {
     if (this.cartItems[index].quantity > 1) {
       this.cartItems[index].quantity--;
+      debugger
+      if (this.cartItems[index].product.stockQuantity >= this.cartItems[index].quantity) {
+        this.hasStockIssue=false;
+      }
       // Cập nhật lại this.cart từ this.cartItems
       this.updateCartFromCartItems();
       this.calculateTotal();

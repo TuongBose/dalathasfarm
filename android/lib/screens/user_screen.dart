@@ -669,6 +669,8 @@ import 'package:android/app_config.dart';
 import 'package:android/models/user.dart';
 import 'package:flutter/material.dart';
 
+import 'change_password_screen.dart';
+
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
 
@@ -739,7 +741,7 @@ class _UserScreenState extends State<UserScreen> {
       Navigator.pushNamedAndRemoveUntil(
         context,
         '/default',
-            (route) => false,
+        (route) => false,
         arguments: 4,
       );
     }
@@ -849,6 +851,18 @@ class _UserScreenState extends State<UserScreen> {
                       title: 'Thông Tin Công Ty',
                       icon: Icons.business_center_outlined,
                       onTap: () {},
+                    ),
+                    _buildListTile(
+                      title: 'Đổi mật khẩu',
+                      icon: Icons.vpn_key_outlined,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ChangePasswordScreen(),
+                          ),
+                        );
+                      },
                     ),
                     _buildListTile(
                       title: 'Điều Khoản Sử Dụng',

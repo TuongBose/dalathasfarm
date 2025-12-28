@@ -6,7 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { UserResponse } from '../../responses/user/user.response';
 import { CommonModule } from '@angular/common';
 import { ApiResponse } from '../../responses/api.response';
-import { catchError, finalize, of, switchMap, tap } from 'rxjs';
+import { catchError, finalize, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { LoginDto } from '../../dtos/user/login.dto';
 
 @Component({
@@ -14,7 +14,7 @@ import { LoginDto } from '../../dtos/user/login.dto';
   standalone: true,
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
-  imports:[CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule]
 })
 
 export class LoginComponent extends BaseComponent {
@@ -52,61 +52,80 @@ export class LoginComponent extends BaseComponent {
       return;
     }
 
-    const loginDto: LoginDto = {
-      password: this.password,
-      phoneNumber: this.phoneNumber,
-      roleId:1,
-    }
-    this.userService.login(loginDto).pipe(
-      tap((apiResponse: ApiResponse) => {
-        const { token } = apiResponse.data;
-        this.tokenService.setToken(token,this.rememberMe);
-      }),
-      switchMap((apiResponse: ApiResponse) => {
-        const { token } = apiResponse.data;
-        return this.userService.getUserDetails(token).pipe(
-          tap((apiResponse2: ApiResponse) => {
-            this.userResponse = {
-              ...apiResponse2.data,
-              dateOfBirth: new Date(apiResponse2.data.dateOfBirth),
-            };
-            debugger
-            this.userService.saveUserToLocalStorage(this.userResponse, this.rememberMe);
-          }),
-          catchError((error: HttpErrorResponse) => {
-            console.error('Lỗi khi lấy thông tin người dùng:', error?.error?.message ?? '');
-            return of(null); // Tiếp tục chuỗi Observable
-          })
-        );
-      }),
-      finalize(() => {
-        this.cartService.refreshCart();
-      })
-    ).subscribe({
-      next: () => {
-        this.toastService.showToast({
-          defaultMsg: 'Đăng nhập thành công',
-          title: 'Thông báo',
-          delay: 3000,
-          type: 'success'
-        });
-        setTimeout(() => {
-          this.resetFormLogin();
-          this.router.navigate(['/']);
-        }, 2000);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.toastService.showToast({
-          error,
-          defaultMsg: 'Đăng nhập thất bại!',
-          title: 'Lỗi đăng nhập',
-          delay: 3000,
-          type: 'danger'
-        });
-        console.error('Lỗi đăng nhập:', error?.error?.message ?? '');
+    const tryLoginWithRole = (roleId: number): Observable<ApiResponse | null> => {
+      const loginDto: LoginDto = {
+        password: this.password,
+        phoneNumber: this.phoneNumber,
+        roleId: roleId,
+      };
+
+      return this.userService.login(loginDto).pipe(
+        catchError((error: HttpErrorResponse) => {
+          // Nếu lỗi 404 hoặc message liên quan đến role → coi như "không tìm thấy user với role này"
+          if (error.status === 404 ||
+            (error.error?.message && error.error.message.toLowerCase().includes('role'))) {
+            return of(null); // Trả về null → thử role khác
+          }
+          // Các lỗi khác (mật khẩu sai, server error...) → throw để báo người dùng
+          return throwError(() => error);
+        })
+      );
+    };
+
+    tryLoginWithRole(1).pipe(
+    switchMap((response1) => {
+      if (response1) {
+        return of(response1); // Thành công với role 1
       }
-    });
-  }
+      // Thử role 2
+      return tryLoginWithRole(2);
+    }),
+    switchMap((finalResponse) => {
+      if (!finalResponse) {
+        // Cả 2 role đều không tìm thấy user
+        throw new HttpErrorResponse({
+          error: { message: 'Số điện thoại hoặc mật khẩu không đúng' },
+          status: 401
+        });
+      }
+      const { token } = finalResponse.data;
+      this.tokenService.setToken(token, this.rememberMe);
+    return this.userService.getUserDetails(token).pipe(
+        tap((apiResponse2: ApiResponse) => {
+          this.userResponse = {
+            ...apiResponse2.data,
+            dateOfBirth: new Date(apiResponse2.data.dateOfBirth),
+          };
+          this.userService.saveUserToLocalStorage(this.userResponse, this.rememberMe);
+        })
+      );
+    }),
+    finalize(() => {
+      this.cartService.refreshCart();
+    })
+  ).subscribe({
+    next: () => {
+      this.toastService.showToast({
+        defaultMsg: 'Đăng nhập thành công',
+        title: 'Thông báo',
+        delay: 3000,
+        type: 'success'
+      });
+      setTimeout(() => {
+        this.resetFormLogin();
+        this.router.navigate(['/']);
+      }, 2000);
+    },
+    error: (error: HttpErrorResponse) => {
+      this.toastService.showToast({
+        defaultMsg: 'Số điện thoại hoặc mật khẩu không đúng',
+        title: 'Lỗi đăng nhập',
+        delay: 3000,
+        type: 'danger'
+      });
+    }
+  });
+}
 
   resetFormLogin() {
     this.phoneNumber = '';

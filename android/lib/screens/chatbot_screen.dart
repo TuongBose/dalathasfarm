@@ -179,82 +179,79 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 ],
               ),
             ),
-            Expanded(child:
-            Column(
-              children: [
-                // Danh sách tin nhắn
-                Expanded(
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _messages.length + (_isLoading ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == _messages.length && _isLoading) {
-                        return _buildBotMessage('Đang suy nghĩ');
-                      }
-                      return _buildMessage(_messages[index]);
-                    },
+            Expanded(
+              child: Column(
+                children: [
+                  // Danh sách tin nhắn
+                  Expanded(
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.all(16),
+                      itemCount: _messages.length + (_isLoading ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == _messages.length && _isLoading) {
+                          return _buildBotMessage('Đang suy nghĩ');
+                        }
+                        return _buildMessage(_messages[index]);
+                      },
+                    ),
                   ),
-                ),
 
-                // Input cố định dưới cùng
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      // Nút đính kèm (tạm thời để trống chức năng)
-                      IconButton(
-                        icon: const Icon(
-                          Icons.add_circle_outline,
-                          color: Colors.black87,
+                  // Input cố định dưới cùng
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
                         ),
-                        onPressed: () {},
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: _controller,
-                          decoration: InputDecoration(
-                            hintText: 'Nhập câu hỏi của bạn...',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide.none,
-                            ),
-                            filled: true,
-                            fillColor: Colors.grey[100],
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 14,
-                            ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        // Nút đính kèm (tạm thời để trống chức năng)
+                        IconButton(
+                          icon: const Icon(
+                            Icons.add_circle_outline,
+                            color: Colors.black87,
                           ),
-                          textInputAction: TextInputAction.send,
-                          onSubmitted: (_) => _sendMessage(),
+                          onPressed: () {},
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      // Nút gửi
-                      FloatingActionButton(
-                        mini: true,
-                        backgroundColor: const Color(0xFF4A7C59),
-                        onPressed: _isLoading ? null : _sendMessage,
-                        child: const Icon(
-                          Icons.send,
-                          color: Colors.white,
+                        Expanded(
+                          child: TextField(
+                            controller: _controller,
+                            decoration: InputDecoration(
+                              hintText: 'Nhập câu hỏi của bạn...',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide.none,
+                              ),
+                              filled: true,
+                              fillColor: Colors.grey[100],
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 14,
+                              ),
+                            ),
+                            textInputAction: TextInputAction.send,
+                            onSubmitted: (_) => _sendMessage(),
+                          ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        // Nút gửi
+                        FloatingActionButton(
+                          mini: true,
+                          backgroundColor: const Color(0xFF4A7C59),
+                          onPressed: _isLoading ? null : _sendMessage,
+                          child: const Icon(Icons.send, color: Colors.white),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
             ),
           ],
         ),

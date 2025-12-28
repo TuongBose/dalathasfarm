@@ -19,7 +19,7 @@ public class SupplierInvoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
 
@@ -49,6 +49,9 @@ public class SupplierInvoice {
 
     @Column(name = "invoice_file", nullable = false)
     private String invoiceFile;
+
+    @Column(name = "is_used")
+    private Boolean isUsed;
 
     public enum SupplierInvoicePaymentMethod { BankTransfer, Cash }
     public enum SupplierInvoicePaymentStatus { Unpaid, Paid }

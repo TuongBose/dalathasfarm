@@ -1,3 +1,5 @@
+import { Role } from "../../models/role";
+
 export interface UserResponse {
     id: number;
     dateOfBirth: Date;
@@ -7,4 +9,5 @@ export interface UserResponse {
     isActive: boolean;
     fullName: string;
     email: string;
+    role:Role;
 }

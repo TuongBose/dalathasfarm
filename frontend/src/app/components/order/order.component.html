@@ -501,16 +501,24 @@
             <div class="mb-4">
               <div class="d-flex">
                 <input type="text" class="form-control" [(ngModel)]="couponCode" placeholder="Mã giảm giá"
-                  name="couponCode">
-                <button class="btn btn-outline-dark ms-2 px-4" type="button" (click)="applyCoupon()">NHẬP</button>
+                  name="couponCode" [disabled]="couponApplied">
+                <button class="btn btn-outline-dark ms-2 px-4" type="button" (click)="applyCoupon()"
+                  [disabled]="couponApplied">{{ couponApplied ? 'ĐÃ ÁP DỤNG' : 'NHẬP' }}</button>
               </div>
-              @if (couponDiscount > 0) {
-              <small class="text-success mt-2 d-block">
-                Đã áp dụng mã giảm giá: -{{ couponDiscount | number:'1.0-0' }}đ
-              </small>
-              <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeCoupon()">
-                <i class="fas fa-times"></i>
-              </button>
+              @if (couponDiscount > 0 && couponApplied) {
+              <div class="d-flex align-items-center justify-content-between mt-3 p-3 bg-light-success rounded">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-check-circle text-success me-2"></i>
+                  <span class="text-success fw-medium">
+                    Đã áp dụng mã <strong>{{ couponCode }}</strong> – Giảm
+                    <strong>{{ couponDiscount | number:'1.0-0' }}₫</strong>
+                  </span>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-danger border-0" (click)="removeCoupon()"
+                  title="Xóa mã giảm giá">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
               }
             </div>
 

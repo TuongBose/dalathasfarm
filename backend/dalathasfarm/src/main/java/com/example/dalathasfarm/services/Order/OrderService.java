@@ -110,7 +110,7 @@ public class OrderService implements IOrderService {
         orderDetailRepository.saveAll(orderDetails);
 
         // Tạo PDF hóa đơn
-        byte[] pdf = InvoicePdfService.generateInvoicePdf(order, orderDetails);
+        byte[] pdf = InvoicePdfService.generateInvoicePdfOrder(order, orderDetails);
 
         // Lưu file PDF vào thư mục
         Path uploadDir = Paths.get("uploads/files/orders/");
@@ -246,6 +246,26 @@ public class OrderService implements IOrderService {
     }
 
     @Override
+    public void cancelOrder(Integer id) throws Exception {
+        Order existingOrder = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cannot find Order"));
+        List<OrderDetail> orderDetailList = orderDetailRepository.findByOrder(existingOrder);
+
+        existingOrder.setStatus(Order.OrderStatus.Cancelled);
+        orderRepository.save(existingOrder);
+
+        for (OrderDetail orderDetail : orderDetailList) {
+            int productId = orderDetail.getProduct().getId();
+            int quantity = orderDetail.getQuantity();
+
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new RuntimeException("Product ID does not exists"));
+            product.setStockQuantity(product.getStockQuantity() + quantity);
+            productRepository.save(product);
+        }
+    }
+
+    @Override
     public void deleteOrder(Integer id) throws Exception {
         Order existingOrder = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cannot find Order"));
@@ -301,8 +321,46 @@ public class OrderService implements IOrderService {
 
         Notification newNotification = Notification.builder()
                 .user(existingUser)
-                .title("Order with ID: " + orderResponse.getId() + " have been " + status)
-                .content("Join us to protect your rights, only receive goods and pay when the order is in \"delivery\" status")
+                .title("Đơn hàng mới mã đơn hàng: " + orderResponse.getId() + " đã được " + status)
+                .content("Cùng Dalat Hasfarm bảo vệ quyền lợi của bạn. Chỉ nhận hàng và thanh toán khi đơn hàng ở trạng thái \"Đang giao hàng\"")
+                .type(Notification.Importance.Normal)
+                .isRead(false)
+                .build();
+        notificationRepository.save(newNotification);
+
+        return orderResponse;
+    }
+
+    @Override
+    public OrderResponse updateStatusAdmin(String status, int orderId) throws Exception {
+        Order orderOptional = orderRepository.findById(orderId)
+                .orElseThrow(()->new DataNotFoundException("Does not exist Order"));
+
+        if (status != null && !status.trim().isEmpty()) {
+            try {
+                Order.OrderStatus newStatus = Order.OrderStatus.valueOf(status.trim());
+                orderOptional.setStatus(newStatus);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid order status: " + status);
+            }
+        }
+        orderRepository.save(orderOptional);
+
+
+        List<OrderDetailResponse> orderDetailResponses = orderDetailRepository.findByOrder(orderOptional)
+                .stream()
+                .map(OrderDetailResponse::fromOrderDetail)
+                .collect(Collectors.toList());
+
+        OrderResponse orderResponse = OrderResponse.fromOrder(orderOptional, orderDetailResponses);
+
+        User existingUser = userRepository.findById(orderResponse.getUserId())
+                .orElseThrow(() -> new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.USER_NOT_FOUND)));
+
+        Notification newNotification = Notification.builder()
+                .user(existingUser)
+                .title("Đơn hàng mới mã đơn hàng: " + orderResponse.getId() + " đã được " + status)
+                .content("Cùng Dalat Hasfarm bảo vệ quyền lợi của bạn. Chỉ nhận hàng và thanh toán khi đơn hàng ở trạng thái \"Đang giao hàng\"")
                 .type(Notification.Importance.Normal)
                 .isRead(false)
                 .build();

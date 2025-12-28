@@ -16,7 +16,7 @@ public class Feedback extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -26,7 +26,7 @@ public class Feedback extends BaseEntity{
     @Column(nullable = false)
     private Integer star;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 

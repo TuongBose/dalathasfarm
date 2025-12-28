@@ -104,4 +104,24 @@ class OrderService{
       throw Exception('Error fetching order detail: $e');
     }
   }
+
+  Future<void> cancelOrder(int id) async {
+    try {
+      final url = Uri.parse('${AppConfig.baseUrl}/orders/cancel/$id');
+      final response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ${AppConfig.accessToken}',
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to load order detail: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching order detail: $e');
+    }
+  }
 }
